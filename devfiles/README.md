@@ -1,3 +1,7 @@
 # Readme
 
-run `npm install`
+`cd devfiles` once
+
+`npm install` once
+
+`npx vite preview` for testing
