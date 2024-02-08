@@ -7,3 +7,7 @@ install node (and npm)
 `npm install` once
 
 `npx vite preview` for testing
+
+## Workflow
+
+`npm run dev` for live webserver
