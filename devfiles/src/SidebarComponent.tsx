@@ -4,7 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Panel from './classes/Panel.js'
 
-function Sidebar() {
+function SidebarComponent() {
 
   return (
    <>
@@ -13,4 +13,4 @@ function Sidebar() {
   )
 }
 
-export default Sidebar
+export default SidebarComponent
