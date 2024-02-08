@@ -1,3 +1,1 @@
-export default class Data {
-
-}
+export default class Data {}

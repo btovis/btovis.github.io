@@ -1,5 +1,3 @@
-
-
 enum ExportFileType {
     PNG,
     JPEG,

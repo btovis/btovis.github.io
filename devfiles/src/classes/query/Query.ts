@@ -1,3 +1,1 @@
-export default class Query {
-
-}
+export default class Query {}
