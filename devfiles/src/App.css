@@ -46,12 +46,12 @@
   flex-direction: row;
 }
 .panel {
-  background-color: #bbb;
-  flex: 40%;
+  background-color: #e7e7e7;
+  flex: 20%;
   width: 40%;
 }
 
 .paner {
-  flex: 60%;
+  flex: 80%;
   width: 60%;
 }
