@@ -8,19 +8,11 @@ import MainPage from './MainPage.tsx'
 
 
 function App() {
-    const [count, setCount] = useState(0);
-
   return (
     <><div className="splitScreen">
       <div className="panel"><Sidebar></Sidebar></div>
-      <div className="paner">
-        <MainPage></MainPage>
-
-
-
+      <div className="paner"><MainPage></MainPage></div>
       </div>
-    </div>
-
     </>
   )
 }
