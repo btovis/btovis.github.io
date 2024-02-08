@@ -8,7 +8,10 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
+    <><div className="splitScreen">
+      <div className="panel">TOPPANE</div>
+      <div className="paner">RPANE</div>
+    </div>
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
