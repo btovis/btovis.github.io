@@ -1,6 +1,6 @@
 # README
 
-# Install
+## Install
 
 install node (and npm)
 
@@ -16,6 +16,8 @@ In the root folder
 ```
 npm run prepare
 npm install
+npx husky-init
+git restore .husky
 ```
 Now when you commit, the files be linted and tested.
 
