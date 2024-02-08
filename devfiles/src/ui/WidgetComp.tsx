@@ -1,13 +1,8 @@
-import './App.css'
-import PageManager from '../classes/PageManager.js'
+import './App.css';
+import PageManager from '../classes/PageManager.js';
 
-function WidgetComp(params:{pageManager:PageManager}) {
-
-  return (
-   <> 
-      WIDGET COMPONENT
-    </>
-  )
+function WidgetComp(params: { pageManager: PageManager }) {
+    return <>WIDGET COMPONENT</>;
 }
 
-export default WidgetComp
+export default WidgetComp;

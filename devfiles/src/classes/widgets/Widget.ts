@@ -1,4 +1,4 @@
-import Data from '../data/Data.js'
+import Data from '../data/Data.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import WidgetConfig from './WidgetConfig.js';

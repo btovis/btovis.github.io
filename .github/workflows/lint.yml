@@ -1,0 +1,28 @@
+name: Format and Lint
+
+on:
+  - push
+  
+
+jobs:
+  run-formatter:
+    name: Run formatter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Run formatter
+        run: npm run format 
+
+      - name: Run linter
+        run: npm run lint 

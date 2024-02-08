@@ -1,6 +1,20 @@
 {
+    "name": "btovis",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
     "devDependencies": {
+        "@testing-library/jest-dom": "^6.4.2",
+        "@testing-library/react": "^14.2.1",
+        "@types/react": "^18.2.43",
+        "@types/react-dom": "^18.2.17",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
+        "@typescript-eslint/parser": "^6.14.0",
+        "@vitejs/plugin-react": "^4.2.1",
         "eslint": "^8.56.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-config-standard-with-typescript": "^43.0.1",
@@ -8,16 +22,25 @@
         "eslint-plugin-n": "^16.6.2",
         "eslint-plugin-promise": "^6.1.1",
         "eslint-plugin-react": "^7.33.2",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "eslint-plugin-react-refresh": "^0.4.5",
         "husky": "^8.0.0",
+        "jsdom": "^24.0.0",
         "lint": "^0.8.19",
         "lint-staged": "^15.2.2",
         "prettier": "^3.2.5",
-        "typescript": "^5.3.3"
+        "typescript": "^5.3.3",
+        "vite": "^5.0.8",
+        "vitest": "^1.2.2"
     },
     "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
         "prepare": "husky install",
         "lint": "eslint --fix '**/*.{js,jsx,ts,tsx}'",
-        "format": "prettier --write --ignore-unknown '**/*.{json,js,ts,jsx,tsx,html}'"
+        "format": "prettier --write --ignore-unknown '**/*.{json,js,ts,jsx,tsx,html}'",
+        "preview": "vite preview",
+        "test": "vitest"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [

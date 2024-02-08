@@ -1,13 +1,8 @@
-import '../App.css'
-import PageManager from '../classes/PageManager.js'
+import '../App.css';
+import PageManager from '../classes/PageManager.js';
 
-function SidebarComp(params:{pageManager:PageManager}) {
-
-  return (
-   <> 
-      LPANE
-    </>
-  )
+function SidebarComp(params: { pageManager: PageManager }) {
+    return <>LPANE</>;
 }
 
-export default SidebarComp
+export default SidebarComp;
