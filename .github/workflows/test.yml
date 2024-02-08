@@ -1,12 +1,16 @@
-name: Format and Lint
+name: Test
 
 on:
-  - push
-  
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main 
 
 jobs:
-  run-formatter:
-    name: Run formatter
+  run-tests:
+    name: Run tests
     runs-on: ubuntu-latest
 
     steps:
@@ -21,8 +25,5 @@ jobs:
       - name: Install Node.js dependencies
         run: npm install
 
-      - name: Run formatter
-        run: npm run format 
-
-      - name: Run linter
-        run: npm run lint 
+      - name: Run Tests
+        run: npm run 
