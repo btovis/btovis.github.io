@@ -1,4 +1,1 @@
-
-export default class WidgetConfig {
-    
-}
+export default class WidgetConfig {}

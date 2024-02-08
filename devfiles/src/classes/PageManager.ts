@@ -1,3 +1,1 @@
-export default class PageManager {
-
-}
+export default class PageManager {}
