@@ -1,7 +1,7 @@
-import Data from '../Data.js';
-import WidgetConfig from './WidgetConfig.js';
+import Data from '../data/Data.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
+import WidgetConfig from './WidgetConfig.js';
 
 export default abstract class Widget {
     protected data: Data;
