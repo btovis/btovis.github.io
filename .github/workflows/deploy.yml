@@ -19,7 +19,7 @@ jobs:
   build:
     name: Build static site
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - name: Check out Git repository
         uses: actions/checkout@v4
 
@@ -35,7 +35,7 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Build with node
-        uses: npm run build
+        run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
