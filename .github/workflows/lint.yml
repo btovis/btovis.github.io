@@ -1,4 +1,4 @@
-name: Format
+name: Format and Lint
 
 on:
   # Trigger the workflow on all pushes and pull requests
@@ -24,3 +24,6 @@ jobs:
 
       - name: Run formatter
         run: npm run format 
+
+      - name: Run linter
+        run: npm run lint 
