@@ -13,7 +13,7 @@ function App() {
                 <div className='panel'>
                     <SidebarComp pageManager={pageManager}></SidebarComp>
                 </div>
-                <div className='panel'>
+                <div className='paner'>
                     <MainPage pageManager={pageManager}></MainPage>
                 </div>
             </div>
