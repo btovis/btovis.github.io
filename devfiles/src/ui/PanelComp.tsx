@@ -5,7 +5,7 @@ import WidgetComp from './WidgetComp.js';
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const panel = params.pageManager.panels[params.panelIdx];
     return [<>PANEL</>].concat(
-        panel.get_widgets().map((_, index) => {
+        panel.getWidgets().map((_, index) => {
             return (
                 <>
                     <WidgetComp

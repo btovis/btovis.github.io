@@ -15,11 +15,11 @@ export default class PageManager {
         this.data = new Data();
     }
 
-    public get_data(): Data {
+    public getData(): Data {
         return this.data;
     }
 
-    public update_sidebar(): void {}
+    public updateSidebar(): void {}
 
-    public update_panels(): void {}
+    public updatePanels(): void {}
 }

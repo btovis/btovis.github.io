@@ -12,12 +12,12 @@ export default abstract class Widget {
         this.config = config;
     }
 
-    public display_sidebar() {}
+    public displaySidebar() {}
 
     /**
      * Generates the Sidebar object
      */
-    public abstract generate_sidebar(): Sidebar;
+    public abstract generateSidebar(): Sidebar;
 
     /**
      * Computes the JSX.Element object to be displayed by the

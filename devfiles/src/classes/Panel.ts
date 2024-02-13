@@ -10,22 +10,22 @@ export default class Panel {
 
     public constructor(manager: PageManager) {
         const testConfig = new WidgetConfig();
-        this.widgets = [new BarChart(manager.get_data(), testConfig)];
+        this.widgets = [new BarChart(manager.getData(), testConfig)];
     }
 
-    public display_sidebar(): void {}
-    public generate_sidebar(): Sidebar {
+    public displaySidebar(): void {}
+    public generateSidebar(): Sidebar {
         this.sidebar = new Sidebar();
         return this.sidebar;
     }
 
     public render(): void {}
 
-    public add_widget(): void {}
+    public addWidget(): void {}
 
-    public render_widgets(): void {}
+    public renderWidgets(): void {}
 
-    public get_widgets(): Widget[] {
+    public getWidgets(): Widget[] {
         return this.widgets;
     }
 }
