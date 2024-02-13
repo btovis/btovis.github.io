@@ -9,7 +9,7 @@ export default class BarChart extends Widget {
         throw new Error('Method not implemented.');
     }
     public render(): JSX.Element {
-        throw new Error('Method not implemented.');
+        return <></>;
     }
     public delete(): void {
         throw new Error('Method not implemented.');
