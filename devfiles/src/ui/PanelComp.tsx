@@ -1,17 +1,21 @@
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
+import WidgetComp from './WidgetComp.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const panel = params.pageManager.panels[params.panelIdx];
-    return (
-        <>
-            PANEL
-            {/* {
-            params.pageManager.panels.forEach((_,index) => {
-                return <><PanelComp panelIdx={index} pageManager={params.pageManager} /></>
-            })
-        } */}
-        </>
+    return [<>PANEL</>].concat(
+        panel.get_widgets().map((_, index) => {
+            return (
+                <>
+                    <WidgetComp
+                        panelIdx={params.panelIdx}
+                        widgetIdx={index}
+                        pageManager={params.pageManager}
+                    />
+                </>
+            );
+        })
     );
 }
 
