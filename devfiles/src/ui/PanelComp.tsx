@@ -4,18 +4,22 @@ import WidgetComp from './WidgetComp.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const panel = params.pageManager.panels[params.panelIdx];
-    return [<>PANEL</>].concat(
-        panel.getWidgets().map((_, idx) => {
-            return (
-                <>
-                    <WidgetComp
-                        panelIdx={params.panelIdx}
-                        widgetIdx={idx}
-                        pageManager={params.pageManager}
-                    />
-                </>
-            );
-        })
+
+    const widgetRow = panel.getWidgets().map((_, idx) => {
+        return (
+            <WidgetComp
+                panelIdx={params.panelIdx}
+                widgetIdx={idx}
+                pageManager={params.pageManager}
+            />
+        );
+    });
+
+    return (
+        <div className='panel'>
+            <div className='title'>Panel {params.panelIdx}</div>
+            <div className='widget-row'>{widgetRow}</div>
+        </div>
     );
 }
 
