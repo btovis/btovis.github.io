@@ -5,7 +5,7 @@ import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 
 export default class TableWidget extends Widget {
-    public generate_sidebar(): Sidebar {
+    public generateSidebar(): Sidebar {
         throw new Error('Method not implemented.');
     }
     public render(): JSX.Element {
