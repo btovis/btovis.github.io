@@ -1,7 +1,6 @@
 import PageManager from './PageManager';
 import Sidebar from './Sidebar';
 import Geographic from './options/Geographic';
-import MutuallyExclusiveSelector from './options/MutuallyExclusiveSelector';
 import NumericInput from './options/NumericInput';
 import Selector from './options/Selector';
 import TextInput from './options/TextInput';
