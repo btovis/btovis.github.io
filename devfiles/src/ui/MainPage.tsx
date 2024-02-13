@@ -10,10 +10,10 @@ function MainPage(params: { pageManager: PageManager }) {
             <h1>Vite + React</h1>
         </>
     ].concat(
-        params.pageManager.panels.map((_, index) => {
+        params.pageManager.panels.map((_, idx) => {
             return (
                 <>
-                    <PanelComp panelIdx={index} pageManager={params.pageManager} />
+                    <PanelComp panelIdx={idx} pageManager={params.pageManager} />
                 </>
             );
         })
