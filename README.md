@@ -8,7 +8,13 @@ install node (and npm)
 
 `npm install` once
 
-`npx vite preview` for testing
+`npm run dev` for testing
+
+## Build
+
+Run `npm run build` and merge to main branch when no errors
+
+Run `npm run lint` to see warnings. See those related to yours and fix them.
 
 ## Setup Pre-Commit Hooks
 
