@@ -96,4 +96,4 @@ function processTypes(columnNames, content) {
     }
 }
 
-export { integrate, processTypes };
+export { processTypes };
