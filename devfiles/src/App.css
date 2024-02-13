@@ -44,6 +44,7 @@
 .splitScreen {
   display: flex;
   flex-direction: row;
+  height: 100vh;
 }
 .panel {
   background-color: #e7e7e7;
