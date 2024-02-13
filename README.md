@@ -1,32 +1,23 @@
 # README
 
-## Install
+## Install and Setup
 
-install node (and npm)
+Install node (and npm)
+```bash
+npm install
+```
 
-`cd devfiles` once
-
-`npm install` once
-
-`npm run dev` for testing
+## Test
+Write tests as `filename.test.jsx` (eg `App.tsx` -> `App.test.jsx`).  
+Run `npm run test` to run tests.
+Tests must pass before merging to `main`.
 
 ## Build
 
-Run `npm run build` and merge to main branch when no errors
+Run `npm run dev` for a dynamic development environment. 
+Run `npm run build` to build the project.
 
-Run `npm run lint` to see warnings. See those related to yours and fix them.
+## Linting and Formatting
 
-## Setup Pre-Commit Hooks
-
-In the root folder
-```
-npm run prepare
-npm install
-npx husky-init
-git restore .husky
-```
-Now when you commit, the files be linted and tested.
-
-## Workflow
-
-`npm run dev` for live webserver
+These are checked and updated during committing. To manually check and update, run `npm run lint` and `npm run format`.  
+These are also checked during the CI/CD pipeline.
