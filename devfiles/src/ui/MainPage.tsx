@@ -2,9 +2,10 @@ import reactLogo from '../assets/react.svg';
 import viteLogo from '/vite.svg';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
+import PanelComp from './PanelComp.js';
 
 function MainPage(params: { pageManager: PageManager }) {
-    return (
+    return [
         <>
             <div>
                 <a href='https://vitejs.dev' target='_blank'>
@@ -21,8 +22,15 @@ function MainPage(params: { pageManager: PageManager }) {
                 </p>
             </div>
             <p className='read-the-docs'>Click on the Vite and React logos to learn more.</p>
-            <p>It works</p>
         </>
+    ].concat(
+        params.pageManager.panels.map((_, index) => {
+            return (
+                <>
+                    <PanelComp panelIdx={index} pageManager={params.pageManager} />
+                </>
+            );
+        })
     );
 }
 
