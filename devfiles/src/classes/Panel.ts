@@ -6,7 +6,6 @@ import WidgetConfig from './widgets/WidgetConfig';
 
 export default class Panel {
     public widgets: Widget[];
-    public sidebar: Sidebar;
 
     public constructor(manager: PageManager) {
         const testConfig = new WidgetConfig();
@@ -14,9 +13,16 @@ export default class Panel {
     }
 
     public displaySidebar(): void {}
+
+    /*
+     * Iterates each widget and adds all its options together
+     */
     public generateSidebar(): Sidebar {
-        this.sidebar = new Sidebar();
-        return this.sidebar;
+        const options = this.widgets
+            .map((widget) => widget.generateSidebar().options)
+            .reduce((acc, a) => acc.concat(a), []);
+
+        return new Sidebar(options);
     }
 
     public render(): void {}
