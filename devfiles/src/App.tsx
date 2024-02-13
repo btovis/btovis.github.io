@@ -10,7 +10,7 @@ function App() {
     return (
         <>
             <div className='splitScreen'>
-                <div className='panel'>
+                <div className='sidebar'>
                     <SidebarComp pageManager={pageManager}></SidebarComp>
                 </div>
                 <div className='paner'>
