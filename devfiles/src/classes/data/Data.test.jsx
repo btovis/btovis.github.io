@@ -9,13 +9,15 @@ const DataTest = test.extend({
         const filename = 'devfiles/src/tests/testdata.csv';
 
         const fd = await fs.promises.open(filename, 'r');
-        const buffer = Buffer.alloc(1);
+        const bufferSize = 1024;
+        const buffer = Buffer.alloc(bufferSize);
         var byteArray = new Uint8Array(0);
 
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            const { bytesRead } = await fd.read(buffer, 0, 1, null);
-            byteArray = new Uint8Array([...byteArray, ...buffer]);
+            const { bytesRead } = await fd.read(buffer, 0, bufferSize, null);
+            const chunk = buffer.slice(0, bytesRead);
+            byteArray = new Uint8Array([...byteArray, ...chunk]);
             if (bytesRead === 0) break;
         }
 
