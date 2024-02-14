@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRef } from 'react';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
@@ -8,8 +8,8 @@ import WidgetComp from './WidgetComp.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
-    const [r, dud] = useState(0);
-    const refresh = () => dud(r + 1);
+    const [snapRight, setSnapRight] = useState(1);
+    const refresh = () => setSnapRight(Math.abs(snapRight) + 1);
 
     const panel = params.pageManager.panels[params.panelIdx];
 
@@ -25,6 +25,10 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
 
     const widgetRowRef = useRef(null);
 
+    useEffect(() => {
+        if (snapRight <= 0 && widgetRowRef.current)
+            widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
+    });
     return (
         <div className='panel'>
             <div className='title'>Panel {params.panelIdx}</div>
@@ -35,14 +39,8 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         panel.addWidget(
                             new LineChart(params.pageManager.getData(), new WidgetConfig())
                         );
-                        refresh();
-                        //widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
-
-                        //TODO: make this less shit
-                        setTimeout(function () {
-                            widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
-                        }, 1); // wait for refresh to complete before snapping to right edge of widget row
-                        // without this it doesn't scroll all the way to the right edge of the div
+                        //If negative, scroll rightwards
+                        setSnapRight(-Math.abs(snapRight) - 1);
                     }}
                 >
                     Placeholder Add Widget Button
