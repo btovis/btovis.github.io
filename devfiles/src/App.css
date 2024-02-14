@@ -78,20 +78,20 @@
 }
 
 .widget {
+  box-sizing: border-box;
   border: solid;
   border-radius: 2px;
   height: 100%;
   width: 300px;
-  
 }
 
 .widget-row {
   height: 85%;
-  width: 100%;
+  width: 80%;
   display: inline-grid;
   grid-auto-flow: column;
-
-  
+  overflow-x: auto;
+  column-gap: 50px;
 }
 
 .paner {
