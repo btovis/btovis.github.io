@@ -8,8 +8,8 @@ export default class PageManager {
     public globalSettings: GlobalSettings;
     public selectedPanel: number = -1;
     public panels: Panel[];
-    public updateCallback?: Dispatch<SetStateAction<PageManager>>;
-    public panelOptionsRefresh?: () => void;
+    public refreshEverything?: () => void;
+    public refreshPanelOptions?: () => void;
     public unselectPanel?: () => void;
 
     public constructor() {
@@ -21,6 +21,10 @@ export default class PageManager {
         return this.data;
     }
 
+    public addPanel(panel: Panel) {
+        this.panels.push(panel);
+    }
+
     public getSelectedPanel() {
         return this.panels[this.selectedPanel];
     }
@@ -29,7 +33,10 @@ export default class PageManager {
         return this.panels[panelIdx];
     }
 
-    public updateSidebar(): void {}
+    //Unsure what these 2 do. If you seek to refresh the UI,
+    // use refreshPanelOptions for panel options in the sidebar,
+    // and getSelectedPanel().refresh() for the selected panel
+    //public updateSidebar(): void {}
 
-    public updatePanels(): void {}
+    //public updatePanels(): void {}
 }

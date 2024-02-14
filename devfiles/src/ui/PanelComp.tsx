@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
@@ -13,7 +12,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const refresh = () => setSnapRight(Math.abs(snapRight) + 1);
 
     const panel = params.pageManager.panels[params.panelIdx];
-
+    panel.refresh = refresh;
     const widgets = panel.getWidgets().map((_, idx) => {
         return (
             <WidgetComp
@@ -44,7 +43,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                 setHighlighted(true);
 
                 //Force sidebar to refresh
-                params.pageManager.panelOptionsRefresh();
+                params.pageManager.refreshPanelOptions();
             }}
         >
             <div className='title'>{panel.getName()}</div>
