@@ -1,14 +1,16 @@
 import { Dispatch, SetStateAction } from 'react';
 import Panel from './Panel';
 import GlobalSettings from './GlobalSettings';
-import Sidebar from './Sidebar';
 import { Data } from './data/Data';
 
 export default class PageManager {
     public data: Data;
     public globalSettings: GlobalSettings;
+    public selectedPanel: number;
     public panels: Panel[];
     public updateCallback?: Dispatch<SetStateAction<PageManager>>;
+    public sidebarRefresh?: () => void;
+    public unselectPanel?: () => void;
 
     public constructor() {
         this.panels = [new Panel(this)];
