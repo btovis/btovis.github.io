@@ -47,7 +47,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                 params.pageManager.panelOptionsRefresh();
             }}
         >
-            <div className='title'>Panel {params.panelIdx}</div>
+            <div className='title'>{panel.getName()}</div>
             <div ref={widgetRowRef} className='widget-row'>
                 {widgets}
                 <button

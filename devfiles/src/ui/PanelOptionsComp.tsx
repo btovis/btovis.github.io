@@ -14,11 +14,11 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     const renderedOptions = panel
         .generateSidebar()
         .options.map((option) => option.render())
-        .reduce((rendered, acc) => acc.concat(rendered), []);
+        .reduce((acc, rendered) => acc.concat(rendered), []);
 
     return (
         <>
-            <h1>{panel.getName()}</h1>
+            <h2>{panel.getName()}</h2>
             {renderedOptions}
         </>
     );

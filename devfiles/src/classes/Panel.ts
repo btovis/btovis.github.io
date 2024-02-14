@@ -23,6 +23,7 @@ export default class Panel {
 
     public constructor(manager: PageManager) {
         this.nameInput = new TextInput('Panel Name');
+        this.nameInput.callback('Default Panel');
         const testConfig = new WidgetConfig();
         this.widgets = [new BarChart(manager.getData(), testConfig)];
         this.baseSidebar = new Sidebar([
