@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRef } from 'react';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
@@ -12,7 +13,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
 
     const panel = params.pageManager.panels[params.panelIdx];
 
-    const widgetRow = panel.getWidgets().map((_, idx) => {
+    const widgets = panel.getWidgets().map((_, idx) => {
         return (
             <WidgetComp
                 panelIdx={params.panelIdx}
@@ -22,17 +23,26 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
         );
     });
 
+    const widgetRowRef = useRef(null);
+
     return (
         <div className='panel'>
             <div className='title'>Panel {params.panelIdx}</div>
-            <div className='widget-row'>
-                {widgetRow}
+            <div ref={widgetRowRef} className='widget-row'>
+                {widgets}
                 <button
                     onClick={() => {
                         panel.addWidget(
                             new LineChart(params.pageManager.getData(), new WidgetConfig())
                         );
                         refresh();
+                        //widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
+
+                        //TODO: make this less shit
+                        setTimeout(function () {
+                            widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
+                        }, 1); // wait for refresh to complete before snapping to right edge of widget row
+                        // without this it doesn't scroll all the way to the right edge of the div
                     }}
                 >
                     Placeholder Add Widget Button
