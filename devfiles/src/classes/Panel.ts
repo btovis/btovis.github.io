@@ -53,9 +53,10 @@ export default class Panel {
      * Iterates each widget and adds all its options together
      */
     public generateSidebar(): Sidebar {
-        const options = this.widgets
-            .map((widget) => widget.generateSidebar().options)
-            .reduce((acc, a) => acc.concat(a), []);
+        const options = []; //TODO HANDLE WIDGET OPTIONS WHEN READY.
+        // const options = this.widgets
+        //     .map((widget) => widget.generateSidebar().options)
+        //     .reduce((acc, a) => acc.concat(a), []);
 
         return new Sidebar(this.baseSidebar.options.concat(options));
     }

@@ -17,6 +17,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const widgets = panel.getWidgets().map((_, idx) => {
         return (
             <WidgetComp
+                key={idx}
                 panelIdx={params.panelIdx}
                 widgetIdx={idx}
                 pageManager={params.pageManager}
@@ -43,7 +44,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                 setHighlighted(true);
 
                 //Force sidebar to refresh
-                params.pageManager.sidebarRefresh();
+                params.pageManager.panelOptionsRefresh();
             }}
         >
             <div className='title'>Panel {params.panelIdx}</div>

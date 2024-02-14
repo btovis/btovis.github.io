@@ -4,7 +4,7 @@ import InputOption from './InputOption';
 export default class TextInput extends InputOption {
     private text: string;
     public render(): JSX.Element[] {
-        return [<p>Text Input</p>];
+        return [<p>Text Input: {this.name}</p>];
     }
     public callback(newValue: any): void {
         this.text = newValue;

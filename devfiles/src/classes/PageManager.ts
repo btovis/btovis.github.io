@@ -6,10 +6,10 @@ import { Data } from './data/Data';
 export default class PageManager {
     public data: Data;
     public globalSettings: GlobalSettings;
-    public selectedPanel: number;
+    public selectedPanel: number = -1;
     public panels: Panel[];
     public updateCallback?: Dispatch<SetStateAction<PageManager>>;
-    public sidebarRefresh?: () => void;
+    public panelOptionsRefresh?: () => void;
     public unselectPanel?: () => void;
 
     public constructor() {
@@ -19,6 +19,14 @@ export default class PageManager {
 
     public getData(): Data {
         return this.data;
+    }
+
+    public getSelectedPanel() {
+        return this.panels[this.selectedPanel];
+    }
+
+    public getPanel(panelIdx: number) {
+        return this.panels[panelIdx];
     }
 
     public updateSidebar(): void {}
