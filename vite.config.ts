@@ -6,7 +6,8 @@ export default defineConfig({
     plugins: [react()],
     root: 'devfiles',
     build: {
-        outDir: '../dist'
+        outDir: '../dist',
+        sourcemap: true
     },
     test: {
         environment: 'jsdom',
