@@ -42,7 +42,8 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                 params.pageManager.unselectPanel = () => setHighlighted(false);
                 setHighlighted(true);
 
-                //Force sidebar to refresh
+                //Force sidebar to refresh by setting the tab
+                params.pageManager.setSidebarTab('panelTab');
                 params.pageManager.refreshPanelOptions();
             }}
         >

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import SidebarComp from './ui/SidebarComp.tsx';
 import MainPage from './ui/MainPage.tsx';
 import PageManager from './classes/PageManager.ts';
