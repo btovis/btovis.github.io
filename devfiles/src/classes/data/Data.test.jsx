@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest';
-import { Data } from './Data';
+import { Attribute, Data } from './Data';
 import fs from 'fs';
 import { Buffer } from 'buffer';
 
@@ -29,4 +29,10 @@ const DataTest = test.extend({
 
 DataTest('load CSV and test for data added', async ({ data }) => {
     expect(data.readDatabase()).not.toStrictEqual([]);
+});
+
+DataTest('get accessor for columns', async ({ data }) => {
+    const accessor = data.getAccessorForColumn(Attribute.latitude);
+    expect(accessor).not.toBeNull();
+    expect(accessor(data.readDatabase()[0])).toBeCloseTo(56.915);
 });
