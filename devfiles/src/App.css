@@ -65,7 +65,7 @@
 
 }
 
-.panel:active {
+.panelactive {
   border-color: rgb(134, 201, 219);
 }
 
