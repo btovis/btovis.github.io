@@ -15,7 +15,6 @@ export default class PanelNameInput extends InputOption {
             <div>
                 <span>Panel Name: </span>
                 <input
-                    key={Math.random() + 4136101727} //WHY DOESN'T THIS WORK WITHOUT THIS
                     defaultValue={this.text}
                     onBlur={(e) => this.callback(e.target.value)}
                     onKeyUp={(e) => {

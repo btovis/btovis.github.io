@@ -12,7 +12,14 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     const panel = params.pageManager.getSelectedPanel();
     const renderedOptions = panel
         .generateSidebar()
-        .options.map((option) => option.render())
+        .options.map((option, optionIdx) => (
+            <div
+                //(prime*a)+b is a hash of (a,b)
+                key={23629 * params.pageManager.selectedPanel + optionIdx}
+            >
+                {option.render()}
+            </div>
+        ))
         .reduce((acc, rendered) => acc.concat(rendered), []);
 
     return (
