@@ -31,7 +31,9 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     const deleteButton = (
         <div>
             <button
+                className='delete-btn'
                 onClick={() => {
+                    // TODO: add confirmation before deletion
                     params.pageManager.unselectPanel();
                     params.pageManager.selectedPanel = -1;
                     params.pageManager.deletePanel(params.pageManager.selectedPanel);

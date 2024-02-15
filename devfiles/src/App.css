@@ -110,6 +110,13 @@
   width: 150px;
 }
 
+.delete-btn {
+  border-width: medium;
+  border-color: #d00000;
+  background-color: #f33333;
+  color: white;
+}
+
 .paner {
   flex: 80%;
   width: 60%;
