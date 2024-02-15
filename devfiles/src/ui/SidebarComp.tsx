@@ -12,7 +12,7 @@ function SidebarComp(params: { pageManager: PageManager }) {
     params.pageManager.setSidebarTab = setKey;
 
     return (
-        <Tabs activeKey={key} onSelect={(k) => setKey(k)} id='sidebar-tab-handler'>
+        <Tabs activeKey={key} onSelect={(k) => setKey(k)} id='sidebar-tab-handler' justify>
             <Tab
                 eventKey='panelTab'
                 title='Panel Settings'

@@ -58,7 +58,7 @@
   border-color: var(--bgcolor);
   background-color: var(--bgcolor);
   margin: auto;
-  height: 300px;
+  min-height: 300px;
   width: 80%;
   border-radius: 16px;
   padding: 16px;
@@ -77,6 +77,12 @@
   font-size: 2.0em;
 }
 
+.panel .body {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
 .widget {
   box-sizing: border-box;
   border: solid;
@@ -86,12 +92,22 @@
 }
 
 .widget-row {
-  height: 85%;
+  height: 250px;
   width: 80%;
   display: inline-grid;
   grid-auto-flow: column;
-  overflow-x: auto;
+  overflow-x: scroll;
+  overflow-y: visible;
   column-gap: 50px;
+}
+
+.add-widget-btns {
+  display: inline-grid;
+  row-gap: 2px;
+}
+
+.widget-btn {
+  width: 150px;
 }
 
 .paner {
