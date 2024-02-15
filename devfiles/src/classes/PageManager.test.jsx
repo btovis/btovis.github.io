@@ -1,5 +1,8 @@
 import { test, expect } from 'vitest';
+import PageManager from './PageManager';
 
-test('placeholder', () => {
-    expect(1).toBe(1);
+test('PageManager starts with panels and data', () => {
+    const pageManager = new PageManager();
+    expect(pageManager.panels.length).not.toBeNull();
+    expect(pageManager.getData()).not.toBeNull();
 });
