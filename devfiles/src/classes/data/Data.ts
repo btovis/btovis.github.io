@@ -1,15 +1,17 @@
 /* Don't access data, use DataFilteredAccess */
 
-import FileIdentifierManager from './setutils/FileIdentifierManager';
+import normaliseIdentifier from './setutils/FileIdentifierUtil.ts';
 import { /*integrate,*/ processTypes } from './datautils/table_integrate';
 import { parseCSVFromByteArray } from './datautils/csvreader';
 import SetElement from './setutils/SetElement';
+import ReferenceSet from './setutils/ReferenceSet.ts';
 
 enum Attribute {
     fileName,
     timestamp, // TODOOOO
     time /*??? */,
     recordingFileName = 'RECORDING FILE NAME',
+    originalFileName = 'ORIGINAL FILE NAME',
     recordingFilePart = 'ORIGINAL FILE PART',
     latitude = 'LATITUDE',
     longitude = 'LONGITUDE',
@@ -30,25 +32,30 @@ enum Attribute {
 }
 
 class Data {
-    private fileIdentifiers = new FileIdentifierManager();
-    private sortedDatabase: (SetElement | string | number)[][] = [];
+    // Don't access sortedDatabase and sets and fileIdentifiers
+    public sortedDatabase: (SetElement | string | number)[][] = [];
+    public sets = [new ReferenceSet()]; // The 0th element are the files
 
-    // Columns from 1.
-    // 0th column is our file Identifier
-    private columnList: string[] = [];
+    // 0th element in this array is column 1
+    // column 0 is file identifier
+    public columnList: string[] = ['_FILE'];
 
     public addCSV(CSVName: string, CSVFile: Uint8Array) {
-        CSVName = this.fileIdentifiers.normaliseIdentifier(CSVName);
-        const CSVIdentifier = this.fileIdentifiers.add(CSVName);
+        CSVName = normaliseIdentifier(CSVName, this.sets[0]);
+        const CSVIdentifier = this.sets[0].addRawOrGet(CSVName);
 
         const { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
         // depending on what it modifies
         // leave this to later: TODO: proper integrate
         //integrate(this.columnList, this.sortedDatabase, )
-        processTypes(columnNames, content);
+        // TODO: reuse sets for the second file
+
+        // need proper integrate here.
+        this.sets = this.sets.concat(processTypes(columnNames, content));
         // TODO: proper merge
+        // TODO: sort!!
         this.sortedDatabase = content;
-        this.columnList = columnNames;
+        this.columnList = this.columnList.concat(columnNames);
     }
 
     // For reading only
@@ -57,14 +64,13 @@ class Data {
     }
 
     // For accessing cell data
-    public getAccessorForColumn(
-        a: Attribute
-    ): (row: SetElement | number | string) => SetElement | number | string {
+    // filname: 0
+    public getIndexForColumn(a: Attribute): number {
         const index = getColumnIndex(a, this.columnList);
         if (index == -1) {
-            throw 'no such column!';
+            throw 'no such column ' + a + ' in ' + this.columnList;
         }
-        return (row) => row[index];
+        return index;
     }
 }
 
@@ -76,7 +82,7 @@ function getColumnIndex(a: Attribute, columnList: string[]): number {
         case Attribute.timestamp:
             return -3;
         default:
-            return columnList.indexOf(a) + 1;
+            return columnList.indexOf(a);
     }
 }
 

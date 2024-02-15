@@ -5,22 +5,22 @@ describe('SetElement', () => {
     describe('constructor', () => {
         it('should set the value correctly', () => {
             const element = new SetElement('testValue');
-            expect(element.getValue()).toBe('testValue');
+            expect(element.value).toBe('testValue');
         });
     });
 
     describe('change', () => {
         it('should change the value correctly', () => {
             const element = new SetElement('initialValue');
-            element.change('newValue');
-            expect(element.getValue()).toBe('newValue');
+            element.value = 'newValue';
+            expect(element.value).toBe('newValue');
         });
     });
 
     describe('getValue', () => {
         it('should return the current value', () => {
             const element = new SetElement('currentValue');
-            expect(element.getValue()).toBe('currentValue');
+            expect(element.value).toBe('currentValue');
         });
     });
 
@@ -32,7 +32,7 @@ describe('SetElement', () => {
 
         it('should remain equal after change', () => {
             const elementA = new SetElement('initialValue');
-            elementA.change('newValue');
+            elementA.value = 'newValue';
             expect(elementA == elementA).toBe(true);
         });
     });
@@ -47,7 +47,7 @@ describe('SetElement', () => {
         it('should not be equal after change', () => {
             const elementA = new SetElement('initialValue');
             const elementB = new SetElement('testValue');
-            elementA.change('testVlaue');
+            elementA.value = 'testValue';
             expect(elementA == elementB).toBe(false);
         });
     });
