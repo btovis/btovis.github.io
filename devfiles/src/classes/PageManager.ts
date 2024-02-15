@@ -10,6 +10,7 @@ export default class PageManager {
     public panels: Panel[];
     public refreshEverything?: () => void;
     public refreshPanelOptions?: () => void;
+    public setSidebarTab?: (tab: string) => void;
     public unselectPanel?: () => void;
 
     public constructor() {
