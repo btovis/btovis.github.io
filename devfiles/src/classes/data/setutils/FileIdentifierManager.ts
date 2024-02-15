@@ -13,7 +13,7 @@ export default class FileIdentifierManager extends SetManager {
         while (this.hasValue(ident)) {
             // Add an underscore before .CSV
             const indexOfDot = ident.lastIndexOf('.');
-            ident = ident.slice(0, indexOfDot) + '_' + ident.slice(0, indexOfDot);
+            ident = ident.slice(0, indexOfDot) + '_' + ident.slice(indexOfDot);
         }
         return ident;
     }

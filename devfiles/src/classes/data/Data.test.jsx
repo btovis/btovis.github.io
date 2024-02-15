@@ -1,4 +1,4 @@
-import { test, expect } from 'vitest';
+import { it, expect, beforeEach, describe } from 'vitest';
 import { Attribute, Data } from './Data';
 import fs from 'fs';
 import { Buffer } from 'buffer';
@@ -26,46 +26,62 @@ async function loadData() {
     return data;
 }
 
-const DataTest = test.extend({
-    data: async ({ task }, use) => {
-        const data = await loadData();
-        await use(data);
-    }
-});
+describe('Data', () => {
+    let data;
+    beforeEach(async () => {
+        data = await loadData();
+    });
+    describe('addCSV', () => {
+        it('should add the data', () => {
+            expect(data.readDatabase()).not.toStrictEqual([]);
+        });
+    });
+    describe('getAccessorForColumn', () => {
+        it('should return a function', () => {
+            const accessor = data.getAccessorForColumn(Attribute.latitude);
+            expect(accessor).toBeInstanceOf(Function);
+        });
 
-DataTest('load CSV and test for data added', async ({ data }) => {
-    expect(data.readDatabase()).not.toStrictEqual([]);
+        it('getAccessorForColumn', () => {
+            describe.each([
+                { index: 0, attribute: Attribute.latitude, expected: 56.915 },
+                { index: 3, attribute: Attribute.longitude, expected: -4.14185 },
+                {
+                    index: 2,
+                    attribute: Attribute.speciesLatinName,
+                    expected: 'Troglodytes troglodytes'
+                },
+                {
+                    index: 8,
+                    attribute: Attribute.projectName,
+                    expected: 'Acoustic Classifier Development'
+                },
+                { index: 0, attribute: Attribute.species, expected: 46 },
+                { index: 5, attribute: Attribute.fileName, expected: filename }
+            ])(
+                'get accessor for columns with index $index and attribute $attribute',
+                async ({ index, attribute, expected }) => {
+                    const accessor = data.getAccessorForColumn(attribute);
+                    expect(accessor).not.toBeNull();
+                    const dataValue = accessor(data.readDatabase()[index]);
+                    if (isNaN(dataValue) && isNaN(expected)) {
+                        console.log('dataValue: ' + typeof dataValue);
+                        switch (typeof dataValue) {
+                            case 'string':
+                                // Check if expected is a string
+                                expect(dataValue).toBe(expected);
+                                break;
+                            default:
+                                // Check if expected is a setItem (filename)
+                                expect(dataValue.value).toBe(expected);
+                                break;
+                        }
+                    } else {
+                        // Check if expected is a number
+                        expect(dataValue).toBeCloseTo(expected);
+                    }
+                }
+            );
+        });
+    });
 });
-
-DataTest.each([
-    { index: 0, attribute: Attribute.latitude, expected: 56.915 },
-    { index: 3, attribute: Attribute.longitude, expected: -4.14185 },
-    { index: 2, attribute: Attribute.speciesLatinName, expected: 'Troglodytes troglodytes' },
-    { index: 8, attribute: Attribute.projectName, expected: 'Acoustic Classifier Development' },
-    { index: 0, attribute: Attribute.species, expected: 46 },
-    { index: 5, attribute: Attribute.fileName, expected: filename }
-])(
-    'get accessor for columns with index $index and attribute $attribute',
-    async ({ index, attribute, expected }) => {
-        const data = await loadData();
-        const accessor = data.getAccessorForColumn(attribute);
-        expect(accessor).not.toBeNull();
-        const dataValue = accessor(data.readDatabase()[index]);
-        if (isNaN(dataValue) && isNaN(expected)) {
-            console.log('dataValue: ' + typeof dataValue);
-            switch (typeof dataValue) {
-                case 'string':
-                    // Check if expected is a string
-                    expect(dataValue).toBe(expected);
-                    break;
-                default:
-                    // Check if expected is a setItem (filename)
-                    expect(dataValue.value).toBe(expected);
-                    break;
-            }
-        } else {
-            // Check if expected is a number
-            expect(dataValue).toBeCloseTo(expected);
-        }
-    }
-);

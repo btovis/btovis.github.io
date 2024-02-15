@@ -20,8 +20,8 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         .generateSidebar()
         .options.map((option, optionIdx) => (
             <div
-                //(prime*a)+b is a hash of (a,b)
-                key={23629 * params.pageManager.selectedPanel + optionIdx}
+                // key must be unique
+                key={generateHash(params, optionIdx)}
             >
                 {option.render()}
             </div>
@@ -37,3 +37,8 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
 }
 
 export default PanelOptionsComp;
+
+function generateHash(params: { pageManager: PageManager }, optionIdx: number) {
+    //(prime*a)+b is a hash of (a,b)
+    return 23629 * params.pageManager.selectedPanel + optionIdx;
+}
