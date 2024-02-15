@@ -15,10 +15,14 @@ function mergeSort(db1: (string | number)[], db2: (string | number)[], compKey: 
     return [];
 }*/
 
-function getProcessorForRow(columnName) /*: (cell: string) => any*/ {
+import ReferenceSet from '../setutils/ReferenceSet';
+
+function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string) => any*/ {
+    // Make set manager for each row that wants a
+
     switch (columnName) {
         case 'RECORDING FILE NAME':
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
         case 'ORIGINAL FILE PART':
             return parseInt;
         case 'LATITUDE':
@@ -26,20 +30,20 @@ function getProcessorForRow(columnName) /*: (cell: string) => any*/ {
         case 'LONGITUDE':
             return parseFloat;
         case 'SPECIES': // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
         case 'SCIENTIFIC NAME': // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
         case 'ENGLISH NAME': // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
         case 'SPECIES GROUP': // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
         case 'PROBABILITY':
-            return parseInt;
+            return parseFloat;
         case 'WARNINGS': // Set, or null
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
         case 'CALL TYPE':
             // TODO Handle nulls, string set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
 
         case 'ACTUAL DATE':
             // Infer american or british
@@ -55,23 +59,23 @@ function getProcessorForRow(columnName) /*: (cell: string) => any*/ {
 
         case 'CLASSIFIER NAME':
             // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
 
         case 'USER ID':
             // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
 
         case 'UPLOAD KEY':
             // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
 
         case 'BATCH NAME':
             // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
 
         case 'PROJECT NAME':
             // Set
-            return (x) => x;
+            return (a) => set.getValueOrAdd(a);
 
         // For now:
         // TODO: sets, infer american or british
@@ -80,20 +84,59 @@ function getProcessorForRow(columnName) /*: (cell: string) => any*/ {
     }
 }
 
+function columnNeedsSet(columnName) {
+    switch (columnName) {
+        case 'RECORDING FILE NAME':
+        case 'ORIGINAL FILE PART':
+        case 'LATITUDE':
+        case 'LONGITUDE':
+            return false;
+        case 'SPECIES':
+        case 'SCIENTIFIC NAME':
+        case 'ENGLISH NAME':
+        case 'SPECIES GROUP':
+            return true;
+        case 'PROBABILITY':
+            return false;
+        case 'WARNINGS':
+        case 'CALL TYPE':
+            return true;
+        case 'ACTUAL DATE':
+        case 'SURVEY DATE': // Infer american or british
+        case 'TIME':
+            // 24H
+            return false;
+        case 'CLASSIFIER NAME':
+        case 'USER ID':
+        case 'UPLOAD KEY':
+        case 'BATCH NAME':
+        case 'PROJECT NAME':
+            return true;
+
+        default:
+            throw 'unknown column';
+    }
+}
+
 // Maybe integrate process into "integrate"
 
+// columnNames excludes filename
+/* eslint no-var: off */
 function processTypes(columnNames, content) {
-    columnNames = columnNames.map((x: string) => {
-        x == 'SCORE' ? 'PROBABILITY' : x;
-    });
+    columnNames = columnNames.map((x: string) => (x == 'SCORE' ? 'PROBABILITY' : x));
 
-    const processors = columnNames.map((n) => getProcessorForRow(n));
+    const sets = columnNames.map((a) => (columnNeedsSet(a) ? new ReferenceSet() : undefined));
+    const processors = [undefined].concat(
+        columnNames.map((n, i) => getProcessorForColumn(n, sets[i]))
+    );
+    var i;
     for (const r of content) {
         // Skip file identifier
-        for (let i = 1; i < r.length; i++) {
-            r[i] = processors[i - 1](r[i]);
+        for (i = 1; i < r.length; i++) {
+            r[i] = processors[i](r[i]);
         }
     }
+    return sets;
 }
 
 export { processTypes };
