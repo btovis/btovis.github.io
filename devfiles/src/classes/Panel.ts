@@ -3,7 +3,7 @@ import Sidebar from './Sidebar';
 import Geographic from './options/Geographic';
 import NumericInput from './options/NumericInput';
 import Selector from './options/Selector';
-import TextInput from './options/TextInput';
+import PanelNameInput from './options/PanelNameInput';
 import TimeRange from './options/TimeRange';
 import BarChart from './widgets/BarChart';
 import Widget from './widgets/Widget';
@@ -15,28 +15,30 @@ export default class Panel {
     //Someone's editing widgetcomp now
     public widgets: Widget[];
 
-    //Panels need their own sidebar, as they hold filters.
-    //InputOption sidebars DO NOT contain filters, only widget-specific
-    //options.
     private baseSidebar: Sidebar;
-    private nameInput: TextInput;
 
-    public constructor(manager: PageManager) {
-        this.nameInput = new TextInput('Panel Name');
+    public refresh: () => void = () => {};
+    public pageManager: PageManager;
+
+    private nameInput: PanelNameInput;
+
+    public constructor(pageManager: PageManager) {
+        this.pageManager = pageManager;
+        this.nameInput = new PanelNameInput(this, 'Panel Name');
         const testConfig = new WidgetConfig();
-        this.widgets = [new BarChart(manager.getData(), testConfig)];
+        this.widgets = [new BarChart(pageManager.getData(), testConfig)];
         this.baseSidebar = new Sidebar([
             this.nameInput, //Panel name. Identity filter
-            new Geographic('Region'), //Positional filter
-            new TimeRange('Time Range'), //Time range for timestamp filtering
-            new Selector('Species'), //Species. TODO: May need special option
-            new NumericInput('Minimum Probability'),
-            new Selector('Warnings'),
-            new Selector('Call Type'),
-            new Selector('Project'),
-            new Selector('Classifier Name'),
-            new Selector('Batch Name'),
-            new Selector('User ID')
+            new Geographic(this, 'Region'), //Positional filter
+            new TimeRange(this, 'Time Range'), //Time range for timestamp filtering
+            new Selector(this, 'Species'), //Species. TODO: May need special option
+            new NumericInput(this, 'Minimum Probability'),
+            new Selector(this, 'Warnings'),
+            new Selector(this, 'Call Type'),
+            new Selector(this, 'Project'),
+            new Selector(this, 'Classifier Name'),
+            new Selector(this, 'Batch Name'),
+            new Selector(this, 'User ID')
         ]);
     }
 
@@ -53,9 +55,14 @@ export default class Panel {
      * Iterates each widget and adds all its options together
      */
     public generateSidebar(): Sidebar {
-        const options = this.widgets
-            .map((widget) => widget.generateSidebar().options)
-            .reduce((acc, a) => acc.concat(a), []);
+        //Panels need their own sidebar, as they hold filters.
+        //InputOption sidebars DO NOT contain filters, only widget-specific
+        //options.
+
+        const options = []; //TODO HANDLE WIDGET OPTIONS WHEN READY.
+        // const options = this.widgets
+        //     .map((widget) => widget.generateSidebar().options)
+        //     .reduce((acc, a) => acc.concat(a), []);
 
         return new Sidebar(this.baseSidebar.options.concat(options));
     }

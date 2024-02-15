@@ -3,7 +3,7 @@ import InputOption from './InputOption';
 
 export default class Selector extends InputOption {
     public render(): JSX.Element[] {
-        throw new Error('Method not implemented.');
+        return [<p>Selector: {this.name}</p>];
     }
     public callback(newValue: any): void {
         throw new Error('Method not implemented.');

@@ -5,8 +5,9 @@ import MainPage from './ui/MainPage.tsx';
 import PageManager from './classes/PageManager.ts';
 
 function App() {
+    const [r, dud] = useState(0);
     const [pageManager, setPageManager] = useState(new PageManager());
-    pageManager.updateCallback = setPageManager;
+    pageManager.refreshEverything = () => dud(r + 1);
     return (
         <>
             <div className='splitScreen'>
