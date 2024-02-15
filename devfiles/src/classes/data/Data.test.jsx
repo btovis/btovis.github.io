@@ -26,7 +26,7 @@ async function loadData() {
     return data;
 }
 
-describe('Data', () => {
+describe('Data', async () => {
     let data;
     beforeEach(async () => {
         data = await loadData();
@@ -36,13 +36,13 @@ describe('Data', () => {
             expect(data.readDatabase()).not.toStrictEqual([]);
         });
     });
-    describe('getAccessorForColumn', () => {
-        it('should return a function', () => {
-            const accessor = data.getAccessorForColumn(Attribute.latitude);
-            expect(accessor).toBeInstanceOf(Function);
+    describe('getIndexForColumn', () => {
+        it('should return a number', () => {
+            const accessor = data.getIndexForColumn(Attribute.latitude);
+            expect(typeof accessor).toBe('number');
         });
 
-        it('getAccessorForColumn', () => {
+        it('getIndexForColumn', () => {
             describe.each([
                 { index: 0, attribute: Attribute.latitude, expected: 56.915 },
                 { index: 3, attribute: Attribute.longitude, expected: -4.14185 },
@@ -61,9 +61,9 @@ describe('Data', () => {
             ])(
                 'get accessor for columns with index $index and attribute $attribute',
                 async ({ index, attribute, expected }) => {
-                    const accessor = data.getAccessorForColumn(attribute);
-                    expect(accessor).not.toBeNull();
-                    const dataValue = accessor(data.readDatabase()[index]);
+                    const idx = data.getIndexForColumn(attribute);
+                    expect(idx).not.toBeNull();
+                    const dataValue = data.readDatabase()[index][idx];
                     if (isNaN(dataValue) && isNaN(expected)) {
                         console.log('dataValue: ' + typeof dataValue);
                         switch (typeof dataValue) {

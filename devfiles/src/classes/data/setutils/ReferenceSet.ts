@@ -10,8 +10,9 @@ export default class ReferenceSet {
     public refs: Set<SetElement> = new Set([]);
     public raws: Map<string, SetElement> = new Map([]);
 
+    // see if element exists. if so, get it. otherwise, make new, add it, get it.
     /* eslint no-var: off */
-    public getValueOrAdd(ident: string): SetElement {
+    public addRawOrGet(ident: string): SetElement {
         var e = this.raws.get(ident);
         if (e !== undefined) {
             return e;
@@ -22,10 +23,9 @@ export default class ReferenceSet {
         return e;
     }
 
-    /* eslint no-var: off */
+    // add new element
     public addRef(e: SetElement) {
-        const i = e.value;
-        this.raws.set(i, e);
+        this.raws.set(e.value, e);
         this.refs.add(e);
     }
 

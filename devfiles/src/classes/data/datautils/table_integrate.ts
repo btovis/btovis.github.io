@@ -22,7 +22,9 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
 
     switch (columnName) {
         case 'RECORDING FILE NAME':
-            return (a) => set.getValueOrAdd(a);
+            return (x) => x;
+        case 'ORIGINAL FILE NAME':
+            return (x) => x;
         case 'ORIGINAL FILE PART':
             return parseInt;
         case 'LATITUDE':
@@ -30,20 +32,20 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
         case 'LONGITUDE':
             return parseFloat;
         case 'SPECIES': // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
         case 'SCIENTIFIC NAME': // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
         case 'ENGLISH NAME': // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
         case 'SPECIES GROUP': // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
         case 'PROBABILITY':
             return parseFloat;
         case 'WARNINGS': // Set, or null
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
         case 'CALL TYPE':
             // TODO Handle nulls, string set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
 
         case 'ACTUAL DATE':
             // Infer american or british
@@ -59,23 +61,23 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
 
         case 'CLASSIFIER NAME':
             // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
 
         case 'USER ID':
             // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
 
         case 'UPLOAD KEY':
             // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
 
         case 'BATCH NAME':
             // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
 
         case 'PROJECT NAME':
             // Set
-            return (a) => set.getValueOrAdd(a);
+            return (a) => set.addRawOrGet(a);
 
         // For now:
         // TODO: sets, infer american or british
@@ -87,6 +89,7 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
 function columnNeedsSet(columnName) {
     switch (columnName) {
         case 'RECORDING FILE NAME':
+        case 'ORIGINAL FILE NAME':
         case 'ORIGINAL FILE PART':
         case 'LATITUDE':
         case 'LONGITUDE':
@@ -114,7 +117,7 @@ function columnNeedsSet(columnName) {
             return true;
 
         default:
-            throw 'unknown column';
+            throw 'unknown column ' + columnName;
     }
 }
 

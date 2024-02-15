@@ -11,6 +11,7 @@ enum Attribute {
     timestamp, // TODOOOO
     time /*??? */,
     recordingFileName = 'RECORDING FILE NAME',
+    originalFileName = 'ORIGINAL FILE NAME',
     recordingFilePart = 'ORIGINAL FILE PART',
     latitude = 'LATITUDE',
     longitude = 'LONGITUDE',
@@ -41,7 +42,7 @@ class Data {
 
     public addCSV(CSVName: string, CSVFile: Uint8Array) {
         CSVName = normaliseIdentifier(CSVName, this.sets[0]);
-        const CSVIdentifier = this.sets[0].getValueOrAdd(CSVName);
+        const CSVIdentifier = this.sets[0].addRawOrGet(CSVName);
 
         const { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
         // depending on what it modifies
@@ -54,6 +55,7 @@ class Data {
         // TODO: proper merge
         // TODO: sort!!
         this.sortedDatabase = content;
+        this.columnList = this.columnList.concat(columnNames);
     }
 
     // For reading only
@@ -66,7 +68,7 @@ class Data {
     public getIndexForColumn(a: Attribute): number {
         const index = getColumnIndex(a, this.columnList);
         if (index == -1) {
-            throw 'no such column!';
+            throw 'no such column ' + a + ' in ' + this.columnList;
         }
         return index;
     }
