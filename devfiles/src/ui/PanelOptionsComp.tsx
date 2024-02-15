@@ -28,10 +28,30 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         ))
         .reduce((acc, rendered) => acc.concat(rendered), []);
 
+    const deleteButton = (
+        <div>
+            <button
+                onClick={() => {
+                    params.pageManager.unselectPanel();
+                    params.pageManager.selectedPanel = -1;
+                    params.pageManager.deletePanel(params.pageManager.selectedPanel);
+
+                    // No longer a valid panel sidebar as there is no selected panel.
+                    // Consider bundling with PageManager.unselectPanel()
+                    params.pageManager.setSidebarTab('globalTab');
+                    params.pageManager.refreshEverything();
+                }}
+            >
+                Delete panel
+            </button>
+        </div>
+    );
+
     return (
         <>
             <h2>{panel.getName()}</h2>
             {renderedOptions}
+            {deleteButton}
         </>
     );
 }

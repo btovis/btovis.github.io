@@ -26,6 +26,10 @@ export default class PageManager {
         this.panels.push(panel);
     }
 
+    public deletePanel(panelIdx: number) {
+        this.panels.splice(panelIdx, 1);
+    }
+
     public getSelectedPanel() {
         return this.panels[this.selectedPanel];
     }
