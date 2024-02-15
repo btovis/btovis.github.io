@@ -4,6 +4,10 @@ import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
 import WidgetConfig from '../classes/widgets/WidgetConfig.js';
 import WidgetComp from './WidgetComp.js';
+import BarChart from '../classes/widgets/BarChart.js';
+import MapWidget from '../classes/widgets/MapWidget.js';
+import StackedLineChart from '../classes/widgets/StackedLineChart.js';
+import TableWidget from '../classes/widgets/TableWidget.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
@@ -48,19 +52,75 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             }}
         >
             <div className='title'>{panel.getName()}</div>
-            <div ref={widgetRowRef} className='widget-row'>
-                {widgets}
-                <button
-                    onClick={() => {
-                        panel.addWidget(
-                            new LineChart(params.pageManager.getData(), new WidgetConfig())
-                        );
-                        //If negative, scroll rightwards
-                        setSnapRight(-Math.abs(snapRight) - 1);
-                    }}
-                >
-                    Placeholder Add Widget Button
-                </button>
+            <div className='body'>
+                <div ref={widgetRowRef} className='widget-row'>
+                    {widgets}
+                </div>
+                <div className='add-widget-btns'>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new BarChart(params.pageManager.getData(), new WidgetConfig())
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Barchart
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new TableWidget(params.pageManager.getData(), new WidgetConfig())
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Table
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new MapWidget(params.pageManager.getData(), new WidgetConfig())
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Map
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new LineChart(params.pageManager.getData(), new WidgetConfig())
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Linechart
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new StackedLineChart(
+                                    params.pageManager.getData(),
+                                    new WidgetConfig()
+                                )
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Stacked Linechart
+                    </button>
+                </div>
             </div>
         </div>
     );
