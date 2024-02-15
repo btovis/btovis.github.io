@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
 
@@ -5,6 +6,11 @@ import PageManager from '../classes/PageManager.js';
  * This is for the panel settings inside the sidebar.
  */
 function PanelOptionsComp(params: { pageManager: PageManager }) {
+    //State machine mechanism. Have this arbitrary integer for a makeshift refresh
+    const [r, dud] = useState(0);
+    const refresh = () => dud(r + 1);
+    params.pageManager.refreshPanelOptions = refresh;
+
     //No options to display
     if (params.pageManager.selectedPanel <= -1) return <></>;
 
