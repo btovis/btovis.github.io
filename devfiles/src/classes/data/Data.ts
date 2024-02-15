@@ -7,26 +7,26 @@ import SetElement from './setutils/SetElement';
 
 enum Attribute {
     fileName,
-    recordingFileName,
-    recordingFilePart,
-    latitude,
-    longitude,
-    species,
-    speciesEnglishName,
-    speciesLatinName,
-    speciesGroup,
-    probability,
-    warnings,
-    callType,
     timestamp, // TODOOOO
-    classifierName,
-    userID,
-    actualDate,
-    surveyDate,
     time /*??? */,
-    uploadKey,
-    batchName,
-    projectName
+    recordingFileName = 'RECORDING FILE NAME',
+    recordingFilePart = 'ORIGINAL FILE PART',
+    latitude = 'LATITUDE',
+    longitude = 'LONGITUDE',
+    species = 'SPECIES',
+    speciesEnglishName = 'ENGLISH NAME',
+    speciesLatinName = 'SCIENTIFIC NAME',
+    speciesGroup = 'SPECIES GROUP',
+    probability = 'PROBABILITY',
+    warnings = 'WARNINGS',
+    callType = 'CALL TYPE',
+    classifierName = 'CLASSIFIER NAME',
+    userID = 'USER ID',
+    actualDate = 'ACTUAL DATE',
+    surveyDate = 'SURVEY DATE',
+    uploadKey = 'UPLOAD KEY',
+    batchName = 'BATCH NAME',
+    projectName = 'PROJECT NAME'
 }
 
 class Data {
@@ -48,6 +48,7 @@ class Data {
         processTypes(columnNames, content);
         // TODO: proper merge
         this.sortedDatabase = content;
+        this.columnList = columnNames;
     }
 
     // For reading only
@@ -71,46 +72,11 @@ function getColumnIndex(a: Attribute, columnList: string[]): number {
     switch (a) {
         case Attribute.fileName:
             return 0;
-        case Attribute.recordingFileName:
-            return columnList.indexOf('RECORDING FILE NAME');
-        case Attribute.recordingFilePart:
-            return columnList.indexOf('ORIGINAL FILE PART');
-        case Attribute.latitude:
-            return columnList.indexOf('LATITUDE');
-        case Attribute.longitude:
-            return columnList.indexOf('LONGITUDE');
-        case Attribute.species:
-            return columnList.indexOf('SPECIES');
-        case Attribute.speciesEnglishName:
-            return columnList.indexOf('ENGLISH NAME');
-        case Attribute.speciesLatinName:
-            return columnList.indexOf('SCIENTIFIC NAME');
-        case Attribute.speciesGroup:
-            return columnList.indexOf('SPECIES GROUP');
-        case Attribute.probability:
-            return columnList.indexOf('PROBABILITY');
-        case Attribute.warnings:
-            return columnList.indexOf('WARNINGS');
-        case Attribute.callType:
-            return columnList.indexOf('CALL TYPE');
-        case Attribute.timestamp:
-            return -3; // TODOOOO return columnList.indexOf("");
-        case Attribute.classifierName:
-            return columnList.indexOf('CLASSIFIER NAME');
-        case Attribute.userID:
-            return columnList.indexOf('USER ID');
-        case Attribute.actualDate:
-            return columnList.indexOf('ACTUAL DATE');
-        case Attribute.surveyDate:
-            return columnList.indexOf('SURVEY DATE');
         case Attribute.time:
-            /*??? */ return columnList.indexOf('TIME');
-        case Attribute.uploadKey:
-            return columnList.indexOf('UPLOAD KEY');
-        case Attribute.batchName:
-            return columnList.indexOf('BATCH NAME');
-        case Attribute.projectName:
-            return columnList.indexOf('PROJECT NAME');
+        case Attribute.timestamp:
+            return -3;
+        default:
+            return columnList.indexOf(a) + 1;
     }
 }
 
