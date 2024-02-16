@@ -78,6 +78,48 @@
   font-size: 2.0em;
 }
 
+.fileUploadIndic {
+	display: grid;
+	align-items: center;
+  position: absolute;
+  width: 98%;
+  height: 98%;
+  left: 1%;
+  top: 1%;
+  border-style: dotted;
+  pointer-events: none;
+  background-color: #eeeeee;
+  opacity: 0;
+}
+
+.fileUploadSuccess {
+	display: grid;
+	align-items: center;
+  position: absolute;
+  width: 98%;
+  height: 98%;
+  left: 1%;
+  top: 1%;
+  border-style: dotted;
+  pointer-events: none;
+  background-color: #aaff82;
+}
+
+.fileUploadWarn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 98%;
+  height: 98%;
+  left: 1%;
+  top: 1%;
+  border-style: dotted;
+  pointer-events: none;
+  background-color: #ff9999;
+  color: white;
+}
+
 .panel .body {
   display: flex;
   justify-content: space-between;
