@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
-import PanelOptionsComp from './PanelOptionsComp.js';
-import GlobalOptionsComp from './GlobalOptionsComp.js';
+import PanelOptionsComp from './OptionsComp/PanelOptionsComp.js';
+import GlobalOptionsComp from './OptionsComp/GlobalOptionsComp.js';
 import { Tab, Tabs } from 'react-bootstrap';
 
 function SidebarComp(params: { pageManager: PageManager }) {

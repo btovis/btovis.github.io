@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import '../App.css';
-import PageManager from '../classes/PageManager.js';
+import '../../App.css';
+import PageManager from '../../classes/PageManager.js';
+import generateHash from '../../utils/generateHash.js';
 
 /**
  * This is for the panel settings inside the sidebar.
@@ -21,7 +22,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         .options.map((option, optionIdx) => (
             <div
                 // key must be unique
-                key={generateHash(params, optionIdx)}
+                key={generateHash(params.pageManager.selectedPanel, optionIdx)}
             >
                 {option.render()}
             </div>
@@ -59,8 +60,3 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
 }
 
 export default PanelOptionsComp;
-
-function generateHash(params: { pageManager: PageManager }, optionIdx: number) {
-    //(prime*a)+b is a hash of (a,b)
-    return 23629 * params.pageManager.selectedPanel + optionIdx;
-}
