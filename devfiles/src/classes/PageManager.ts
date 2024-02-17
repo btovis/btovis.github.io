@@ -14,12 +14,17 @@ export default class PageManager {
     public unselectPanel?: () => void;
 
     public constructor() {
-        this.panels = [new Panel(this)];
         this.data = new Data();
+        this.panels = [new Panel(this)];
     }
 
     public getData(): Data {
         return this.data;
+    }
+
+    public addCSV(CSVName: string, CSVFile: Uint8Array) {
+        this.data.addCSV(CSVName, CSVFile);
+        this.panels.forEach((p) => p.dataFilterer.dataUpdated());
     }
 
     public addPanel(panel: Panel) {

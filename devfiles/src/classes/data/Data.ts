@@ -31,6 +31,8 @@ enum Attribute {
     projectName = 'PROJECT NAME'
 }
 
+// Calling addCSV will require calling dataUpdated in all DataFiltered!!!!!
+
 class Data {
     // Don't access sortedDatabase and sets and fileIdentifiers
     public sortedDatabase: (SetElement | string | number)[][] = [];
@@ -56,11 +58,6 @@ class Data {
         // TODO: sort!!
         this.sortedDatabase = content;
         this.columnList = this.columnList.concat(columnNames);
-    }
-
-    // For reading only
-    public readDatabase() {
-        return this.sortedDatabase;
     }
 
     // For accessing cell data

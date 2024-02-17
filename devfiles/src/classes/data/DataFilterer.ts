@@ -4,35 +4,31 @@ import SetElement from './setutils/SetElement';
 import SetFilter from '../filters/SetFilter';
 import ReferenceSet from './setutils/ReferenceSet';
 
-// call filterUpdate on filterupdate. this will call recalculateFilteredData
-// if original file changed, call recalculateFilteredData
+// call filterUpdate, this will call recalculateFilteredData
+// if original file changed, call dataUpdated, this will call recalculateFilteredData
 
-// TODO: propagate data changes to filters!!!!
-// make it easy to update sets
-// to call replacefilter method, make a builder for setfilter and one for rangefilter
-
-// TODOs:
-// There are minor optimizations remaining with no significant impact
-// on filtering speed.
-// 1) Sets need a differential filter update: add species or remove species
-// instead of reconstructing the filter set again and again every time species filter changed
-// 2) recalculateFilteredData doesn't need to calculate filterColumns every time
+// There are two minor optimizations remaining with no visible impact on filtering speed.
+// 1) recalculateFilteredData doesn't need to calculate filterColumns every time
 // instead, this should be stored in a sorted array (a new class) and updated on filter update and
+// 2) Replace all opaques with checkeveryitem. opaques don't need being optimized for
 export default class DataFilterer {
     private d: Data;
     private filtersClasses: Filter[] = []; // Only updated when the user changes filtering setting
     private filterPredsForData = []; // Only updated when the user changes filtering setting (hence, indirectly) or when data is updated
     private filteredData; // Only updated when filterPredsForData is updated
-    private filteredDataArrLen; // keeps len of output array. to reuse memory
+    private filteredDataArrLen; // keeps len of output array. to reuse memory, the same array for filteredData
 
-    // User has requested an impossible filter so terminate early
+    // Opaque: User has requested an impossible filter (e.g. no species) so terminate early
     private opaqueFilters = new Set<number>([]);
+    // If Opaque filter, in this array, and predicate undefined
+    // if transparent, predicate undefined
+    // otherwise, predicate defined
 
     public constructor(data: Data) {
         this.d = data;
         // Preallocate to max size
-        this.filteredData = new Array(data.sortedDatabase.length);
-        this.filteredDataArrLen = 0;
+        this.filteredData = [{ length: data.sortedDatabase.length }, (_, i) => data[i]];
+        this.filteredDataArrLen = data.sortedDatabase.length;
     }
 
     // currently, this function assumes it won't be called with same args consecutively
@@ -41,27 +37,39 @@ export default class DataFilterer {
     // columnIndex can't be larger than the number of total columns
     // filterClass needs to be correct type, won't be checked here
     public replaceFilter(columnIndex, filterClass: Filter) {
-        if (columnIndex >= this.d.sets.length) {
-            throw 'column out of bounds';
-        }
         this.filtersClasses[columnIndex] = filterClass;
         const [status, pred] = filterClass.getPredicate();
+        this.filterPredsForData[columnIndex] = pred;
         if (status == PredicateType.Opaque) {
             this.opaqueFilters.add(columnIndex);
             this.filteredDataArrLen = 0;
-            this.filterPredsForData[columnIndex] = undefined;
-            return; // Does this work well with recalculateFilteredData?
+            return;
         }
         this.opaqueFilters.delete(columnIndex);
-        this.filterPredsForData[columnIndex] = pred;
         this.recalculateFilteredData();
     }
 
-    // The caller ensures that filters[columnIndex] is a set and not a range
-    public updateSetFilter(columnIndex, e: SetElement, filterAwayFromNowOn: boolean) {
-        if (columnIndex >= this.d.sets.length) {
-            throw 'column out of bounds';
+    public dataUpdated() {
+        if (this.d.sortedDatabase.length != this.filteredData.length) {
+            this.filteredData = new Array(this.d.sortedDatabase.length);
         }
+        for (let i = 0; i < this.filtersClasses.length; i++) {
+            if (this.filtersClasses[i]) {
+                this.filtersClasses[i].updateSetReference(this.d.sets[i]);
+                const [status, pred] = this.filtersClasses[i].getPredicate();
+                this.filterPredsForData[i] = pred;
+                if (status == PredicateType.Opaque) {
+                    this.opaqueFilters.add(i);
+                } else {
+                    this.opaqueFilters.delete(i);
+                }
+            }
+        }
+        this.recalculateFilteredData();
+    }
+
+    // The caller needs to ensure that filters[columnIndex] is a set filter and not a range filter
+    public updateSetFilter(columnIndex, e: SetElement, filterAwayFromNowOn: boolean) {
         let c: SetFilter = this.filtersClasses[columnIndex] as SetFilter;
         if (!c) {
             c = this.filtersClasses[columnIndex] = new SetFilter(
@@ -73,9 +81,15 @@ export default class DataFilterer {
             c.filterAway(e);
         } else {
             c.accept(e);
+            // Not needed: this.opaqueFilters.delete(columnIndex);
+        }
+        const [status, pred] = this.filtersClasses[columnIndex].getPredicate();
+        if (status == PredicateType.Opaque) {
+            this.opaqueFilters.add(columnIndex);
+        } else {
             this.opaqueFilters.delete(columnIndex);
         }
-        this.filterPredsForData[columnIndex] = this.filtersClasses[columnIndex].getPredicate();
+        this.filterPredsForData[columnIndex] = pred;
         this.recalculateFilteredData();
     }
 
@@ -98,17 +112,20 @@ export default class DataFilterer {
         }
         const fLen = filterColumns.length;
         l = 0;
-        for (const r of d) {
+        row: for (const r of d) {
             for (fi = 0; fi < fLen; fi++) {
                 if (!filterPreds[fi](r[filterColumns[fi]])) {
-                    continue;
+                    continue row;
                 }
-                fData[l++] = r;
             }
+            fData[l++] = r;
         }
         this.filteredDataArrLen = l;
     }
 
+    // This gives you an array of full size, but one shouldn't access it beyond the first dataArrLen elements.
+    // So please use for (var i = 0; i < dataArrLen ; i++ ) { ...}
+    // and don't use map, forEach.
     public getData(): [dataArr: Array<any>, dataArrLen: number] {
         return [this.filteredData, this.filteredDataArrLen];
     }

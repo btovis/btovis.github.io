@@ -1,13 +1,13 @@
-import { Data } from '../data/Data.js';
+import DataFilterer from '../data/DataFilterer.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import WidgetConfig from './WidgetConfig.js';
 
 export default abstract class Widget {
-    protected data: Data;
+    protected data: DataFilterer;
     protected config: WidgetConfig;
 
-    public constructor(data: Data, config: WidgetConfig) {
+    public constructor(data: DataFilterer, config: WidgetConfig) {
         this.data = data;
         this.config = config;
     }

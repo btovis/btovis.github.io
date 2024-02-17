@@ -31,22 +31,24 @@ function App() {
                 event.preventDefault();
                 if (spinnerRef.current) spinnerRef.current.style.opacity = 1;
 
-                Promise.allSettled(Array.prototype.map.call(event.dataTransfer.files, async (file) => {
-                    if (!file.name.toLowerCase().endsWith('csv')) {
-                        throw file.name;
-                    }
-                    window['pageManager'] = pageManager;
-                    try {
-                        pageManager
-                        .getData()
-                        .addCSV(file.name, new Uint8Array(await file.arrayBuffer()));
-                    } catch(e) {
-                        throw file.name;
-                    }
-                })).then(arr => {
+                Promise.allSettled(
+                    Array.prototype.map.call(event.dataTransfer.files, async (file) => {
+                        if (!file.name.toLowerCase().endsWith('csv')) {
+                            throw file.name;
+                        }
+                        window['pageManager'] = pageManager;
+                        try {
+                            pageManager.addCSV(file.name, new Uint8Array(await file.arrayBuffer()));
+                        } catch (e) {
+                            throw file.name;
+                        }
+                    })
+                ).then((arr) => {
                     if (borderRef.current) borderRef.current.style.opacity = 0;
                     if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
-                    const rejected = arr.filter(x => x.status == "rejected").map((x: PromiseRejectedResult) => x.reason);
+                    const rejected = arr
+                        .filter((x) => x.status == 'rejected')
+                        .map((x: PromiseRejectedResult) => x.reason);
                     setIsOverlaySuccess(rejected.length == 0);
                     if (rejected.length > 0)
                         setOverlayMessage(
