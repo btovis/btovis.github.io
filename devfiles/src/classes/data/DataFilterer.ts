@@ -27,7 +27,7 @@ export default class DataFilterer {
     public constructor(data: Data) {
         this.d = data;
         // Preallocate to max size
-        this.filteredData = [{ length: data.sortedDatabase.length }, (_, i) => data[i]];
+        this.filteredData = Array.from({ length: data.sortedDatabase.length }, (_, i) => data[i]);
         this.filteredDataArrLen = data.sortedDatabase.length;
     }
 
