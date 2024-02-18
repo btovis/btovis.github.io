@@ -72,8 +72,6 @@ export default class SetFilter implements Filter {
         }
     }
 
-    // Note: the functions below do not transition to opaque or transparent and this is not a bug
-
     public filterAway(e: SetElement) {
         const eS = this.e;
         // readonly:
@@ -101,7 +99,7 @@ export default class SetFilter implements Filter {
                 }
                 return;
             case 3:
-                // stay in accept some
+                // stay in accept some (could check here to move to opaque)
                 this.allowSet.delete(e);
                 return;
         }
@@ -120,18 +118,25 @@ export default class SetFilter implements Filter {
                 return;
             case 1: {
                 // Switch from opaque to "accept some" /*or transparent*/
-                const al = (this.allowSet = setDifference(this.a.refs, eSR));
+                const al = (this.allowSet = new Set([e])); //setDifference(this.a.refs, eSR));
                 this.mode = 3;
                 this.pred[0] = PredicateType.CheckEveryItem;
                 this.pred[1] = (c) => al.has(c);
                 return;
             }
             case 2:
-                // stay in reject some
+                // stay in reject some unless can transition to transparent
+                if (eSR.size == 0) {
+                    // switch to transparent
+                    this.mode = 0;
+                    this.allowSet = undefined;
+                    this.pred[0] = PredicateType.Transparent;
+                    this.pred[1] = undefined;
+                }
                 return;
             case 3:
                 // stay in accept some if exclude set still large, otherwise discard allow set and switch back to exclude some
-                if (eS.size() <= this.a.size() / 2) {
+                if (eSR.size <= this.a.size() / 2) {
                     // switch to reject some
                     this.mode = 2;
                     this.allowSet = undefined;
@@ -147,6 +152,12 @@ export default class SetFilter implements Filter {
     // as opposed to filterAway and accept, takes entire list
     public setExcludesSet(e: ReferenceSet) {
         this.e = e;
+        this.recalculateAll();
+    }
+
+    // inverts the "excludes set"
+    public invertExcludesSet() {
+        this.e = ReferenceSet.fromSet(setDifference(this.a.refs, this.e.refs));
         this.recalculateAll();
     }
 

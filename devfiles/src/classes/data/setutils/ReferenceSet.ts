@@ -71,4 +71,12 @@ export default class ReferenceSet {
     public size() {
         return this.refs.size;
     }
+
+    public static fromSet(s: Set<SetElement>) {
+        const n = new ReferenceSet();
+        for (const e of s) {
+            n.addRef(e);
+        }
+        return n;
+    }
 }
