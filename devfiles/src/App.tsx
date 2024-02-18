@@ -32,23 +32,29 @@ function App() {
                 if (spinnerRef.current) spinnerRef.current.style.opacity = 1;
 
                 Promise.allSettled(
-                    Array.prototype.map.call(event.dataTransfer.files, async (file) => {
-                        if (!file.name.toLowerCase().endsWith('csv')) {
-                            throw file.name;
-                        }
-                        window['pageManager'] = pageManager;
-                        try {
-                            pageManager.addCSV(file.name, new Uint8Array(await file.arrayBuffer()));
-                        } catch (e) {
-                            throw file.name;
-                        }
-                    })
+                    Array.prototype.map.call(event.dataTransfer.files, async (file) => ({
+                        name: file.name,
+                        data: new Uint8Array(await file.arrayBuffer())
+                    }))
                 ).then((arr) => {
+                    const rejected = [];
+                    arr.forEach(
+                        (file: PromiseFulfilledResult<{ name: string; data: Uint8Array }>) => {
+                            if (!file.value.name.toLowerCase().endsWith('csv')) {
+                                rejected.push(file.value.name);
+                                return;
+                            }
+                            window['pageManager'] = pageManager;
+                            try {
+                                pageManager.addCSV(file.value.name, file.value.data);
+                            } catch (e) {
+                                rejected.push(file.value.name + ': ' + e);
+                                return;
+                            }
+                        }
+                    );
                     if (borderRef.current) borderRef.current.style.opacity = 0;
                     if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
-                    const rejected = arr
-                        .filter((x) => x.status == 'rejected')
-                        .map((x: PromiseRejectedResult) => x.reason);
                     setIsOverlaySuccess(rejected.length == 0);
                     if (rejected.length > 0)
                         setOverlayMessage(
