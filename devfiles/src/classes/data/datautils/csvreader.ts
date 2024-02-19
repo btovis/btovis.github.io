@@ -5,7 +5,7 @@ CSV Reader WITH A DIFFERENCE:
 - security analysis: i to always increase, O(n^2) scanning (through findIndex) is avoided
 
 The difference is that this CSV reader adds to the beginning of each row a value passed in as a parameter.
-(Which is the identifier for the file)
+(Which is the identifier for the file, hence the columnNames array returned has the first element _FILE)
 */
 
 import SetElement from '../setutils/SetElement';
@@ -29,7 +29,7 @@ function parseCSV(
 ): { columnNames: string[]; content: (string | SetElement)[][] } {
     const l = input.length;
 
-    const columnNames = [];
+    const columnNames = ['_FILE'];
 
     // An iteration starts from cell beginning and handles up to and including the comma and the newline
     // (but not both, because that would be an empty cell)
@@ -84,7 +84,7 @@ function parseCSV(
             case '\r':
                 // Treat empty lines and empty cells differently
                 i++; // Prepare for the next iteration early
-                if (columnNames.length) {
+                if (columnNames.length > 1) {
                     // Empty cell at the end of line
                     columnNames.push('');
                     break consume_header;
@@ -129,7 +129,7 @@ function parseCSV(
 
     // Set up comma or newline predictor: all rows have the same number of columns,
     // so expect comma except when reading the last column
-    const naturalColumnCount = columnNames.length;
+    const naturalColumnCount = columnNames.length - 1; // -1 due to '_FILE' being the 0th element in the columns array
     //const expectNewlineWhenReadingCell = naturalColumnCount - 2;
 
     // Add a first element to each array

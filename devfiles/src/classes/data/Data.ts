@@ -7,7 +7,7 @@ import SetElement from './setutils/SetElement';
 import ReferenceSet from './setutils/ReferenceSet.ts';
 
 enum Attribute {
-    fileName,
+    csvName = '_FILE',
     recordingFileName = 'RECORDING FILE NAME',
     originalFileName = 'ORIGINAL FILE NAME',
     recordingFilePart = 'ORIGINAL FILE PART',
@@ -39,11 +39,16 @@ class Data {
 
     // 0th element in this array is column 1
     // column 0 is file identifier
+    // all elements are capitalised and the array is duplicate-free
     public columnList: string[] = ['_FILE'];
 
     public readDatabase() {
         return this.sortedDatabase;
     }
+
+    // see the method below to access it
+    private titleToColumnIndex = new Map<string, number>([['_FILE', 0]]);
+    private cellProcessors = [(a) => this.sets[0].addRawOrGet(a)];
 
     // Throws an error message (such as: malformed CSV) to be appended to filename to become "abc.csv: malformed CSV"
     /* eslint no-var: off */
@@ -76,23 +81,13 @@ class Data {
         this.columnList = this.columnList.concat(columnNames);
     }
 
-    // For accessing cell data
     // filename: 0
     public getIndexForColumn(a: Attribute): number {
-        const index = getColumnIndex(a, this.columnList);
-        if (index == -1) {
+        const index = this.columnList.indexOf(a); //this.titleToColumnIndex.get(a);
+        if (index === undefined) {
             throw 'no such column ' + a + ' in ' + this.columnList;
         }
         return index;
-    }
-}
-
-function getColumnIndex(a: Attribute, columnList: string[]): number {
-    switch (a) {
-        case Attribute.fileName:
-            return 0;
-        default:
-            return columnList.indexOf(a);
     }
 }
 
