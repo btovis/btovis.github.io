@@ -34,6 +34,8 @@ function GlobalOptionsComp(params: {
                     }}
                     ref={fileInputRef}
                     type='file'
+                    accept='.csv'
+                    multiple
                     hidden
                 />
                 <button onClick={() => fileInputRef.current.click()}>Browse Files</button>
