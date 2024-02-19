@@ -34,12 +34,16 @@ enum Attribute {
 // TODO: delete file function? scan database, remake sets by rescanning all, recall statistician for all of it, keep columns the same.
 class Data {
     // sortedDatabase is actually unsorted
-    public sortedDatabase: (SetElement | string | number)[][] = [];
+    private sortedDatabase: (SetElement | string | number)[][] = [];
     public sets = [new ReferenceSet()]; // The 0th element are the files
 
     // 0th element in this array is column 1
     // column 0 is file identifier
     public columnList: string[] = ['_FILE'];
+
+    public readDatabase() {
+        return this.sortedDatabase;
+    }
 
     // Throws an error message (such as: malformed CSV) to be appended to filename to become "abc.csv: malformed CSV"
     /* eslint no-var: off */
