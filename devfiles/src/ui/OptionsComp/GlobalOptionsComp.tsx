@@ -52,7 +52,7 @@ function GlobalOptionsComp(params: {
                 <button
                     className='btn-close'
                     onClick={() => {
-                        alert('To implement: Delete: ' + key);
+                        params.pageManager.removeCSV(key);
                         params.pageManager.refreshEverything();
                     }}
                 />

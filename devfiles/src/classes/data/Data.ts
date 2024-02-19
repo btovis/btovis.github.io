@@ -58,6 +58,7 @@ class Data {
         try {
             var { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
         } catch (e) {
+            this.sets[0].removeRef(CSVIdentifier);
             throw 'Malformed CSV ' + e;
         }
 
@@ -70,6 +71,24 @@ class Data {
             this.sets,
             this.cellProcessors
         );
+    }
+
+    public removeCSV(CSVName: string) {
+        const CSVIdentifier = this.sets[0].raws.get(CSVName);
+        if (!CSVIdentifier) return;
+        this.sets[0].removeRef(CSVIdentifier);
+        let newI = 0,
+            oldI = 0;
+        const db = this.sortedDatabase,
+            len = db.length;
+        for (; oldI < len; oldI++) {
+            const r = db[oldI];
+            if (r[0] != CSVIdentifier) {
+                db[newI] = r;
+                newI++;
+            }
+        }
+        db.length = newI;
     }
 
     // filename: 0

@@ -27,6 +27,11 @@ export default class PageManager {
         this.panels.forEach((p) => p.dataFilterer.dataUpdated());
     }
 
+    public removeCSV(CSVName: string) {
+        this.data.removeCSV(CSVName);
+        this.panels.forEach((p) => p.dataFilterer.dataUpdated());
+    }
+
     public addPanel(panel: Panel) {
         this.panels.push(panel);
     }
