@@ -1,7 +1,7 @@
 /* Don't access data, use DataFilteredAccess */
 
 import normaliseIdentifier from './setutils/FileIdentifierUtil.ts';
-import { /*integrate,*/ processTypes } from './datautils/table_integrate';
+import { integrateNewCSV, processTypes } from './datautils/table_integrate';
 import { parseCSVFromByteArray } from './datautils/csvreader';
 import SetElement from './setutils/SetElement';
 import ReferenceSet from './setutils/ReferenceSet.ts';
@@ -61,29 +61,20 @@ class Data {
             throw 'Malformed CSV ' + e;
         }
 
-        // One function to return processors for columnNames
-        // The other taking columnList and columnNames, giving a list length columnNames with permute lambdas
-        // (Permute: take common rows first, then remaining in order)
-        // A third giving sets and setmakers for new columns
-        // With sets, for older files, need to go through them for older columns so tag them empty
-
-        // Data statistician: what does it take on update? new rows, old rows, columnlist. refresh for rescanning on deleted file
-        // Data taxonomist: updated rows. refresh for rescanning on deleted file
-
-        // One function to take old columnlist, new columnlist, new rows, old rows
-        // permutes new rows, gives new sets, makes processor for old rows internally and processes them (for each element, adds null there)
-
-        // need proper integrate here.
-        this.sets = this.sets.concat(processTypes(columnNames, content));
-        // TODO: proper merge
-        // TODO: sort!!
-        this.sortedDatabase = content;
-        this.columnList = this.columnList.concat(columnNames);
+        integrateNewCSV(
+            this.columnList,
+            this.titleToColumnIndex,
+            columnNames,
+            this.sortedDatabase,
+            content,
+            this.sets,
+            this.cellProcessors
+        );
     }
 
     // filename: 0
     public getIndexForColumn(a: Attribute): number {
-        const index = this.columnList.indexOf(a); //this.titleToColumnIndex.get(a);
+        const index = this.titleToColumnIndex.get(a);
         if (index === undefined) {
             throw 'no such column ' + a + ' in ' + this.columnList;
         }
