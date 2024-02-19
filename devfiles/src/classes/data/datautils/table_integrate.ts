@@ -129,8 +129,8 @@ function integrateNewCSV(
     for (let i = oldDBLen; i < finalDBLen; i++) {
         const r = oldDatabase[i];
         // Skip file identifier
-        for (i = 1; i < columnCount; i++) {
-            r[i] = newProcessors[i](r[i]);
+        for (let z = 1; z < columnCount; z++) {
+            r[z] = oldProcessors[z](r[z]);
         }
     }
 }
