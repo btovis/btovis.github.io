@@ -1,7 +1,7 @@
 /* Don't access data, use DataFilteredAccess */
 
 import normaliseIdentifier from './setutils/FileIdentifierUtil.ts';
-import { integrateNewCSV, processTypes } from './datautils/table_integrate';
+import { integrateNewCSV } from './datautils/table_integrate';
 import { parseCSVFromByteArray } from './datautils/csvreader';
 import SetElement from './setutils/SetElement';
 import ReferenceSet from './setutils/ReferenceSet.ts';

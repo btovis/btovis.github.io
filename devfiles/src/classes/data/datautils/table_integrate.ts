@@ -241,33 +241,4 @@ function columnNeedsSet(columnName) {
     }
 }
 
-// Maybe integrate process into "integrate"
-
-// columnNames excludes filename
-/* eslint no-var: off */
-function processTypes(columnNames, content) {
-    columnNames = columnNames.map((x: string) =>
-        x == 'SCORE'
-            ? 'PROBABILITY'
-            : x == 'CONFIDENCE'
-              ? 'PROBABIITY'
-              : x == 'COMMON_NAME'
-                ? 'ENGLISH NAME'
-                : x
-    );
-
-    const sets = columnNames.map((a) => (columnNeedsSet(a) ? new ReferenceSet() : undefined));
-    const processors = [undefined].concat(
-        columnNames.map((n, i) => getProcessorForColumn(n, sets[i]))
-    );
-    var i;
-    for (const r of content) {
-        // Skip file identifier
-        for (i = 1; i < r.length; i++) {
-            r[i] = processors[i](r[i]);
-        }
-    }
-    return sets;
-}
-
-export { integrateNewCSV, processTypes };
+export { integrateNewCSV };
