@@ -27,8 +27,11 @@ export default class DataFilterer {
     public constructor(data: Data) {
         this.data = data;
         // Preallocate to max size
-        this.filteredData = Array.from({ length: data.readDatabase().length }, (_, i) => data[i]);
-        this.filteredDataArrLen = data.readDatabase().length;
+        const db = data.readDatabase();
+        this.filteredData = new Array(db.length);
+        for (let i = 0; i < db.length; i++) this.filteredData[i] = data[i];
+
+        this.filteredDataArrLen = db.length;
     }
 
     // currently, this function assumes it won't be called with same args consecutively
