@@ -41,7 +41,33 @@ function GlobalOptionsComp(params: {
         </>
     );
 
-    return fileUploadTooltip;
+    //Check file names from the dataset
+    if (params.pageManager.data.sets[0].size() <= 0) return fileUploadTooltip;
+
+    const fileNameList = [];
+    params.pageManager.data.sets[0].raws.forEach((_value, key) => {
+        fileNameList.push(
+            <div key={key}>
+                <span>{key}</span>
+                <button
+                    className='btn-close'
+                    onClick={() => {
+                        alert('To implement: Delete: ' + key);
+                        params.pageManager.refreshEverything();
+                    }}
+                />
+            </div>
+        );
+    });
+
+    return (
+        <>
+            <h3>Data Files:</h3>
+            {fileNameList}
+            <hr />
+            {fileUploadTooltip}
+        </>
+    );
 }
 
 export default GlobalOptionsComp;

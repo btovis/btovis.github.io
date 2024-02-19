@@ -44,7 +44,6 @@
 .splitScreen {
   display: flex;
   flex-direction: row;
-  height: 100vh;
 }
 .sidebar {
   background-color: #e7e7e7;
@@ -89,7 +88,7 @@
 .fileUploadIndic {
 	display: grid;
 	align-items: center;
-  position: absolute;
+  position: fixed;
   width: 98%;
   height: 98%;
   left: 1%;
@@ -98,12 +97,13 @@
   pointer-events: none;
   background-color: #eeeeee;
   opacity: 0;
+  z-index:1000000;
 }
 
 .fileUploadSuccess {
 	display: grid;
 	align-items: center;
-  position: absolute;
+  position: fixed;
   width: 98%;
   height: 98%;
   left: 1%;
@@ -111,13 +111,14 @@
   border-style: dotted;
   pointer-events: none;
   background-color: #aaff82;
+  z-index:1000000;
 }
 
 .fileUploadWarn {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
+  position: fixed;
   width: 98%;
   height: 98%;
   left: 1%;
@@ -126,6 +127,7 @@
   pointer-events: none;
   background-color: #ff9999;
   color: white;
+  z-index:1000000;
 }
 
 .panel .body {
