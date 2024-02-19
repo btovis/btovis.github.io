@@ -8,8 +8,6 @@ import ReferenceSet from './setutils/ReferenceSet.ts';
 
 enum Attribute {
     fileName,
-    timestamp, // TODOOOO
-    time /*??? */,
     recordingFileName = 'RECORDING FILE NAME',
     originalFileName = 'ORIGINAL FILE NAME',
     recordingFilePart = 'ORIGINAL FILE PART',
@@ -31,24 +29,44 @@ enum Attribute {
     projectName = 'PROJECT NAME'
 }
 
+// Calling addCSV will require calling dataUpdated in all DataFiltered!!!!!
+
+// TODO: delete file function? scan database, remake sets by rescanning all, recall statistician for all of it, keep columns the same.
 class Data {
-    // Don't access sortedDatabase and sets and fileIdentifiers
-    public sortedDatabase: (SetElement | string | number)[][] = [];
+    // sortedDatabase is actually unsorted
+    private sortedDatabase: (SetElement | string | number)[][] = [];
     public sets = [new ReferenceSet()]; // The 0th element are the files
 
     // 0th element in this array is column 1
     // column 0 is file identifier
     public columnList: string[] = ['_FILE'];
 
+    public readDatabase() {
+        return this.sortedDatabase;
+    }
+
+    // Throws an error message (such as: malformed CSV) to be appended to filename to become "abc.csv: malformed CSV"
+    /* eslint no-var: off */
     public addCSV(CSVName: string, CSVFile: Uint8Array) {
         CSVName = normaliseIdentifier(CSVName, this.sets[0]);
         const CSVIdentifier = this.sets[0].addRawOrGet(CSVName);
+        try {
+            var { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
+        } catch (e) {
+            throw 'Malformed CSV ' + e;
+        }
 
-        const { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
-        // depending on what it modifies
-        // leave this to later: TODO: proper integrate
-        //integrate(this.columnList, this.sortedDatabase, )
-        // TODO: reuse sets for the second file
+        // One function to return processors for columnNames
+        // The other taking columnList and columnNames, giving a list length columnNames with permute lambdas
+        // (Permute: take common rows first, then remaining in order)
+        // A third giving sets and setmakers for new columns
+        // With sets, for older files, need to go through them for older columns so tag them empty
+
+        // Data statistician: what does it take on update? new rows, old rows, columnlist. refresh for rescanning on deleted file
+        // Data taxonomist: updated rows. refresh for rescanning on deleted file
+
+        // One function to take old columnlist, new columnlist, new rows, old rows
+        // permutes new rows, gives new sets, makes processor for old rows internally and processes them (for each element, adds null there)
 
         // need proper integrate here.
         this.sets = this.sets.concat(processTypes(columnNames, content));
@@ -58,13 +76,8 @@ class Data {
         this.columnList = this.columnList.concat(columnNames);
     }
 
-    // For reading only
-    public readDatabase() {
-        return this.sortedDatabase;
-    }
-
     // For accessing cell data
-    // filname: 0
+    // filename: 0
     public getIndexForColumn(a: Attribute): number {
         const index = getColumnIndex(a, this.columnList);
         if (index == -1) {
@@ -78,9 +91,6 @@ function getColumnIndex(a: Attribute, columnList: string[]): number {
     switch (a) {
         case Attribute.fileName:
             return 0;
-        case Attribute.time:
-        case Attribute.timestamp:
-            return -3;
         default:
             return columnList.indexOf(a);
     }
