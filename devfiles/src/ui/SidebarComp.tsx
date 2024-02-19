@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { MutableRefObject, useState } from 'react';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import PanelOptionsComp from './OptionsComp/PanelOptionsComp.js';
 import GlobalOptionsComp from './OptionsComp/GlobalOptionsComp.js';
 import { Tab, Tabs } from 'react-bootstrap';
 
-function SidebarComp(params: { pageManager: PageManager }) {
+function SidebarComp(params: { renderFileProcess: (FileList) => void; pageManager: PageManager }) {
     //Tab state
     const [key, setKey] = useState('globalTab');
 
@@ -21,7 +21,10 @@ function SidebarComp(params: { pageManager: PageManager }) {
                 <PanelOptionsComp pageManager={params.pageManager} />
             </Tab>
             <Tab eventKey='globalTab' title='Global'>
-                <GlobalOptionsComp pageManager={params.pageManager} />
+                <GlobalOptionsComp
+                    renderFileProcess={params.renderFileProcess}
+                    pageManager={params.pageManager}
+                />
             </Tab>
         </Tabs>
     );

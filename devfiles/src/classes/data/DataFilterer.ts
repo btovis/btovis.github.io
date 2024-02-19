@@ -12,7 +12,7 @@ import ReferenceSet from './setutils/ReferenceSet';
 // instead, this should be stored in a sorted array (a new class) and updated on filter update and
 // 2) Replace all opaques with checkeveryitem. opaques don't need being optimized for
 export default class DataFilterer {
-    private d: Data;
+    private data: Data;
     private filtersClasses: Filter[] = []; // Only updated when the user changes filtering setting
     private filterPredsForData = []; // Only updated when the user changes filtering setting (hence, indirectly) or when data is updated
     private filteredData; // Only updated when filterPredsForData is updated
@@ -25,10 +25,10 @@ export default class DataFilterer {
     // otherwise, predicate defined
 
     public constructor(data: Data) {
-        this.d = data;
+        this.data = data;
         // Preallocate to max size
-        this.filteredData = Array.from({ length: data.sortedDatabase.length }, (_, i) => data[i]);
-        this.filteredDataArrLen = data.sortedDatabase.length;
+        this.filteredData = Array.from({ length: data.readDatabase().length }, (_, i) => data[i]);
+        this.filteredDataArrLen = data.readDatabase().length;
     }
 
     // currently, this function assumes it won't be called with same args consecutively
@@ -50,12 +50,12 @@ export default class DataFilterer {
     }
 
     public dataUpdated() {
-        if (this.d.sortedDatabase.length != this.filteredData.length) {
-            this.filteredData = new Array(this.d.sortedDatabase.length);
+        if (this.data.readDatabase().length != this.filteredData.length) {
+            this.filteredData = new Array(this.data.readDatabase().length);
         }
         for (let i = 0; i < this.filtersClasses.length; i++) {
             if (this.filtersClasses[i]) {
-                this.filtersClasses[i].updateSetReference(this.d.sets[i]);
+                this.filtersClasses[i].updateSetReference(this.data.sets[i]);
                 const [status, pred] = this.filtersClasses[i].getPredicate();
                 this.filterPredsForData[i] = pred;
                 if (status == PredicateType.Opaque) {
@@ -74,7 +74,7 @@ export default class DataFilterer {
         if (!c) {
             c = this.filtersClasses[columnIndex] = new SetFilter(
                 new ReferenceSet(),
-                this.d.sets[columnIndex]
+                this.data.sets[columnIndex]
             );
         }
         if (filterAwayFromNowOn) {
@@ -98,7 +98,7 @@ export default class DataFilterer {
             this.filteredDataArrLen = 0;
             return;
         }
-        const d = this.d.sortedDatabase,
+        const d = this.data.readDatabase(),
             filterColumns = [],
             filterPreds = [];
         const fData = this.filteredData;

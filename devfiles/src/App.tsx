@@ -16,6 +16,46 @@ function App() {
 
     const borderRef = useRef(null);
     const spinnerRef = useRef(null);
+
+    const renderFileProcess = (files: FileList) => {
+        //Yes, do this AGAIN to facilitate use from GlobalOptionsComp
+        if (borderRef.current) borderRef.current.style.opacity = 0.8;
+        if (spinnerRef.current) spinnerRef.current.style.opacity = 1;
+
+        Promise.allSettled(
+            Array.prototype.map.call(files, async (file) => ({
+                name: file.name,
+                data: new Uint8Array(await file.arrayBuffer())
+            }))
+        ).then((arr) => {
+            const rejected = [];
+            arr.forEach((file: PromiseFulfilledResult<{ name: string; data: Uint8Array }>) => {
+                if (!file.value.name.toLowerCase().endsWith('csv')) {
+                    rejected.push(file.value.name);
+                    return;
+                }
+                window['pageManager'] = pageManager;
+                try {
+                    pageManager.addCSV(file.value.name, file.value.data);
+                } catch (e) {
+                    rejected.push(file.value.name + ': ' + e);
+                    return;
+                }
+            });
+            if (borderRef.current) borderRef.current.style.opacity = 0;
+            if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
+            setIsOverlaySuccess(rejected.length == 0);
+            if (rejected.length > 0)
+                setOverlayMessage(
+                    'Did not parse:\n - ' +
+                        rejected.join('\n - ') +
+                        '\n Only CSVs exported from the BTO pipeline can be processed.'
+                );
+            else setOverlayMessage('Loaded file(s).');
+            setOverlayVisible(true);
+        });
+    };
+
     return (
         <div
             onDragOver={(event) => {
@@ -29,42 +69,7 @@ function App() {
             onDrop={(event) => {
                 event.stopPropagation();
                 event.preventDefault();
-                if (spinnerRef.current) spinnerRef.current.style.opacity = 1;
-
-                Promise.allSettled(
-                    Array.prototype.map.call(event.dataTransfer.files, async (file) => ({
-                        name: file.name,
-                        data: new Uint8Array(await file.arrayBuffer())
-                    }))
-                ).then((arr) => {
-                    const rejected = [];
-                    arr.forEach(
-                        (file: PromiseFulfilledResult<{ name: string; data: Uint8Array }>) => {
-                            if (!file.value.name.toLowerCase().endsWith('csv')) {
-                                rejected.push(file.value.name);
-                                return;
-                            }
-                            window['pageManager'] = pageManager;
-                            try {
-                                pageManager.addCSV(file.value.name, file.value.data);
-                            } catch (e) {
-                                rejected.push(file.value.name + ': ' + e);
-                                return;
-                            }
-                        }
-                    );
-                    if (borderRef.current) borderRef.current.style.opacity = 0;
-                    if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
-                    setIsOverlaySuccess(rejected.length == 0);
-                    if (rejected.length > 0)
-                        setOverlayMessage(
-                            'Did not parse:\n - ' +
-                                rejected.join('\n - ') +
-                                '\n Only CSVs exported from the BTO pipeline can be processed.'
-                        );
-                    else setOverlayMessage('Loaded file(s).');
-                    setOverlayVisible(true);
-                });
+                renderFileProcess(event.dataTransfer.files);
             }}
         >
             {/* The stuff above is solely for the drag and drop handling. */}
@@ -114,7 +119,10 @@ function App() {
             {/* This leads to the rest of the UI components*/}
             <div className='splitScreen'>
                 <div className='sidebar'>
-                    <SidebarComp pageManager={pageManager}></SidebarComp>
+                    <SidebarComp
+                        renderFileProcess={renderFileProcess}
+                        pageManager={pageManager}
+                    ></SidebarComp>
                 </div>
                 <div className='paner'>
                     <MainPage pageManager={pageManager}></MainPage>
