@@ -1,6 +1,6 @@
 import Panel from '../Panel';
 import DataFilterer from '../data/DataFilterer';
-import Query from '../query/Query';
+import { Query } from '../query/Query';
 import InputOption from './InputOption';
 
 export default class Selector extends InputOption {

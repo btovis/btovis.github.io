@@ -1,5 +1,5 @@
 import Panel from '../Panel';
-import Query from '../query/Query';
+import { Query } from '../query/Query';
 
 export default abstract class InputOption {
     public readonly name: string;
