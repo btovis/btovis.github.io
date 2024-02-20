@@ -1,13 +1,13 @@
 /* Don't access data, use DataFilteredAccess */
 
 import normaliseIdentifier from './setutils/FileIdentifierUtil.ts';
-import { /*integrate,*/ processTypes } from './datautils/table_integrate';
+import { integrateNewCSV } from './datautils/table_integrate';
 import { parseCSVFromByteArray } from './datautils/csvreader';
 import SetElement from './setutils/SetElement';
 import ReferenceSet from './setutils/ReferenceSet.ts';
 
 enum Attribute {
-    fileName,
+    csvName = '_FILE',
     recordingFileName = 'RECORDING FILE NAME',
     originalFileName = 'ORIGINAL FILE NAME',
     recordingFilePart = 'ORIGINAL FILE PART',
@@ -39,11 +39,16 @@ class Data {
 
     // 0th element in this array is column 1
     // column 0 is file identifier
+    // all elements are capitalised and the array is duplicate-free
     public columnList: string[] = ['_FILE'];
 
     public readDatabase() {
         return this.sortedDatabase;
     }
+
+    // see the method below to access it
+    private titleToColumnIndex = new Map<string, number>([['_FILE', 0]]);
+    private cellProcessors = [(a) => this.sets[0].addRawOrGet(a)];
 
     // Throws an error message (such as: malformed CSV) to be appended to filename to become "abc.csv: malformed CSV"
     /* eslint no-var: off */
@@ -53,46 +58,46 @@ class Data {
         try {
             var { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
         } catch (e) {
+            this.sets[0].removeRef(CSVIdentifier);
             throw 'Malformed CSV ' + e;
         }
 
-        // One function to return processors for columnNames
-        // The other taking columnList and columnNames, giving a list length columnNames with permute lambdas
-        // (Permute: take common rows first, then remaining in order)
-        // A third giving sets and setmakers for new columns
-        // With sets, for older files, need to go through them for older columns so tag them empty
-
-        // Data statistician: what does it take on update? new rows, old rows, columnlist. refresh for rescanning on deleted file
-        // Data taxonomist: updated rows. refresh for rescanning on deleted file
-
-        // One function to take old columnlist, new columnlist, new rows, old rows
-        // permutes new rows, gives new sets, makes processor for old rows internally and processes them (for each element, adds null there)
-
-        // need proper integrate here.
-        this.sets = this.sets.concat(processTypes(columnNames, content));
-        // TODO: proper merge
-        // TODO: sort!!
-        this.sortedDatabase = content;
-        this.columnList = this.columnList.concat(columnNames);
+        integrateNewCSV(
+            this.columnList,
+            this.titleToColumnIndex,
+            columnNames,
+            this.sortedDatabase,
+            content,
+            this.sets,
+            this.cellProcessors
+        );
     }
 
-    // For accessing cell data
+    public removeCSV(CSVName: string) {
+        const CSVIdentifier = this.sets[0].raws.get(CSVName);
+        if (!CSVIdentifier) return;
+        this.sets[0].removeRef(CSVIdentifier);
+        let newI = 0,
+            oldI = 0;
+        const db = this.sortedDatabase,
+            len = db.length;
+        for (; oldI < len; oldI++) {
+            const r = db[oldI];
+            if (r[0] != CSVIdentifier) {
+                db[newI] = r;
+                newI++;
+            }
+        }
+        db.length = newI;
+    }
+
     // filename: 0
     public getIndexForColumn(a: Attribute): number {
-        const index = getColumnIndex(a, this.columnList);
-        if (index == -1) {
+        const index = this.titleToColumnIndex.get(a);
+        if (index === undefined) {
             throw 'no such column ' + a + ' in ' + this.columnList;
         }
         return index;
-    }
-}
-
-function getColumnIndex(a: Attribute, columnList: string[]): number {
-    switch (a) {
-        case Attribute.fileName:
-            return 0;
-        default:
-            return columnList.indexOf(a);
     }
 }
 

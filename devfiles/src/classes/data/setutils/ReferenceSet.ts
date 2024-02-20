@@ -35,7 +35,7 @@ export default class ReferenceSet {
         return this.raws.has(ident);
     }
 
-    // No "hasRef": please call it directly
+    // No "hasRef": please call it directly refs
 
     // Returns: successful or not
     public changeValue(ident: string, identNew: string): boolean {
