@@ -1,0 +1,16 @@
+Apodemus flavicollis
+Apodemus sylvaticus
+Arvicola amphibius
+Crocidura russula
+Crocidura suaveolens
+Micromys minutus
+Microtus agrestis
+Mus musculus
+Muscardinus avellanarius
+Myodes glareolus
+Neomys fodiens
+Rattus norvegicus
+Rattus rattus
+Sorex araneus
+Sorex coronatus
+Sorex minutus
