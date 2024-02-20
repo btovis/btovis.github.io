@@ -3,7 +3,7 @@ import { Filter, PredicateType } from '../filters/Filter';
 import SetElement from './setutils/SetElement';
 import SetFilter from '../filters/SetFilter';
 import ReferenceSet from './setutils/ReferenceSet';
-import { Attribute } from '../Data';
+import { Attribute } from './Data';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
