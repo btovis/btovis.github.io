@@ -3,6 +3,7 @@ import { Filter, PredicateType } from '../filters/Filter';
 import SetElement from './setutils/SetElement';
 import SetFilter from '../filters/SetFilter';
 import ReferenceSet from './setutils/ReferenceSet';
+import { Attribute } from '../Data';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
@@ -136,5 +137,10 @@ export default class DataFilterer {
     // Please don't modify this either
     public getColumns(): string[] {
         return this.data.columnList;
+    }
+
+    // throws if it fails
+    public getColumnIndex(a: Attribute): number {
+        return this.data.getIndexForColumn(a);
     }
 }
