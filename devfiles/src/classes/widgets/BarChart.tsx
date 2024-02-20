@@ -14,20 +14,20 @@ export default class BarChart extends Widget {
             type: 'bar',
             x: [1, 2, 3],
             y: [2, 5, 3],
-            marker:{
+            marker: {
                 color: Array(3).fill(this.config.traceColor[0])
-            },
+            }
         };
         const trace2 = {
             type: 'bar',
             x: [1, 2, 3],
             y: [4, 2, 6],
-            marker:{
+            marker: {
                 color: Array(3).fill(this.config.traceColor[1])
-            },
+            }
         };
         const plotData = [trace1, trace2];
-        const plotLayout={
+        const plotLayout = {
             width: 290,
             height: 240,
             title: {
@@ -35,22 +35,17 @@ export default class BarChart extends Widget {
                 y: 0.85
             },
             margin: {
-                l:30,
-                r:30,
-                b:50,
-                t:65
+                l: 30,
+                r: 30,
+                b: 50,
+                t: 65
             }
-
         };
-        const plotConfig={
+        const plotConfig = {
             //staticPlot: true,
-            modeBarButtonsToRemove: [
-                'zoomIn2d', 'zoomOut2d'
-            ]
+            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
         };
-        return (
-            <Plot data={plotData} layout={plotLayout} config={plotConfig}/>
-        );
+        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
     }
     public delete(): void {
         throw new Error('Method not implemented.');
