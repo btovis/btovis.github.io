@@ -21,7 +21,7 @@ driver.get("https://www.iucnredlist.org/")
 
 # Load existing species data if available
 species = {}
-species_file_path = "./devfiles/species.json"
+species_file_path = "./devfiles/src/assets/species.json"
 if os.path.exists(species_file_path):
     with open(species_file_path) as f:
         species = json.load(f)
