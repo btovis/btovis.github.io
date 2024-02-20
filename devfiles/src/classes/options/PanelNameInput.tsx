@@ -31,8 +31,10 @@ export default class PanelNameInput extends InputOption {
     public callback(newValue: any): void {
         this.text = newValue;
         //Refresh to show new panel name
+        // @ts-expect-error: now need to decide how to allow option for both panel and global
         this.panel.refresh();
         //Refresh sidebar for new panel name too
+        // @ts-expect-error: now need to decide how to allow option for both panel and global
         this.panel.pageManager.refreshPanelOptions();
     }
     public query(): Query {

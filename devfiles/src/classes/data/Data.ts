@@ -1,15 +1,13 @@
 /* Don't access data, use DataFilteredAccess */
 
 import normaliseIdentifier from './setutils/FileIdentifierUtil.ts';
-import { /*integrate,*/ processTypes } from './datautils/table_integrate';
+import { integrateNewCSV } from './datautils/table_integrate';
 import { parseCSVFromByteArray } from './datautils/csvreader';
 import SetElement from './setutils/SetElement';
 import ReferenceSet from './setutils/ReferenceSet.ts';
 
 enum Attribute {
-    fileName,
-    timestamp, // TODOOOO
-    time /*??? */,
+    csvName = '_FILE',
     recordingFileName = 'RECORDING FILE NAME',
     originalFileName = 'ORIGINAL FILE NAME',
     recordingFilePart = 'ORIGINAL FILE PART',
@@ -31,58 +29,75 @@ enum Attribute {
     projectName = 'PROJECT NAME'
 }
 
+// Calling addCSV will require calling dataUpdated in all DataFiltered!!!!!
+
+// TODO: delete file function? scan database, remake sets by rescanning all, recall statistician for all of it, keep columns the same.
 class Data {
-    // Don't access sortedDatabase and sets and fileIdentifiers
-    public sortedDatabase: (SetElement | string | number)[][] = [];
+    // sortedDatabase is actually unsorted
+    private sortedDatabase: (SetElement | string | number)[][] = [];
     public sets = [new ReferenceSet()]; // The 0th element are the files
 
     // 0th element in this array is column 1
     // column 0 is file identifier
+    // all elements are capitalised and the array is duplicate-free
     public columnList: string[] = ['_FILE'];
 
-    public addCSV(CSVName: string, CSVFile: Uint8Array) {
-        CSVName = normaliseIdentifier(CSVName, this.sets[0]);
-        const CSVIdentifier = this.sets[0].addRawOrGet(CSVName);
-
-        const { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
-        // depending on what it modifies
-        // leave this to later: TODO: proper integrate
-        //integrate(this.columnList, this.sortedDatabase, )
-        // TODO: reuse sets for the second file
-
-        // need proper integrate here.
-        this.sets = this.sets.concat(processTypes(columnNames, content));
-        // TODO: proper merge
-        // TODO: sort!!
-        this.sortedDatabase = content;
-        this.columnList = this.columnList.concat(columnNames);
-    }
-
-    // For reading only
     public readDatabase() {
         return this.sortedDatabase;
     }
 
-    // For accessing cell data
-    // filname: 0
+    // see the method below to access it
+    private titleToColumnIndex = new Map<string, number>([['_FILE', 0]]);
+    private cellProcessors = [(a) => this.sets[0].addRawOrGet(a)];
+
+    // Throws an error message (such as: malformed CSV) to be appended to filename to become "abc.csv: malformed CSV"
+    /* eslint no-var: off */
+    public addCSV(CSVName: string, CSVFile: Uint8Array) {
+        CSVName = normaliseIdentifier(CSVName, this.sets[0]);
+        const CSVIdentifier = this.sets[0].addRawOrGet(CSVName);
+        try {
+            var { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
+        } catch (e) {
+            this.sets[0].removeRef(CSVIdentifier);
+            throw 'Malformed CSV ' + e;
+        }
+
+        integrateNewCSV(
+            this.columnList,
+            this.titleToColumnIndex,
+            columnNames,
+            this.sortedDatabase,
+            content,
+            this.sets,
+            this.cellProcessors
+        );
+    }
+
+    public removeCSV(CSVName: string) {
+        const CSVIdentifier = this.sets[0].raws.get(CSVName);
+        if (!CSVIdentifier) return;
+        this.sets[0].removeRef(CSVIdentifier);
+        let newI = 0,
+            oldI = 0;
+        const db = this.sortedDatabase,
+            len = db.length;
+        for (; oldI < len; oldI++) {
+            const r = db[oldI];
+            if (r[0] != CSVIdentifier) {
+                db[newI] = r;
+                newI++;
+            }
+        }
+        db.length = newI;
+    }
+
+    // filename: 0
     public getIndexForColumn(a: Attribute): number {
-        const index = getColumnIndex(a, this.columnList);
-        if (index == -1) {
+        const index = this.titleToColumnIndex.get(a);
+        if (index === undefined) {
             throw 'no such column ' + a + ' in ' + this.columnList;
         }
         return index;
-    }
-}
-
-function getColumnIndex(a: Attribute, columnList: string[]): number {
-    switch (a) {
-        case Attribute.fileName:
-            return 0;
-        case Attribute.time:
-        case Attribute.timestamp:
-            return -3;
-        default:
-            return columnList.indexOf(a);
     }
 }
 

@@ -8,6 +8,7 @@ import TimeRange from './options/TimeRange';
 import BarChart from './widgets/BarChart';
 import Widget from './widgets/Widget';
 import WidgetConfig from './widgets/WidgetConfig';
+import DataFilterer from './data/DataFilterer';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -22,11 +23,14 @@ export default class Panel {
 
     private nameInput: PanelNameInput;
 
+    public dataFilterer: DataFilterer;
+
     public constructor(pageManager: PageManager) {
         this.pageManager = pageManager;
         this.nameInput = new PanelNameInput(this, 'Panel Name');
+        this.dataFilterer = new DataFilterer(pageManager.getData());
         const testConfig = new WidgetConfig();
-        this.widgets = [new BarChart(pageManager.getData(), testConfig)];
+        this.widgets = [new BarChart(this.dataFilterer, testConfig)];
         this.baseSidebar = new Sidebar([
             this.nameInput, //Panel name. Identity filter
             new Geographic(this, 'Region'), //Positional filter

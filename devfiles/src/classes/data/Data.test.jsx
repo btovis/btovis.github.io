@@ -57,7 +57,7 @@ describe('Data', async () => {
                     expected: 'Acoustic Classifier Development'
                 },
                 { index: 0, attribute: Attribute.species, expected: 46 },
-                { index: 5, attribute: Attribute.fileName, expected: filename }
+                { index: 5, attribute: Attribute.csvName, expected: filename }
             ])(
                 'get accessor for columns with index $index and attribute $attribute',
                 async ({ index, attribute, expected }) => {

@@ -35,7 +35,7 @@ export default class ReferenceSet {
         return this.raws.has(ident);
     }
 
-    // No "hasRef": please call it directly
+    // No "hasRef": please call it directly refs
 
     // Returns: successful or not
     public changeValue(ident: string, identNew: string): boolean {
@@ -70,5 +70,13 @@ export default class ReferenceSet {
 
     public size() {
         return this.refs.size;
+    }
+
+    public static fromSet(s: Set<SetElement>) {
+        const n = new ReferenceSet();
+        for (const e of s) {
+            n.addRef(e);
+        }
+        return n;
     }
 }
