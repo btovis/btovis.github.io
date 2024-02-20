@@ -6,6 +6,7 @@ import WidgetConfig from './WidgetConfig.js';
 import Panel from '../Panel.js';
 import { Attribute, Data } from '../data/Data.js';
 import SetElement from '../data/setutils/SetElement.js';
+import PageManager from '../PageManager.js';
 
 /**
  * This will take in a set of input columns, then
@@ -59,28 +60,6 @@ export default class TableWidget extends Widget {
     }
 
     //These are static to facilitate testing.
-    protected static sortByFrequency(rowMap: Map<string, number>) {
-        const entries: [number, string][] = [];
-        const iterator = rowMap.entries();
-        while (entries.length < rowMap.size) {
-            const entry = iterator.next();
-            if (entry.done === true) break;
-            const key: string = entry.value[0];
-            const freq: number = entry.value[1];
-            let inserted = false;
-            for (let i = 0; i < entries.length; i++) {
-                if (entries[i][0] < freq) {
-                    entries.splice(i, 0, [freq, key]);
-                    inserted = true;
-                    break;
-                }
-            }
-            if (!inserted) entries.push([freq, key]);
-        }
-        return entries;
-    }
-
-    //These are static to facilitate testing.
     protected static groupByFrequency(
         dataRows: any,
         dataLength: number,
@@ -101,6 +80,28 @@ export default class TableWidget extends Widget {
             rowMap.set(key, count + 1);
         }
         return rowMap;
+    }
+
+    //These are static to facilitate testing.
+    protected static sortByFrequency(rowMap: Map<string, number>) {
+        const entries: [number, string][] = [];
+        const iterator = rowMap.entries();
+        while (entries.length < rowMap.size) {
+            const entry = iterator.next();
+            if (entry.done === true) break;
+            const key: string = entry.value[0];
+            const freq: number = entry.value[1];
+            let inserted = false;
+            for (let i = 0; i < entries.length; i++) {
+                if (entries[i][0] < freq) {
+                    entries.splice(i, 0, [freq, key]);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted) entries.push([freq, key]);
+        }
+        return entries;
     }
 
     public render(): JSX.Element {
