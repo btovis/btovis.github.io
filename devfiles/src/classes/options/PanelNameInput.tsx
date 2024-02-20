@@ -31,9 +31,9 @@ export default class PanelNameInput extends InputOption {
     }
     public callback(newValue: any): void {
         this.text = newValue;
+
         //Refresh to show new panel name
         this.panel.refresh();
-
         //Refresh sidebar for new panel name too
         this.panel.pageManager.refreshPanelOptions();
     }

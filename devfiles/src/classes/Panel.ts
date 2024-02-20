@@ -33,7 +33,7 @@ export default class Panel {
         this.nameInput = new PanelNameInput(this, 'Panel Name');
         this.dataFilterer = new DataFilterer(pageManager.getData());
         const testConfig = new WidgetConfig();
-        this.widgets = [new BarChart(this.dataFilterer, testConfig)];
+        this.widgets = [new BarChart(this, testConfig)];
         this.baseSidebar = new Sidebar([
             this.nameInput, //Panel name. Identity filter
             new Geographic(this, 'Region'), //Positional filter
@@ -67,14 +67,7 @@ export default class Panel {
         //options.
 
         const options = this.widgets
-            .map((widget) => {
-                try {
-                    return widget.generateSidebar().options;
-                } catch (error) {
-                    console.log(error);
-                    return [];
-                }
-            })
+            .map((widget) => widget.generateSidebar().options)
             .reduce((acc, a) => acc.concat(a), []);
 
         return new Sidebar(this.baseSidebar.options.concat(options));

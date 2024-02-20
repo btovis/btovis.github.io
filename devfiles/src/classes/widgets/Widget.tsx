@@ -1,16 +1,17 @@
 import DataFilterer from '../data/DataFilterer.js';
 import InputOption from '../options/InputOption.js';
+import Panel from '../Panel.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import WidgetConfig from './WidgetConfig.js';
 
 export default abstract class Widget {
-    protected data: DataFilterer;
+    protected panel: Panel;
     protected options: InputOption[];
     protected config: WidgetConfig;
 
-    public constructor(data: DataFilterer, config: WidgetConfig) {
-        this.data = data;
+    public constructor(panel: Panel, config: WidgetConfig) {
+        this.panel = panel;
         this.config = config;
         this.options = [];
     }

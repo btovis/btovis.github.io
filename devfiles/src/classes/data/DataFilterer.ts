@@ -140,7 +140,7 @@ export default class DataFilterer {
     }
 
     // throws if it fails
-    public getColumnIndex(a: Attribute): number {
+    public getColumnIndex(a: Attribute | string): number {
         return this.data.getIndexForColumn(a);
     }
 }

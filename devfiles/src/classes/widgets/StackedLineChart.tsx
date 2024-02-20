@@ -8,7 +8,7 @@ import Plot from 'react-plotly.js';
 
 export default class StackedLineChart extends Widget {
     public generateSidebar(): Sidebar {
-        throw new Error('Method not implemented.');
+        return new Sidebar([]);
     }
     public render(): JSX.Element {
         const trace1 = {
