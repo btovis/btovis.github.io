@@ -44,5 +44,16 @@
         "preview": "vite preview",
         "test": "vitest",
         "check-staged": "npm run build && npm run format && npm run lint"
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx}": [
+            "eslint --quiet --fix"
+        ],
+        "*.{json,js,ts,jsx,tsx,html}": [
+            "prettier --write --ignore-unknown"
+        ],
+        "!*": [
+            "npm run build"
+        ]
     }
 }
