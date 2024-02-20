@@ -34,7 +34,9 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         <div>
             <button
                 className='delete-btn'
-                onClick={() => document.getElementById('delete_panel_modal').style.display='block'}
+                onClick={() =>
+                    (document.getElementById('delete_panel_modal').style.display = 'block')
+                }
             >
                 Delete panel
             </button>
@@ -42,10 +44,19 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
             <div id='delete_panel_modal' className='modal'>
                 <div className='modal-box'>
                     <p>Are you sure you want to delete this panel?</p>
-                    <button className='modal-btn modal-cancel-btn'
-                        onClick={() => document.getElementById('delete_panel_modal').style.display='none'}
-                    >Cancel</button>
-                    <button className='modal-btn delete-btn'
+                    <p>
+                        <i>{params.pageManager.getSelectedPanel().getName()}</i>
+                    </p>
+                    <button
+                        className='modal-btn modal-cancel-btn'
+                        onClick={() =>
+                            (document.getElementById('delete_panel_modal').style.display = 'none')
+                        }
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className='modal-btn delete-btn'
                         onClick={() => {
                             params.pageManager.deletePanel(params.pageManager.selectedPanel);
                             params.pageManager.unselectPanel();
@@ -57,7 +68,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
                             params.pageManager.refreshEverything();
                         }}
                     >
-                    Delete
+                        Delete
                     </button>
                 </div>
             </div>
