@@ -5,6 +5,7 @@ import { integrateNewCSV } from './datautils/table_integrate';
 import { parseCSVFromByteArray } from './datautils/csvreader';
 import SetElement from './setutils/SetElement';
 import ReferenceSet from './setutils/ReferenceSet.ts';
+import DataStats from './DataStats.ts';
 
 enum Attribute {
     csvName = '_FILE',
@@ -42,6 +43,10 @@ class Data {
     // all elements are capitalised and the array is duplicate-free
     public columnList: string[] = ['_FILE'];
 
+    // Data class is blind about what each column represents. dataStats gives meaningful data about important columns's useful ranges and stats
+    // (Date, 'ACTUAL DATE' is also handled by Data, but processed in isolation for each csv)
+    public dataStats: DataStats = new DataStats(this);
+
     public readDatabase() {
         return this.sortedDatabase;
     }
@@ -71,6 +76,7 @@ class Data {
             this.sets,
             this.cellProcessors
         );
+        this.dataStats.refresh();
     }
 
     public removeCSV(CSVName: string) {
@@ -89,6 +95,7 @@ class Data {
             }
         }
         db.length = newI;
+        this.dataStats.refresh();
     }
 
     // filename: 0

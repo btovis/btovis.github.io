@@ -1,7 +1,9 @@
 /* Handles merging multiple files together */
 //import FileIdentifierManager from "../setutils/FileIdentifierManager";
 
+import { Attribute } from '../Data';
 import ReferenceSet from '../setutils/ReferenceSet';
+import { processDates } from './date';
 
 function matchColumnNames(upperCaseColumnName) {
     switch (upperCaseColumnName) {
@@ -10,6 +12,8 @@ function matchColumnNames(upperCaseColumnName) {
             return 'PROBABILITY';
         case 'COMMON_NAME': // Underscore, because from bird pipeline CSV
             return 'ENGLISH NAME';
+        case 'DATE':
+            return 'ACTUAL DATE'; // map Date from bird pipeline to actual date
         default:
             return upperCaseColumnName;
     }
@@ -117,6 +121,7 @@ function integrateNewCSV(
     // Extend processors, process old data
     // NOTE: NOT IMPLEMENTED: it isn't useful to extend old data with NaN, unknown dates, and SetElement("") and ""
     // INCONSISTENCY: but we do process empty columns of the new rows (if the new data doesn't have some columns as the original)
+    // but this has good effect that we can replace processor with every new csv
 
     // Extend processors, process new data with both old and new processors
     // for this, extend set
@@ -126,6 +131,16 @@ function integrateNewCSV(
     const newProcessors = newColumns.map((n, i) => getProcessorForColumn(n, newSets[i]));
     oldSets.push(...newSets);
     oldProcessors.push(...newProcessors);
+
+    // handle time: get index of actual ...
+    // make processor, replace previous with it
+
+    const dateCol = titleToColumnIndex.get(Attribute.actualDate);
+    if (dateCol) {
+        // TODO: perhaps move processing here?
+        processDates(newDatabase, dateCol);
+    }
+
     for (let i = oldDBLen; i < finalDBLen; i++) {
         const r = oldDatabase[i];
         // Skip file identifier
@@ -166,11 +181,9 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
             return (a) => set.addRawOrGet(a);
 
         case 'ACTUAL DATE':
-            // Infer american or british
             return (x) => x;
 
         case 'SURVEY DATE':
-            // Infer american or british
             return (x) => x;
 
         case 'TIME':
@@ -237,7 +250,7 @@ function columnNeedsSet(columnName) {
             return true;
 
         default:
-            throw 'unknown column ' + columnName;
+            return false; //'unknown column ' + columnName;
     }
 }
 
