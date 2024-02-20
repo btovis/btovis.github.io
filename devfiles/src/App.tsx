@@ -117,16 +117,14 @@ function App() {
                 </div>
             </Fade>
             {/* This leads to the rest of the UI components*/}
-            <div className='splitScreen'>
-                <div className='sidebar'>
-                    <SidebarComp
-                        renderFileProcess={renderFileProcess}
-                        pageManager={pageManager}
-                    ></SidebarComp>
-                </div>
-                <div className='paner'>
-                    <MainPage pageManager={pageManager}></MainPage>
-                </div>
+            <div className='sidebar'>
+                <SidebarComp
+                    renderFileProcess={renderFileProcess}
+                    pageManager={pageManager}
+                ></SidebarComp>
+            </div>
+            <div className='paner'>
+                <MainPage pageManager={pageManager}></MainPage>
             </div>
         </div>
     );
