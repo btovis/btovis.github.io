@@ -5,8 +5,8 @@ import PanelComp from './PanelComp.js';
 
 function MainPage(params: { pageManager: PageManager }) {
     return params.pageManager.panels
-        .map((_, idx) => {
-            return <PanelComp key={idx} panelIdx={idx} pageManager={params.pageManager} />;
+        .map((panel, idx) => {
+            return <PanelComp key={panel.uuid} panelIdx={idx} pageManager={params.pageManager} />;
         })
         .concat(
             <button

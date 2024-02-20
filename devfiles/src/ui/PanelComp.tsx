@@ -53,15 +53,102 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                 params.pageManager.refreshPanelOptions();
             }}
         >
-            <div className='panel-header'>
-                <div className='title'>{panel.getName()}</div>
-                <div
-                    className='title'
-                    onClick={() => {
-                        setHidden((hidden) => !hidden);
-                    }}
-                >
-                    {hidden ? '˂' : '˅'}
+            <div className='title'>{panel.getName()}</div>
+            <div className='body'>
+                <div ref={widgetRowRef} className='widget-row'>
+                    {widgets}
+                </div>
+                <div className='add-widget-btns'>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new BarChart(
+                                    params.pageManager.panels[params.panelIdx].dataFilterer,
+                                    new WidgetConfig()
+                                )
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Barchart
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new TableWidget(
+                                    params.pageManager.panels[params.panelIdx],
+                                    new WidgetConfig()
+                                )
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Table
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new MapWidget(
+                                    params.pageManager.panels[params.panelIdx].dataFilterer,
+                                    new WidgetConfig()
+                                )
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Map
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new LineChart(
+                                    params.pageManager.panels[params.panelIdx].dataFilterer,
+                                    new WidgetConfig()
+                                )
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Linechart
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new StackedLineChart(
+                                    params.pageManager.panels[params.panelIdx].dataFilterer,
+                                    new WidgetConfig()
+                                )
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Stacked Linechart
+                    </button>
+                    <button
+                        className='widget-btn'
+                        onClick={() => {
+                            panel.addWidget(
+                                new DebugWidget(
+                                    params.pageManager.panels[params.panelIdx].dataFilterer,
+                                    new WidgetConfig()
+                                )
+                            );
+                            //If negative, scroll rightwards
+                            setSnapRight(-Math.abs(snapRight) - 1);
+                        }}
+                    >
+                        Add Debug Widget
+                    </button>
                 </div>
             </div>
             {!hidden && (
@@ -90,7 +177,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new TableWidget(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
