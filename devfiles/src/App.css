@@ -41,14 +41,16 @@
   color: #888;
 }
 
-.splitScreen {
-  display: flex;
-  flex-direction: row;
-}
 .sidebar {
   background-color: #e7e7e7;
-  flex: 20%;
-  width: 40%;
+  width: 20%;
+  height: 100%;
+  position: fixed
+}
+
+.paner {
+  float: right;
+  width: 80%;
 }
 
 .panel {
@@ -171,9 +173,4 @@
   border-color: #d00000;
   background-color: #f33333;
   color: white;
-}
-
-.paner {
-  flex: 80%;
-  width: 60%;
 }
