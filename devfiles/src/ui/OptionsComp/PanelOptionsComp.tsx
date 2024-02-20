@@ -33,20 +33,31 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         <div>
             <button
                 className='delete-btn'
-                onClick={() => {
-                    // TODO: add confirmation before deletion
-                    params.pageManager.deletePanel(params.pageManager.selectedPanel);
-                    params.pageManager.unselectPanel();
-                    params.pageManager.selectedPanel = -1;
-
-                    // No longer a valid panel sidebar as there is no selected panel.
-                    // Consider bundling with PageManager.unselectPanel()
-                    params.pageManager.setSidebarTab('globalTab');
-                    params.pageManager.refreshEverything();
-                }}
+                onClick={() => document.getElementById('delete_confirm_modal').style.display='block'}
             >
                 Delete panel
             </button>
+
+            <div id='delete_confirm_modal' class='modal'>
+                <button
+                    onClick={() => document.getElementById('delete_confirm_modal').style.display='none'}
+                >Cancel</button>
+                <button
+                    onClick={() => {
+                        // TODO: add confirmation before deletion
+                        params.pageManager.deletePanel(params.pageManager.selectedPanel);
+                        params.pageManager.unselectPanel();
+                        params.pageManager.selectedPanel = -1;
+
+                        // No longer a valid panel sidebar as there is no selected panel.
+                        // Consider bundling with PageManager.unselectPanel()
+                        params.pageManager.setSidebarTab('globalTab');
+                        params.pageManager.refreshEverything();
+                    }}
+                >
+                Delete
+                </button>
+            </div>
         </div>
     );
 
