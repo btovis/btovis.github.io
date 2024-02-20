@@ -21,7 +21,7 @@ driver.get("https://www.iucnredlist.org/")
 
 # Load existing species data if available
 species = {}
-species_file_path = "./devfiles/src/assets/species.json"
+species_file_path = "./devfiles/src/assets/endangerment.json"
 if os.path.exists(species_file_path):
     with open(species_file_path) as f:
         species = json.load(f)
@@ -30,13 +30,13 @@ if os.path.exists(species_file_path):
 def update_species(bird_name, category):
     species[bird_name] = category
 
-# Scrape data for birds not already in the species data
-for species_name in tqdm(species_names, desc="Scraping species data"):
+# Scrape data for animals not already in the endangerment data
+for species_name in tqdm(species_names, desc="Scraping endangerment data"):
     species_name = species_name.strip().lower()
     if species_name in species:
         continue
     try:
-        # Search for the bird on the IUCN Red List website
+        # Search for the species on the IUCN Red List website
         search_input = driver.find_element(By.CSS_SELECTOR, "input[type='search'].search.search--site")
         search_input.clear()
         search_input.send_keys(species_name + Keys.RETURN)
