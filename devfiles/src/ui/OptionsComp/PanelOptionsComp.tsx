@@ -35,9 +35,9 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
                 className='delete-btn'
                 onClick={() => {
                     // TODO: add confirmation before deletion
+                    params.pageManager.deletePanel(params.pageManager.selectedPanel);
                     params.pageManager.unselectPanel();
                     params.pageManager.selectedPanel = -1;
-                    params.pageManager.deletePanel(params.pageManager.selectedPanel);
 
                     // No longer a valid panel sidebar as there is no selected panel.
                     // Consider bundling with PageManager.unselectPanel()
