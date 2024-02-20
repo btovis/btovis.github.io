@@ -34,7 +34,7 @@ export default class LineChart extends Widget {
         const plotData = [trace1, trace2];
         const plotLayout = {
             width: 290,
-            height: 240,
+            height: 210,
             title: {
                 text: 'Line Chart',
                 y: 0.85

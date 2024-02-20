@@ -29,7 +29,7 @@ export default class BarChart extends Widget {
         const plotData = [trace1, trace2];
         const plotLayout = {
             width: 290,
-            height: 240,
+            height: 210,
             title: {
                 text: 'Bar Chart',
                 y: 0.85
