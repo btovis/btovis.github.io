@@ -41,7 +41,7 @@
         "dev": "vite",
         "build": "tsc && vite build --emptyOutDir",
         "prepare": "husky install",
-        "lint": "eslint --fix devfiles/src/**/*.{js,jsx,ts,tsx}",
+        "lint": "eslint --fix \"devfiles/src/**/*.{js,jsx,ts,tsx}\"",
         "format": "prettier --write --ignore-unknown devfiles/src/**/*.{json,js,ts,jsx,tsx,html}",
         "preview": "vite preview",
         "test": "vitest",
