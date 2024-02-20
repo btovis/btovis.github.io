@@ -132,4 +132,9 @@ export default class DataFilterer {
     public getData(): [dataArr: Array<any>, dataArrLen: number] {
         return [this.filteredData, this.filteredDataArrLen];
     }
+
+    // Please don't modify this either
+    public getColumns(): string[] {
+        return this.data.columnList;
+    }
 }
