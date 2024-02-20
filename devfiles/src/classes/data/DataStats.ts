@@ -1,4 +1,5 @@
 import RangeMeta from '../queryMeta/RangeMeta';
+import SetMeta from '../queryMeta/SetMeta';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 import { Attribute, Data } from './Data';
 import SetElement from './setutils/SetElement';
@@ -51,6 +52,10 @@ export default class DataStats {
     // You shouldn't need to call this more than once but no harm otherwise
     public getSpeciesMeta() {
         return new SpeciesMeta(this.species);
+    }
+
+    public getSetMeta() {
+        return new SetMeta(this.data.sets[0]);
     }
 
     // You shouldn't need to call this more than once but no harm otherwise
