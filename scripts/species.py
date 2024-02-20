@@ -1,14 +1,19 @@
 import json
+from glob import glob
 import os
 import time
+from tqdm import tqdm
 
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-# Load bird names from file
-with open("devfiles/birds.txt") as f:
-    birds = f.read().splitlines()
+# Load species names from file
+species_names = []
+for filename in glob("scripts/species-lists/*species.txt"):
+    with open(filename) as f:
+        species_names += f.read().splitlines()
 
 # Initialize WebDriver
 driver = webdriver.Chrome()
@@ -24,17 +29,17 @@ if os.path.exists(species_file_path):
 # Function to update species data
 def update_species(bird_name, category):
     species[bird_name] = category
-    print(bird_name, category)
 
 # Scrape data for birds not already in the species data
-for bird in birds:
-    if bird in species:
+for species_name in tqdm(species_names, desc="Scraping species data"):
+    species_name = species_name.strip().lower()
+    if species_name in species:
         continue
     try:
         # Search for the bird on the IUCN Red List website
         search_input = driver.find_element(By.CSS_SELECTOR, "input[type='search'].search.search--site")
         search_input.clear()
-        search_input.send_keys(bird + Keys.RETURN)
+        search_input.send_keys(species_name + Keys.RETURN)
         time.sleep(2)
         
         # Extract category information if found
@@ -42,13 +47,12 @@ for bird in birds:
         classes = result.get_attribute("class")
         for c in classes.split():
             if c.startswith("species-category--"):
-                update_species(bird, c.split("--")[1])
+                update_species(species_name, c.split("--")[1])
                 break
         else:
-            update_species(bird, "unknown")
-    except Exception as e:
-        print("Error:", bird, e)
-        update_species(bird, "unknown")
+            update_species(species_name, "unknown")
+    except NoSuchElementException as e:
+        update_species(species_name, "unknown")
     
     # Save updated species data
     with open(species_file_path, "w") as f:
