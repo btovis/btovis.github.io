@@ -1,4 +1,4 @@
-import Query from '../query/Query';
+import { Query } from '../query/Query';
 import InputOption from './InputOption';
 
 export default class TimeRange extends InputOption {
