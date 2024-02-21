@@ -45,7 +45,8 @@
   background-color: #e7e7e7;
   width: 20%;
   height: 100%;
-  position: fixed
+  position: fixed;
+  overflow: auto
 }
 
 .paner {
