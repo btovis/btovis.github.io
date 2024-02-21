@@ -46,7 +46,7 @@
         "format": "prettier --write --ignore-unknown devfiles/src/**/*.{json,js,ts,jsx,tsx,html}",
         "preview": "vite preview",
         "test": "vitest",
-        "coverage": "vitest run --coverage",
+        "coverage": "vitest run --coverage --coverage.reportsDirectory ../coverage",
         "check-staged": "npm run build && npm run format && npm run lint"
     },
     "lint-staged": {
