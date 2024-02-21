@@ -64,10 +64,12 @@ function GlobalOptionsComp(params: {
 
     return (
         <>
-            <h3>Data Files:</h3>
-            {fileNameList}
-            <hr />
-            {fileUploadTooltip}
+            <div className='overflowable'>
+                <h3>Data Files:</h3>
+                {fileNameList}
+                <hr />
+                {fileUploadTooltip}
+            </div>
         </>
     );
 }

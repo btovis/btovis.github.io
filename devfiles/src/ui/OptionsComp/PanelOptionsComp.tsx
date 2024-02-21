@@ -29,57 +29,57 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         ))
         .reduce((acc, rendered) => acc.concat(rendered), []);
 
-    // TODO: Display panel name to be deleted
     const deleteButton = (
-        <div>
-            <button
-                className='delete-btn'
-                onClick={() =>
-                    (document.getElementById('delete_panel_modal').style.display = 'block')
-                }
-            >
-                Delete panel
-            </button>
+        <button
+            className='delete-btn'
+            onClick={() => (document.getElementById('delete_panel_modal').style.display = 'block')}
+        >
+            Delete panel
+        </button>
+    );
 
-            <div id='delete_panel_modal' className='modal'>
-                <div className='modal-box'>
-                    <p>Are you sure you want to delete this panel?</p>
-                    <p>
-                        <i>{params.pageManager.getSelectedPanel().getName()}</i>
-                    </p>
-                    <button
-                        className='modal-btn modal-cancel-btn'
-                        onClick={() =>
-                            (document.getElementById('delete_panel_modal').style.display = 'none')
-                        }
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className='modal-btn delete-btn'
-                        onClick={() => {
-                            params.pageManager.deletePanel(params.pageManager.selectedPanel);
-                            params.pageManager.unselectPanel();
-                            params.pageManager.selectedPanel = -1;
+    const dialog = (
+        <div id='delete_panel_modal' className='modal'>
+            <div className='modal-box'>
+                <p>Are you sure you want to delete this panel?</p>
+                <p>
+                    <i>{params.pageManager.getSelectedPanel().getName()}</i>
+                </p>
+                <button
+                    className='modal-btn modal-cancel-btn'
+                    onClick={() =>
+                        (document.getElementById('delete_panel_modal').style.display = 'none')
+                    }
+                >
+                    Cancel
+                </button>
+                <button
+                    className='modal-btn delete-btn'
+                    onClick={() => {
+                        params.pageManager.deletePanel(params.pageManager.selectedPanel);
+                        params.pageManager.unselectPanel();
+                        params.pageManager.selectedPanel = -1;
 
-                            // No longer a valid panel sidebar as there is no selected panel.
-                            // Consider bundling with PageManager.unselectPanel()
-                            params.pageManager.setSidebarTab('globalTab');
-                            params.pageManager.refreshEverything();
-                        }}
-                    >
-                        Delete
-                    </button>
-                </div>
+                        // No longer a valid panel sidebar as there is no selected panel.
+                        // Consider bundling with PageManager.unselectPanel()
+                        params.pageManager.setSidebarTab('globalTab');
+                        params.pageManager.refreshEverything();
+                    }}
+                >
+                    Delete
+                </button>
             </div>
         </div>
     );
 
     return (
         <>
-            <h2>{panel.getName()}</h2>
-            {renderedOptions}
-            {deleteButton}
+            <div className='overflowable'>
+                <h2>{panel.getName()}</h2>
+                {renderedOptions}
+                {deleteButton}
+            </div>
+            {dialog}
         </>
     );
 }

@@ -24,6 +24,7 @@ export default class PanelNameInput extends InputOption {
                             e.currentTarget.blur();
                         }
                     }}
+                    style={{ width: '10em' }}
                 />
                 <hr></hr>
             </div>

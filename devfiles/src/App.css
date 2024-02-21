@@ -51,12 +51,16 @@
 } */
 
 .sidebar {
-  background-color: var(--element-bg);
+  background-color: #e7e7e7;
   width: 20%;
   height: 100%;
   position: fixed;
-  overflow: auto;
-  color: var(--text-color);
+}
+
+.overflowable {
+  overflow-y: scroll;
+  height: calc(100vh - 6.5em);
+  position: fixed;width: 20%;
 }
 
 .paner {
