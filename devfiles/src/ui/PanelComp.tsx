@@ -76,7 +76,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new BarChart(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -91,7 +91,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new TableWidget(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -106,7 +106,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new MapWidget(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -121,7 +121,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new LineChart(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -136,7 +136,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new StackedLineChart(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -151,7 +151,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new DebugWidget(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );

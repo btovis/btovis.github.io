@@ -5,9 +5,11 @@
     "type": "module",
     "dependencies": {
         "bootstrap": "^5.3.2",
+        "plotly.js": "^2.29.1",
         "react": "^18.2.0",
         "react-bootstrap": "^2.10.1",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "react-plotly.js": "^2.6.0"
     },
     "devDependencies": {
         "@testing-library/jest-dom": "^6.4.2",
@@ -39,10 +41,21 @@
         "dev": "vite",
         "build": "tsc && vite build --emptyOutDir",
         "prepare": "husky install",
-        "lint": "eslint --fix 'devfiles/src/**/*.{js,jsx,ts,tsx}'",
-        "format": "prettier --write --ignore-unknown 'devfiles/src/**/*.{json,js,ts,jsx,tsx,html}'",
+        "lint": "eslint --fix devfiles/src/**/*.{js,jsx,ts,tsx}",
+        "format": "prettier --write --ignore-unknown devfiles/src/**/*.{json,js,ts,jsx,tsx,html}",
         "preview": "vite preview",
         "test": "vitest",
         "check-staged": "npm run build && npm run format && npm run lint"
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx}": [
+            "eslint --quiet --fix"
+        ],
+        "*.{json,js,ts,jsx,tsx,html}": [
+            "prettier --write --ignore-unknown"
+        ],
+        "!*": [
+            "npm run build"
+        ]
     }
 }
