@@ -6,7 +6,7 @@ import ExportFileType from './ExportFileType.js';
 
 export default class MapWidget extends Widget {
     public generateSidebar(): Sidebar {
-        throw new Error('Method not implemented.');
+        return new Sidebar([]);
     }
     public render(): JSX.Element {
         throw new Error('Method not implemented.');

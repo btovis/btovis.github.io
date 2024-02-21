@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SidebarComp from './ui/SidebarComp.tsx';
@@ -11,7 +11,7 @@ function App() {
     const [overlayMessage, setOverlayMessage] = useState('');
     const [isOverlaySuccess, setIsOverlaySuccess] = useState(true);
     const [r, dud] = useState(0);
-    const [pageManager, _] = useState(new PageManager());
+    const [pageManager, _] = useState(PageManager.get());
     pageManager.refreshEverything = () => dud(r + 1);
 
     const borderRef = useRef(null);

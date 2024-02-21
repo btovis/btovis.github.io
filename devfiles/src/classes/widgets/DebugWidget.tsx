@@ -6,13 +6,13 @@ import ExportFileType from './ExportFileType.js';
 
 export default class DebugWidget extends Widget {
     public generateSidebar(): Sidebar {
-        throw new Error('Method not implemented.');
+        return new Sidebar([]);
     }
     public render(): JSX.Element {
-        console.log('DebugWidget instantiated. Row count:' + this.data.getData()[1]);
+        console.log('DebugWidget instantiated. Row count:' + this.panel.dataFilterer.getData()[1]);
         return (
             <>
-                <p>Row count: {this.data.getData()[1]}</p>
+                <p>Row count: {this.panel.dataFilterer.getData()[1]}</p>
             </>
         );
     }

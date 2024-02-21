@@ -4,11 +4,12 @@ import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
 import WidgetConfig from '../classes/widgets/WidgetConfig.js';
 import WidgetComp from './WidgetComp.js';
+import BarChart from '../classes/widgets/BarChart.js';
 import MapWidget from '../classes/widgets/MapWidget.js';
+import StackedLineChart from '../classes/widgets/StackedLineChart.js';
+import TableWidget from '../classes/widgets/TableWidget.js';
 import DebugWidget from '../classes/widgets/DebugWidget.js';
-import StackedLineChart from '../classes/widgets/StackedLineChart.tsx';
-import TableWidget from '../classes/widgets/TableWidget.tsx';
-import BarChart from '../classes/widgets/BarChart.tsx';
+
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [snapRight, setSnapRight] = useState(1);
@@ -75,7 +76,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new BarChart(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -90,7 +91,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new TableWidget(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -105,7 +106,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new MapWidget(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -120,7 +121,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new LineChart(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -135,7 +136,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new StackedLineChart(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );
@@ -150,7 +151,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             onClick={() => {
                                 panel.addWidget(
                                     new DebugWidget(
-                                        params.pageManager.panels[params.panelIdx].dataFilterer,
+                                        params.pageManager.panels[params.panelIdx],
                                         new WidgetConfig()
                                     )
                                 );

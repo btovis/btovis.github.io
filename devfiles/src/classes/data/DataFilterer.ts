@@ -30,7 +30,7 @@ export default class DataFilterer {
         // Preallocate to max size
         const db = data.readDatabase();
         this.filteredData = new Array(db.length);
-        for (let i = 0; i < db.length; i++) this.filteredData[i] = data[i];
+        for (let i = 0; i < db.length; i++) this.filteredData[i] = db[i];
 
         this.filteredDataArrLen = db.length;
     }
@@ -140,7 +140,7 @@ export default class DataFilterer {
     }
 
     // throws if it fails
-    public getColumnIndex(a: Attribute): number {
+    public getColumnIndex(a: Attribute | string): number {
         return this.data.getIndexForColumn(a);
     }
 }

@@ -92,7 +92,7 @@ class Data {
     }
 
     // filename: 0
-    public getIndexForColumn(a: Attribute): number {
+    public getIndexForColumn(a: Attribute | string): number {
         const index = this.titleToColumnIndex.get(a);
         if (index === undefined) {
             throw 'no such column ' + a + ' in ' + this.columnList;
