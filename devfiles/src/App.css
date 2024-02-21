@@ -79,6 +79,9 @@
 } */
 
 .panel {
+  border: solid;
+  border-color: rgba(0, 0, 0, 0);
+  border-radius: 10px;
   margin: auto;
   width: 80%;
   margin-top: 16px;
@@ -86,6 +89,7 @@
 }
 
 .panelactive {
+  
   border-color: rgb(134, 201, 219);
 }
 

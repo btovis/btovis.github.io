@@ -38,11 +38,10 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
     });
     return (
-        <div className='panel'>
+        <div className={highlighted ? 'panel panelactive' : 'panel'}>
             <Accordion defaultActiveKey='0'>
                 <Accordion.Item
                     eventKey='0'
-                    className={highlighted && 'panelactive'}
                     onClick={() => {
                         //If there is a previous selected panel, render unselection
                         if (params.pageManager.unselectPanel) params.pageManager.unselectPanel();
