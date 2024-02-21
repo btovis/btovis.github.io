@@ -19,6 +19,7 @@
         "@typescript-eslint/eslint-plugin": "^6.21.0",
         "@typescript-eslint/parser": "^6.14.0",
         "@vitejs/plugin-react": "^4.2.1",
+        "@vitest/coverage-v8": "^1.3.1",
         "eslint": "^8.56.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-config-standard-with-typescript": "^43.0.1",
@@ -45,6 +46,7 @@
         "format": "prettier --write --ignore-unknown devfiles/src/**/*.{json,js,ts,jsx,tsx,html}",
         "preview": "vite preview",
         "test": "vitest",
+        "coverage": "vitest run --coverage --coverage.reportsDirectory ../coverage --coverage.reporter text --coverage.reporter html --coverage.reporter clover --coverage.reporter json --coverage.reporter json-summary",
         "check-staged": "npm run build && npm run format && npm run lint"
     },
     "lint-staged": {
