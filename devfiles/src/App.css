@@ -1,11 +1,20 @@
-#root {
-  /*max-width: 1280px;
-  margin: 0 auto;*/
-  /*padding: 2rem;*/
+:root {
   text-align: center;
+  --page-bg: #ffffff;
+  --element-bg: #e7e7e7;
+  --text-color: black;
+  --file-box-color: #eeeeee;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-bg: #0a0027;
+    --element-bg: rgb(120, 141, 173);
+    --text-color: white;
+    --file-box-color: rgb(12, 30, 58);
+  }
 }
 
-.logo {
+/* .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
@@ -39,26 +48,28 @@
 
 .read-the-docs {
   color: #888;
-}
+} */
 
 .sidebar {
-  background-color: #e7e7e7;
+  background-color: var(--element-bg);
   width: 20%;
   height: 100%;
   position: fixed;
-  overflow: auto
+  overflow: auto;
+  color: var(--text-color);
 }
 
 .paner {
   float: right;
   width: 80%;
+  min-height: 100vh;
+  background-color: var(--page-bg);
 }
 
 .panel {
-  --bgcolor: #e7e7e7;
   border: solid;
-  border-color: var(--bgcolor);
-  background-color: var(--bgcolor);
+  border-color: var(--element-bg);
+  background-color: var(--element-bg);
   margin: auto;
   width: 80%;
   border-radius: 16px;
@@ -88,7 +99,7 @@
 	display: grid;
 	align-items: center;
   border-style: dotted;
-  background-color: #eeeeee;
+  background-color: var(--file-box-color);
 }
 
 .fileUploadIndic {
