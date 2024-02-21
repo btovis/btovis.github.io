@@ -51,7 +51,7 @@
 } */
 
 .sidebar {
-  background-color: #e7e7e7;
+  background-color: var(--element-bg);;
   width: 20%;
   height: 100%;
   position: fixed;
