@@ -66,7 +66,7 @@
   background-color: var(--page-bg);
 }
 
-.panel {
+/* .panel {
   border: solid;
   border-color: var(--element-bg);
   background-color: var(--element-bg);
@@ -74,6 +74,13 @@
   width: 80%;
   border-radius: 16px;
   padding: 16px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+} */
+
+.panel {
+  margin: auto;
+  width: 80%;
   margin-top: 16px;
   margin-bottom: 16px;
 }
@@ -170,6 +177,8 @@
   padding: 16px;
   border-radius: 16px;
   margin: auto;
+  z-index: 0;
+  position:relative;
 }
 
 .modal-btn {
