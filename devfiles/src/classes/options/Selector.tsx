@@ -1,18 +1,20 @@
 import Panel from '../Panel';
-import DataFilterer from '../data/DataFilterer';
-import SetElement from '../data/setutils/SetElement';
 import { Query } from '../query/Query';
-import SetQueryElement from '../query/SetQueryElement';
+import SetQueryArray from '../query/SetQueryArray';
 import InputOption from './InputOption';
 
 export default class Selector extends InputOption {
+    //Internal state unique to every option class.
+    //Use this to store current selections
     private choices: string[];
     public selected: Set<string> = new Set();
-    /**
-     *
+    public readonly columnIndex;
+
+    /**     *
      * @param panel The associated panel
      * @param name Name of the Selector option
-     * @param choices DO NOT HAVE DUPLICATES HERE.
+     * @param choices If this is a number, it will be the column index of the thing
+     * to be sorted, and this.choices will populate automatically.
      * @param allSelected If this is true (default is true), everything will be selected
      * @param defaults If allSelected is false, the default selected items will be this.
      * @param template This is the template Selector to "copy" selected options from.
@@ -20,13 +22,18 @@ export default class Selector extends InputOption {
     public constructor(
         panel: Panel,
         name: string,
-        choices: string[],
+        choices: string[] | number,
         allSelected: boolean = true,
         defaults?: string[],
         template: Selector = undefined
     ) {
         super(panel, name);
-        this.choices = choices;
+        //If a column index is provided, set choices to the unique column values
+        if (typeof choices === 'number') {
+            this.columnIndex = choices;
+            this.choices = [...panel.pageManager.data.sets[this.columnIndex].raws.keys()];
+        } //if not, this is a list of strings.
+        else this.choices = choices;
 
         if (template === undefined) {
             if (allSelected) this.selected = new Set(this.choices);
@@ -43,6 +50,16 @@ export default class Selector extends InputOption {
         return this.choices.length == this.selected.size;
     }
 
+    /**
+     * This is called when PanelOptionComp is re-rendered.
+     * Use the state from the private fields to build this
+     *
+     * Set onChange to run callback() against the input that changed
+     *
+     * If you want other state like a search bar, you can just
+     * change the internal input field and trigger a re-render
+     * with this.panel.pageManager.refreshPanelOptions();
+     */
     public render(): JSX.Element[] {
         return [
             <div>
@@ -71,6 +88,13 @@ export default class Selector extends InputOption {
         ];
     }
 
+    /**
+     * this.panel.recalculateFilters(this) will tell panel to execute the
+     * filter
+     *
+     * @param newValue In this case, contains the "checked" status of
+     * a tickbox and the string value of the item that was ticked
+     */
     public callback(newValue: any): void {
         if (newValue.checked) this.selected.add(newValue.item);
         else this.selected.delete(newValue.item);
@@ -83,7 +107,11 @@ export default class Selector extends InputOption {
         this.panel.pageManager.refreshPanelOptions();
     }
 
+    /**
+     * DO NOT RUN THIS IF SELECTOR WAS NOT INITIALISED WITH A COLUMN INDEX.
+     * @returns Query object to be applied by the panel in recalculateFilters(this)
+     */
     public query(): Query {
-        return null;
+        return new SetQueryArray(this.columnIndex).query([...this.selected]);
     }
 }
