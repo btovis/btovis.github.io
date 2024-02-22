@@ -9,8 +9,16 @@ async function loadData(filename: string | undefined) {
     if (filename === undefined) {
         filename = testDataFilename;
     }
-    const data = new Data();
 
+    const data = new Data();
+    const byteArray = await readBytes(filename);
+
+    expect(data.readDatabase()).toStrictEqual([]);
+    data.addCSV(filename, byteArray);
+    return data;
+}
+
+async function readBytes(filename: string) {
     const fd = await fs.promises.open(filename, 'r');
     const bufferSize = 1024;
     const buffer = Buffer.alloc(bufferSize);
@@ -23,10 +31,7 @@ async function loadData(filename: string | undefined) {
         byteArray = new Uint8Array([...byteArray, ...chunk]);
         if (bytesRead === 0) break;
     }
-
-    expect(data.readDatabase()).toStrictEqual([]);
-    data.addCSV(filename, byteArray);
-    return data;
+    return byteArray;
 }
 
-export { loadData, testDataFilename, testDataFilename2 };
+export { loadData, readBytes, testDataFilename, testDataFilename2 };
