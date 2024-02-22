@@ -23,6 +23,10 @@ export default class ReferenceSet {
         return e;
     }
 
+    public getRef(ident: string): SetElement | undefined {
+        return this.raws.get(ident);
+    }
+
     // add new element
     public addRef(e: SetElement) {
         this.raws.set(e.value, e);
