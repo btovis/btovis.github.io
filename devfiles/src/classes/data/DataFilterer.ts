@@ -207,4 +207,8 @@ export default class DataFilterer {
     public getColumnIndex(a: Attribute | string): number {
         return this.data.getIndexForColumn(a);
     }
+
+    public getDataStats() {
+        return this.data.dataStats;
+    }
 }
