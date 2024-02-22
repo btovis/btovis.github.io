@@ -4,6 +4,12 @@ import GlobalSettings from './GlobalSettings';
 import { Data } from './data/Data';
 
 export default class PageManager {
+    private static instance: PageManager;
+    public static get(): PageManager {
+        if (PageManager.instance == null) PageManager.instance = new PageManager();
+        return PageManager.instance;
+    }
+
     public data: Data;
     public globalSettings: GlobalSettings;
     public selectedPanel: number = -1;
@@ -13,7 +19,8 @@ export default class PageManager {
     public setSidebarTab?: (tab: string) => void;
     public unselectPanel?: () => void;
 
-    public constructor() {
+    private constructor() {
+        console.log('Pagemanager was initialised.');
         this.data = new Data();
         this.panels = [new Panel(this)];
     }

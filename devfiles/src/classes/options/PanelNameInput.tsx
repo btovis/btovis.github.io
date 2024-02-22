@@ -1,4 +1,5 @@
-import Query from '../query/Query';
+import Panel from '../Panel';
+import { Query } from '../query/Query';
 import InputOption from './InputOption';
 
 /**
@@ -7,7 +8,7 @@ import InputOption from './InputOption';
  * panel.
  */
 export default class PanelNameInput extends InputOption {
-    private text: string = 'Default Panel';
+    private text: string;
 
     public render(): JSX.Element[] {
         console.log('Rendering PanelNameInput: ' + this.text);
@@ -28,13 +29,18 @@ export default class PanelNameInput extends InputOption {
             </div>
         ];
     }
+
+    public constructor(panel: Panel, name: string, text) {
+        super(panel, name);
+        this.text = text;
+    }
+
     public callback(newValue: any): void {
         this.text = newValue;
+
         //Refresh to show new panel name
-        // @ts-expect-error: now need to decide how to allow option for both panel and global
         this.panel.refresh();
         //Refresh sidebar for new panel name too
-        // @ts-expect-error: now need to decide how to allow option for both panel and global
         this.panel.pageManager.refreshPanelOptions();
     }
     public query(): Query {

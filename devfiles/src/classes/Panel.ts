@@ -9,6 +9,7 @@ import BarChart from './widgets/BarChart';
 import Widget from './widgets/Widget';
 import WidgetConfig from './widgets/WidgetConfig';
 import DataFilterer from './data/DataFilterer';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -24,25 +25,31 @@ export default class Panel {
     private nameInput: PanelNameInput;
 
     public dataFilterer: DataFilterer;
+    public readonly uuid: number;
 
     public constructor(pageManager: PageManager) {
+        this.uuid = uuidv4();
         this.pageManager = pageManager;
-        this.nameInput = new PanelNameInput(this, 'Panel Name');
+        this.nameInput = new PanelNameInput(
+            this,
+            'Panel Name',
+            'Panel ' + ((this.pageManager.panels?.length || 0) + 1)
+        );
         this.dataFilterer = new DataFilterer(pageManager.getData());
         const testConfig = new WidgetConfig();
-        this.widgets = [new BarChart(this.dataFilterer, testConfig)];
+        this.widgets = [new BarChart(this, testConfig)];
         this.baseSidebar = new Sidebar([
             this.nameInput, //Panel name. Identity filter
             new Geographic(this, 'Region'), //Positional filter
             new TimeRange(this, 'Time Range'), //Time range for timestamp filtering
-            new Selector(this, 'Species'), //Species. TODO: May need special option
+            new Selector(this, 'Species', []), //Species. TODO: May need special option
             new NumericInput(this, 'Minimum Probability'),
-            new Selector(this, 'Warnings'),
-            new Selector(this, 'Call Type'),
-            new Selector(this, 'Project'),
-            new Selector(this, 'Classifier Name'),
-            new Selector(this, 'Batch Name'),
-            new Selector(this, 'User ID')
+            new Selector(this, 'Warnings', []),
+            new Selector(this, 'Call Type', []),
+            new Selector(this, 'Project', []),
+            new Selector(this, 'Classifier Name', []),
+            new Selector(this, 'Batch Name', []),
+            new Selector(this, 'User ID', [])
         ]);
     }
 
@@ -55,7 +62,7 @@ export default class Panel {
      * /
     //public displaySidebar(): void {}
 
-    /*
+    /**
      * Iterates each widget and adds all its options together
      */
     public generateSidebar(): Sidebar {
@@ -63,10 +70,9 @@ export default class Panel {
         //InputOption sidebars DO NOT contain filters, only widget-specific
         //options.
 
-        const options = []; //TODO HANDLE WIDGET OPTIONS WHEN READY.
-        // const options = this.widgets
-        //     .map((widget) => widget.generateSidebar().options)
-        //     .reduce((acc, a) => acc.concat(a), []);
+        const options = this.widgets
+            .map((widget) => widget.generateSidebar().options)
+            .reduce((acc, a) => acc.concat(a), []);
 
         return new Sidebar(this.baseSidebar.options.concat(options));
     }

@@ -1,5 +1,4 @@
 import { Filter, PredicateType } from './Filter.ts';
-import ReferenceSet from '../data/setutils/ReferenceSet.ts';
 
 export default class RangeFilter implements Filter {
     private l: number;

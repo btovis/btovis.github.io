@@ -4,6 +4,8 @@ import SetElement from './setutils/SetElement';
 import SetFilter from '../filters/SetFilter';
 import ReferenceSet from './setutils/ReferenceSet';
 import { Attribute } from './Data';
+import { Query, QueryType } from '../query/Query';
+import RangeFilter from '../filters/RangeFilter';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
@@ -30,7 +32,7 @@ export default class DataFilterer {
         // Preallocate to max size
         const db = data.readDatabase();
         this.filteredData = new Array(db.length);
-        for (let i = 0; i < db.length; i++) this.filteredData[i] = data[i];
+        for (let i = 0; i < db.length; i++) this.filteredData[i] = db[i];
 
         this.filteredDataArrLen = db.length;
     }
@@ -97,6 +99,30 @@ export default class DataFilterer {
         this.recalculateFilteredData();
     }
 
+    // The caller needs to ensure that filters[columnIndex] is a set filter and not a range filter
+    public invertSetFilter(columnIndex) {
+        let c: SetFilter = this.filtersClasses[columnIndex] as SetFilter;
+        if (!c) {
+            c = this.filtersClasses[columnIndex] = new SetFilter(
+                this.data.sets[columnIndex],
+                this.data.sets[columnIndex]
+            );
+            this.opaqueFilters.add(columnIndex);
+            this.filterPredsForData[columnIndex] = undefined;
+            this.recalculateFilteredData();
+            return;
+        }
+        c.invertExcludesSet();
+        const [status, pred] = this.filtersClasses[columnIndex].getPredicate();
+        if (status == PredicateType.Opaque) {
+            this.opaqueFilters.add(columnIndex);
+        } else {
+            this.opaqueFilters.delete(columnIndex);
+        }
+        this.filterPredsForData[columnIndex] = pred;
+        this.recalculateFilteredData();
+    }
+
     public recalculateFilteredData() {
         if (this.opaqueFilters.size) {
             this.filteredDataArrLen = 0;
@@ -127,6 +153,58 @@ export default class DataFilterer {
         this.filteredDataArrLen = l;
     }
 
+    // recalculates data
+    public processQuery(q: Query) {
+        switch (q[1]) {
+            case QueryType.Range:
+                this.replaceFilter(q[0], new RangeFilter(q[2], q[3]));
+                break;
+            case QueryType.SetElem:
+                this.updateSetFilter(q[0], q[2], !q[3]);
+                break;
+            case QueryType.Set:
+                if (!q[2]) {
+                    // reject all
+                    this.filtersClasses[q[0]] = new SetFilter(
+                        this.data.sets[q[0]],
+                        this.data.sets[q[0]]
+                    );
+                    this.opaqueFilters.add(q[0]);
+                    this.filterPredsForData[q[0]] = undefined;
+                } else if (q[2] == 2) {
+                    // invert
+                    (this.filtersClasses[q[0]] as SetFilter).invertExcludesSet();
+                    const [status, pred] = this.filtersClasses[q[0]].getPredicate();
+                    if (status == PredicateType.Opaque) {
+                        this.opaqueFilters.add(q[0]);
+                    } else {
+                        this.opaqueFilters.delete(q[0]);
+                    }
+                    this.filterPredsForData[q[0]] = pred;
+                } else {
+                    // accept all
+                    (this.filtersClasses[q[0]] as SetFilter).setExcludesSet(new ReferenceSet());
+                    this.opaqueFilters.delete(q[0]);
+                    this.filterPredsForData[q[0]] = undefined;
+                }
+                break;
+            case QueryType.SetAsArray:
+                {
+                    const excludes = new ReferenceSet();
+                    for (const e of q[2]) {
+                        const ref = this.data.sets[q[0]].getRef(e);
+                        if (!ref) continue;
+                        excludes.addRef(ref);
+                    }
+                    this.filtersClasses[q[0]] = new SetFilter(excludes, this.data.sets[q[0]]);
+                    (this.filtersClasses[q[0]] as SetFilter).invertExcludesSet();
+                    this.replaceFilter(q[0], this.filtersClasses[q[0]]);
+                }
+                return;
+        }
+        this.recalculateFilteredData();
+    }
+
     // This gives you an array of full size, but one shouldn't access it beyond the first dataArrLen elements.
     // So please use for (var i = 0; i < dataArrLen ; i++ ) { ...}
     // and don't use map, forEach.
@@ -140,7 +218,11 @@ export default class DataFilterer {
     }
 
     // throws if it fails
-    public getColumnIndex(a: Attribute): number {
+    public getColumnIndex(a: Attribute | string): number {
         return this.data.getIndexForColumn(a);
+    }
+
+    public getDataStats() {
+        return this.data.dataStats;
     }
 }

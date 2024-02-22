@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SidebarComp from './ui/SidebarComp.tsx';
@@ -11,7 +11,7 @@ function App() {
     const [overlayMessage, setOverlayMessage] = useState('');
     const [isOverlaySuccess, setIsOverlaySuccess] = useState(true);
     const [r, dud] = useState(0);
-    const [pageManager, _] = useState(new PageManager());
+    const [pageManager, _] = useState(PageManager.get());
     pageManager.refreshEverything = () => dud(r + 1);
 
     const borderRef = useRef(null);
@@ -116,6 +116,29 @@ function App() {
                     </table>
                 </div>
             </Fade>
+            <div id='delete_panel_modal' className='modal'>
+                <div className='modal-box'>
+                    <p>Are you sure you want to delete this panel?</p>
+                    <p>
+                        <i id='delete_modal_name'></i>
+                    </p>
+                    <button
+                        className='modal-btn modal-cancel-btn'
+                        onClick={() =>
+                            (document.getElementById('delete_panel_modal').style.display = 'none')
+                        }
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        id='delete_modal_btn'
+                        className='modal-btn delete-btn'
+                        onClick={() => {}}
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
             {/* This leads to the rest of the UI components*/}
             <div className='sidebar'>
                 <SidebarComp
