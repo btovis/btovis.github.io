@@ -1,6 +1,11 @@
 import { it, expect, beforeEach, describe } from 'vitest';
 import { Attribute } from './Data';
-import { testDataFilename as filename, loadData } from '../../tests/utils';
+import {
+    testDataFilename as filename,
+    testDataFilename2 as filename2,
+    loadData,
+    readBytes
+} from '../../tests/utils';
 
 describe('Data', async () => {
     let data;
@@ -10,6 +15,12 @@ describe('Data', async () => {
     describe('addCSV', () => {
         it('should add the data', () => {
             expect(data.readDatabase()).not.toStrictEqual([]);
+        });
+        it('should add more data with second CSV', async () => {
+            const length = data.readDatabase().length;
+            const data2 = await readBytes(filename2);
+            await data.addCSV(filename2, data2);
+            expect(data.readDatabase().length).toBeGreaterThan(length);
         });
     });
     describe('getIndexForColumn', () => {
