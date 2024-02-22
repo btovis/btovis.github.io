@@ -30,7 +30,11 @@ export default class Panel {
     public constructor(pageManager: PageManager) {
         this.uuid = uuidv4();
         this.pageManager = pageManager;
-        this.nameInput = new PanelNameInput(this, 'Panel Name');
+        this.nameInput = new PanelNameInput(
+            this,
+            'Panel Name',
+            'Panel ' + ((this.pageManager.panels?.length || 0) + 1)
+        );
         this.dataFilterer = new DataFilterer(pageManager.getData());
         const testConfig = new WidgetConfig();
         this.widgets = [new BarChart(this, testConfig)];

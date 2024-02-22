@@ -8,7 +8,7 @@ import InputOption from './InputOption';
  * panel.
  */
 export default class PanelNameInput extends InputOption {
-    private text: string = 'Default Panel';
+    private text: string;
 
     public render(): JSX.Element[] {
         console.log('Rendering PanelNameInput: ' + this.text);
@@ -29,6 +29,12 @@ export default class PanelNameInput extends InputOption {
             </div>
         ];
     }
+
+    public constructor(panel: Panel, name: string, text) {
+        super(panel, name);
+        this.text = text;
+    }
+
     public callback(newValue: any): void {
         this.text = newValue;
 
