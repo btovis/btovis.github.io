@@ -10,9 +10,7 @@ import Widget from './widgets/Widget';
 import WidgetConfig from './widgets/WidgetConfig';
 import DataFilterer from './data/DataFilterer';
 import { v4 as uuidv4 } from 'uuid';
-import SetQueryElement from './query/SetQueryElement';
 import InputOption from './options/InputOption';
-import SetQueryArray from './query/SetQueryArray';
 import { Attribute } from './data/Data';
 
 export default class Panel {
@@ -53,22 +51,20 @@ export default class Panel {
     }
 
     private updateInputOptions(): void {
+        console.log('file selector', 0);
         this.fileSelector = new Selector(
             this,
             'Active Files',
-            [...this.dataFilterer.getDataStats().getFilesMeta().value.raws.keys()],
+            0, //Column Index 0 is file name
             true,
             [],
             this.fileSelector
         );
+        console.log('warnings selector', Attribute.warnings);
         this.warningsSelector = new Selector(
             this,
             'Warnings',
-            [
-                ...this.pageManager.data.sets[
-                    this.dataFilterer.getColumnIndex(Attribute.warnings)
-                ].raws.keys()
-            ],
+            this.dataFilterer.getColumnIndex(Attribute.warnings),
             true,
             [],
             this.warningsSelector
@@ -83,17 +79,10 @@ export default class Panel {
      */
     public recalculateFilters(changedOption: InputOption): void {
         let query = null;
-        switch (changedOption.name) {
-            case this.fileSelector.name:
-                //Filename is column index 0
-                query = new SetQueryArray(0).query([...this.fileSelector.selected]);
-                break;
-            case this.warningsSelector.name:
-                query = new SetQueryArray(
-                    this.dataFilterer.getColumnIndex(Attribute.warnings)
-                ).query([...this.warningsSelector.selected]);
-                break;
-        }
+        //Remove instanceof and null guard once all the filters are implemented
+        //we can just call changedOption.query.
+        if (changedOption instanceof Selector) query = changedOption.query();
+
         if (query === null) return;
         this.dataFilterer.processQuery(query);
     }
