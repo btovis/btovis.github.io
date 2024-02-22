@@ -112,8 +112,6 @@ export default class Selector extends InputOption {
      * @returns Query object to be applied by the panel in recalculateFilters(this)
      */
     public query(): Query {
-        return new SetQueryArray(this.columnIndex).query(
-            [...this.selected].map((x) => (x == '<empty>' ? '' : x))
-        );
+        return new SetQueryArray(this.columnIndex).query([...this.selected]);
     }
 }
