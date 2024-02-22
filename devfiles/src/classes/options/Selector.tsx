@@ -80,7 +80,7 @@ export default class Selector extends InputOption {
                                 type='checkbox'
                                 value=''
                             />
-                            <label className='form-check-label'>{item}</label>
+                            <label className='form-check-label'>{item || '<empty>'}</label>
                         </div>
                     );
                 })}
