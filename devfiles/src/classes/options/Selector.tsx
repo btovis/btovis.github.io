@@ -80,7 +80,7 @@ export default class Selector extends InputOption {
                                 type='checkbox'
                                 value=''
                             />
-                            <label className='form-check-label'>{item}</label>
+                            <label className='form-check-label'>{item || '<empty>'}</label>
                         </div>
                     );
                 })}
@@ -112,6 +112,8 @@ export default class Selector extends InputOption {
      * @returns Query object to be applied by the panel in recalculateFilters(this)
      */
     public query(): Query {
-        return new SetQueryArray(this.columnIndex).query([...this.selected]);
+        return new SetQueryArray(this.columnIndex).query(
+            [...this.selected].map((x) => (x == '<empty>' ? '' : x))
+        );
     }
 }
