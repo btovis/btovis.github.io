@@ -192,7 +192,8 @@ export default class DataFilterer {
                 {
                     const excludes = new ReferenceSet();
                     for (const e of q[2]) {
-                        const ref = this.data.sets[q[0]].addRawOrGet(e);
+                        const ref = this.data.sets[q[0]].getRef(e);
+                        if (!ref) continue;
                         excludes.addRef(ref);
                     }
                     this.filtersClasses[q[0]] = new SetFilter(excludes, this.data.sets[q[0]]);
