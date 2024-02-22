@@ -19,10 +19,10 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     const panel = params.pageManager.getSelectedPanel();
     const renderedOptions = panel
         .generateSidebar()
-        .options.map((option, optionIdx) => (
+        .options.map((option) => (
             <div
                 // key must be unique
-                key={generateHash(params.pageManager.selectedPanel, optionIdx)}
+                key={option.uuid}
             >
                 {option.render()}
             </div>

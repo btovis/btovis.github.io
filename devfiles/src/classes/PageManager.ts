@@ -22,7 +22,7 @@ export default class PageManager {
     private constructor() {
         console.log('Pagemanager was initialised.');
         this.data = new Data();
-        this.panels = [new Panel(this)];
+        this.panels = [];
     }
 
     public getData(): Data {
@@ -31,12 +31,12 @@ export default class PageManager {
 
     public addCSV(CSVName: string, CSVFile: Uint8Array) {
         this.data.addCSV(CSVName, CSVFile);
-        this.panels.forEach((p) => p.dataFilterer.dataUpdated());
+        this.panels.forEach((p) => p.refresh());
     }
 
     public removeCSV(CSVName: string) {
         this.data.removeCSV(CSVName);
-        this.panels.forEach((p) => p.dataFilterer.dataUpdated());
+        this.panels.forEach((p) => p.refresh());
     }
 
     public addPanel(panel: Panel) {
