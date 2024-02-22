@@ -23,6 +23,35 @@ describe('Data', async () => {
             expect(data.readDatabase().length).toBeGreaterThan(length);
         });
     });
+    describe('removeCSV', () => {
+        it('should remove the data', () => {
+            const length = data.readDatabase().length;
+            data.removeCSV(filename);
+            expect(data.readDatabase().length).toBeLessThan(length);
+        });
+        it('should remove the second CSV only', async () => {
+            const length = data.readDatabase().length;
+            const data2 = await readBytes(filename2);
+            await data.addCSV(filename2, data2);
+            data.removeCSV(filename2);
+            expect(data.readDatabase().length).toEqual(length);
+        });
+        it('should remove the first CSV only', async () => {
+            const length1 = data.readDatabase().length;
+            const data2 = await readBytes(filename2);
+            await data.addCSV(filename2, data2);
+            const length2 = data.readDatabase().length - length1;
+            data.removeCSV(filename);
+            expect(data.readDatabase().length).toEqual(length2);
+        });
+        it('should remove all data', async () => {
+            const data2 = await readBytes(filename2);
+            await data.addCSV(filename2, data2);
+            data.removeCSV(filename);
+            data.removeCSV(filename2);
+            expect(data.readDatabase()).toStrictEqual([]);
+        });
+    });
     describe('getIndexForColumn', () => {
         it('should return a number', () => {
             const accessor = data.getIndexForColumn(Attribute.latitude);
