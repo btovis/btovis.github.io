@@ -57,7 +57,7 @@ export default class DataStats {
         return new SpeciesMeta(this.species);
     }
 
-    public getSetMeta() {
+    public getFilesMeta() {
         return new SetMeta(this.data.sets[0]);
     }
 
