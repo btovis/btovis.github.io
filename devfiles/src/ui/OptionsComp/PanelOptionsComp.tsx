@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
-import generateHash from '../../utils/generateHash.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * This is for the panel settings inside the sidebar.
@@ -19,10 +19,10 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     const panel = params.pageManager.getSelectedPanel();
     const renderedOptions = panel
         .generateSidebar()
-        .options.map((option, optionIdx) => (
+        .options.map((option) => (
             <div
                 // key must be unique
-                key={generateHash(params.pageManager.selectedPanel, optionIdx)}
+                key={option.uuid}
             >
                 {option.render()}
             </div>
@@ -31,7 +31,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
 
     // TODO: Display panel name to be deleted
     const deleteButton = (
-        <div>
+        <div key={uuidv4()}>
             <button
                 className='delete-btn'
                 onClick={() => {
@@ -59,7 +59,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
 
     return (
         <>
-            <h2>{panel.getName()}</h2>
+            <h2 key={uuidv4()}>{panel.getName()}</h2>
             {renderedOptions}
             {deleteButton}
         </>

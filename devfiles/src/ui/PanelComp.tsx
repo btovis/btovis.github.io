@@ -15,10 +15,10 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [snapRight, setSnapRight] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
-    const refresh = () => setSnapRight(Math.abs(snapRight) + 1);
+    const refreshComponent = () => setSnapRight(Math.abs(snapRight) + 1);
 
     const panel = params.pageManager.panels[params.panelIdx];
-    panel.refresh = refresh;
+    panel.refreshComponent = refreshComponent;
     const widgets = panel.getWidgets().map((w, idx) => {
         return (
             <WidgetComp
