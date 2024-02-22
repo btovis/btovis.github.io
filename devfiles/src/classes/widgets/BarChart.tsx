@@ -48,7 +48,7 @@ export default class BarChart extends Widget {
         return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
     }
     public delete(): void {
-        throw new Error('Method not implemented.');
+        //throw new Error('Method not implemented.');
     }
     public clone(): Widget {
         throw new Error('Method not implemented.');

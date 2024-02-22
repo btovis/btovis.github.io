@@ -195,11 +195,17 @@
 }
 
 .widget {
-  box-sizing: border-box;
+  min-height: 100%;
+  width: fit-content;
+  position: relative;
+  float: left;
   border: solid;
-  border-radius: 2px;
-  height: 100%;
-  width: 300px;
+  border-color: rgba(0, 0, 0, 0);
+  border-radius: 10px;
+}
+
+.widget:hover {
+  border-color: lightgray;
 }
 
 .widget-row {
@@ -221,6 +227,10 @@
   width: 150px;
 }
 
+.close-widget {
+  position: relative;
+  float: right;
+}
 .delete-btn {
   border-width: medium;
   border-color: #d00000;
