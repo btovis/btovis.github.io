@@ -106,7 +106,7 @@ export function processDates(
     }
 
     if (scanNeeded) {
-        for (let i = 0; i < dataArr.length; i++) {
+        for (let i = startI; i < dataArr.length; i++) {
             const y = processBeforeScan(dataArr[i][columnI]);
             if (y[0] > '12' || y[1] > '12') {
                 if (y[0] > '12') {
@@ -148,7 +148,7 @@ export function processDates(
     }
 
     const l = dataArr.length;
-    for (let i = 0; i < l; i++) {
+    for (let i = startI; i < l; i++) {
         dataArr[i][columnI] = processor(dataArr[i][columnI]);
     }
 }

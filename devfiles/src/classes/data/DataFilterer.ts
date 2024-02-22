@@ -187,6 +187,20 @@ export default class DataFilterer {
                     this.opaqueFilters.delete(q[0]);
                     this.filterPredsForData[q[0]] = undefined;
                 }
+                break;
+            case QueryType.SetAsArray:
+                {
+                    const excludes = new ReferenceSet();
+                    for (const e of q[2]) {
+                        const ref = this.data.sets[q[0]].getRef(e);
+                        if (!ref) continue;
+                        excludes.addRef(ref);
+                    }
+                    this.filtersClasses[q[0]] = new SetFilter(excludes, this.data.sets[q[0]]);
+                    (this.filtersClasses[q[0]] as SetFilter).invertExcludesSet();
+                    this.replaceFilter(q[0], this.filtersClasses[q[0]]);
+                }
+                return;
         }
         this.recalculateFilteredData();
     }
