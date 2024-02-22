@@ -38,8 +38,11 @@ export default class DataStats {
             }
             this.timeRange[0] = min;
             this.timeRange[1] = max;
+        } else {
+            this.timeRange[0] = -Infinity as unknown as Date;
+            this.timeRange[1] = +Infinity as unknown as Date;
         }
-        if (!dateCol || !this.timeRange[0] || !this.timeRange[1]) {
+        if (!dateCol || this.timeRange[0] == (-Infinity as unknown as Date)) {
             this.timeRange[2] = undefined;
         } else {
             this.timeRange[2] = dateCol;
