@@ -21,6 +21,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         .generateSidebar()
         .options.map((option) => (
             <div
+                className='inputOption'
                 // key must be unique
                 key={option.uuid}
             >
@@ -58,11 +59,10 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     );
 
     return (
-        <>
-            <h2 key={uuidv4()}>{panel.getName()}</h2>
+        <div key={uuidv4()}>
             {renderedOptions}
             {deleteButton}
-        </>
+        </div>
     );
 }
 

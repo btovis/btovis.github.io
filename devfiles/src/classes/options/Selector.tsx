@@ -1,3 +1,4 @@
+import { Accordion } from 'react-bootstrap';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import SetQueryArray from '../query/SetQueryArray';
@@ -7,10 +8,11 @@ export default class Selector extends InputOption {
     //Internal state unique to every option class.
     //Use this to store current selections
     private choices: string[];
+    private searchState: string = '';
     public selected: Set<string> = new Set();
     public readonly columnIndex;
 
-    /**     *
+    /**
      * @param panel The associated panel
      * @param name Name of the Selector option
      * @param choices If this is a number, it will be the column index of the thing
@@ -59,32 +61,91 @@ export default class Selector extends InputOption {
      * If you want other state like a search bar, you can just
      * change the internal input field and trigger a re-render
      * with this.panel.pageManager.refreshPanelOptions();
+     *
+     *
      */
     public render(): JSX.Element[] {
+        //If there are more than 5 selections, enable advanced options
+        // like search
+        let searchBar = <></>;
+        if (this.choices.length > 5) {
+            searchBar = (
+                <div style={{ paddingBottom: '5px' }}>
+                    <input
+                        type='text'
+                        list={this.uuid.toString() + '-search'}
+                        placeholder='Search'
+                        onChange={(event) => {
+                            this.searchState = event.target.value;
+                            //Optimisation potential: Don't refresh everything for this
+                            this.panel.pageManager.refreshPanelOptions();
+                        }}
+                    />
+                    <datalist id={this.uuid.toString() + '-search'}>
+                        {this.choices.map((item) => {
+                            return <option value={item} />;
+                        })}
+                    </datalist>
+                </div>
+            );
+        }
         return [
-            <div>
-                <p>{this.name}</p>
-                {this.choices.map((item, itemIdx) => {
-                    return (
-                        <div>
-                            <input
-                                key={this.panel.uuid + 11 * itemIdx}
-                                onChange={(event) =>
-                                    this.callback({
-                                        checked: event.currentTarget.checked,
-                                        item: item
-                                    })
-                                }
-                                defaultChecked={this.selected.has(item)}
-                                className='form-check-input'
-                                type='checkbox'
-                                value=''
-                            />
-                            <label className='form-check-label'>{item || '<empty>'}</label>
+            <Accordion defaultActiveKey='0'>
+                <Accordion.Item eventKey='0'>
+                    <Accordion.Header>
+                        <span>
+                            <strong>{this.name}</strong>
+                        </span>
+                        <input
+                            style={{ marginLeft: '10px' }}
+                            key={this.panel.uuid - 11}
+                            onChange={(event) =>
+                                this.callback(event.currentTarget.checked ? this.choices : [])
+                            }
+                            checked={this.selected.size == this.choices.length}
+                            className='form-check-input'
+                            type='checkbox'
+                        />
+                    </Accordion.Header>
+                    <Accordion.Body>
+                        {searchBar}
+                        <div className='form-check'>
+                            {this.choices.map((item, itemIdx) => {
+                                return (
+                                    <div
+                                        hidden={
+                                            this.searchState.length > 0 &&
+                                            !item
+                                                .toLowerCase()
+                                                .startsWith(this.searchState.toLowerCase())
+                                        }
+                                    >
+                                        <input
+                                            key={this.panel.uuid + 11 * itemIdx}
+                                            onChange={(event) =>
+                                                this.callback({
+                                                    checked: event.currentTarget.checked,
+                                                    item: item
+                                                })
+                                            }
+                                            id={this.uuid.toString() + item}
+                                            checked={this.selected.has(item)}
+                                            className='form-check-input'
+                                            type='checkbox'
+                                        />
+                                        <label
+                                            className='form-check-label selectorLabel'
+                                            htmlFor={this.uuid.toString() + item}
+                                        >
+                                            {item.trim() == '' ? 'No Warning' : item}
+                                        </label>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    );
-                })}
-            </div>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
         ];
     }
 
@@ -96,10 +157,18 @@ export default class Selector extends InputOption {
      * a tickbox and the string value of the item that was ticked
      */
     public callback(newValue: any): void {
-        if (newValue.checked) this.selected.add(newValue.item);
-        else this.selected.delete(newValue.item);
-        //Ask the panel to re-calculate its filters
-        this.panel.recalculateFilters(this);
+        //If this is a boolean, that means this is a single change
+        if (typeof newValue.checked === 'boolean') {
+            if (newValue.checked) this.selected.add(newValue.item);
+            else this.selected.delete(newValue.item);
+        } //If not, its an array and we can apply it entirely.
+        else {
+            this.selected = new Set<string>(newValue as string[]);
+        }
+        //Ask the panel to re-calculate its filters ONLY if the
+        //column index is defined. Some selectors do not use
+        //columns (i.e. tablewidget)
+        if (this.columnIndex !== undefined) this.panel.recalculateFilters(this);
         //Refresh to update the associated widget
         //Potential to optimise here
         this.panel.refreshComponent();
