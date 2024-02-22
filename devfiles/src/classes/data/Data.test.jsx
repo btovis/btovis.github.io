@@ -5,7 +5,7 @@ import {
     testDataFilename2 as filename2,
     loadData,
     readBytes
-} from '../../tests/utils';
+} from '../../tests/utils.test';
 
 describe('Data', async () => {
     let data;

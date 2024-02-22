@@ -1,11 +1,12 @@
 import { Data } from '../classes/data/Data';
 import fs from 'fs';
 import { Buffer } from 'buffer';
+import { describe, it, expect } from 'vitest';
 
 const testDataFilename = 'devfiles/src/tests/testdata.csv';
 const testDataFilename2 = 'devfiles/src/tests/testdata2.csv';
 
-async function loadData(filename: string | undefined) {
+async function loadData(filename) {
     if (filename === undefined) {
         filename = testDataFilename;
     }
@@ -18,7 +19,7 @@ async function loadData(filename: string | undefined) {
     return data;
 }
 
-async function readBytes(filename: string) {
+async function readBytes(filename) {
     const fd = await fs.promises.open(filename, 'r');
     const bufferSize = 1024;
     const buffer = Buffer.alloc(bufferSize);
@@ -33,5 +34,19 @@ async function readBytes(filename: string) {
     }
     return byteArray;
 }
+
+describe('readBytes', () => {
+    it('should read the bytes', async () => {
+        const byteArray = await readBytes(testDataFilename);
+        expect(byteArray).not.toBeNull();
+    });
+});
+
+describe('loadData', () => {
+    it('should load the data', async () => {
+        const data = await loadData(testDataFilename);
+        expect(data).not.toBeNull();
+    });
+});
 
 export { loadData, readBytes, testDataFilename, testDataFilename2 };
