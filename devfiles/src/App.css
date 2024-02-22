@@ -227,3 +227,15 @@
   background-color: #f33333;
   color: white;
 }
+
+.numeric-input {
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.numeric-input input {
+  width: 4rem;
+}

@@ -1,11 +1,19 @@
 import Widget from './Widget.js';
 import WidgetConfig from './WidgetConfig.js';
+import Panel from '../Panel.js';
 import { Data } from '../data/Data.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
 
 export default class BarChart extends Widget {
+    /**
+     * Initiatise all options here in private variables. These options will persist
+     * state for the widget.
+     * @param panel
+     * @param config
+     */
+
     public generateSidebar(): Sidebar {
         return new Sidebar([]);
     }
