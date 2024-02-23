@@ -54,16 +54,8 @@ export default class TableWidget extends Widget {
         const data = this.panel.dataFilterer.getData()[0];
         const dataLength = this.panel.dataFilterer.getData()[1];
         const indices = this.columns.map((c) => c[1]);
-        this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
         //Collect and group the relevant rows.
-        /*const rowMap = TableWidget.groupByFrequency(
-            this.panel.dataFilterer.getData()[0],
-            this.panel.dataFilterer.getData()[1],
-            selectedIndices
-        );
-
-        //Sort the rows by count. Potential for optimisation here if needed, this is insertion sort
-        this.tableEntries = TableWidget.sortByFrequency(rowMap);*/
+        this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
 
         return new Sidebar(this.options);
     }
@@ -105,6 +97,7 @@ export default class TableWidget extends Widget {
         arr.sort((a, b) => (a == b ? 0 : a < b ? -1 : 1));
 
         // Collect same strings, they're consecutive
+        //Potential optimisation to build the DOM straight in here
         const newArr = [];
         let old: string = arr[0],
             oldCount: number = 1;
@@ -122,51 +115,6 @@ export default class TableWidget extends Widget {
         newArr.sort((a, b) => b[1] - a[1]);
 
         return newArr;
-    }
-
-    //These are static to facilitate testing.
-    protected static groupByFrequency(
-        dataRows: any,
-        dataLength: number,
-        selectedIndices: number[]
-    ) {
-        const rowMap: Map<string, number> = new Map();
-        for (let i = 0; i < dataLength; i++) {
-            const row = dataRows[i];
-            const keyList = [];
-            selectedIndices.forEach((j) => {
-                if (row[j] instanceof SetElement) keyList.push(row[j].value);
-                else keyList.push(row[j]);
-            });
-            if (keyList.includes('')) continue;
-            const key = keyList.join('\0');
-
-            const count = rowMap.get(key);
-            rowMap.set(key, count ? count + 1 : 1);
-        }
-        return rowMap;
-    }
-
-    //These are static to facilitate testing.
-    protected static sortByFrequency(rowMap: Map<string, number>) {
-        const entries: [string, number][] = [];
-        const iterator = rowMap.entries();
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-            const entry = iterator.next();
-            if (entry.done === true) break;
-            const freq: number = entry.value[1];
-            let inserted = false;
-            for (let i = 0; i < entries.length; i++) {
-                if (entries[i][1] < freq) {
-                    entries.splice(i, 0, entry.value);
-                    inserted = true;
-                    break;
-                }
-            }
-            if (!inserted) entries.push(entry.value);
-        }
-        return entries;
     }
 
     public render(): JSX.Element {
