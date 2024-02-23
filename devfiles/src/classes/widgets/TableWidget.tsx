@@ -7,6 +7,7 @@ import Panel from '../Panel.js';
 import { Attribute, Data } from '../data/Data.js';
 import SetElement from '../data/setutils/SetElement.js';
 import PageManager from '../PageManager.js';
+import { columnToBranching } from '../data/datautils/table_integrate.js';
 
 /**
  * This will take in a set of input columns, then

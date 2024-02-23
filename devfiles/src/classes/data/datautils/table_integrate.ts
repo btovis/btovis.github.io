@@ -254,4 +254,54 @@ function columnNeedsSet(columnName) {
     }
 }
 
-export { integrateNewCSV };
+// note: the value is a statistical ordering and doesn't have a meaning
+function columnToBranching(columnName) {
+    switch (columnName) {
+        case '_FILE':
+            return 0;
+        case 'USER ID':
+            return 1;
+        case 'PROJECT NAME':
+            return 2;
+        case 'CLASSIFIER NAME':
+            return 3;
+        case 'CALL TYPE':
+            return 4;
+        case 'ORIGINAL FILE PART':
+            return 5;
+        case 'SPECIES GROUP':
+            return 6;
+        case 'WARNINGS':
+            return 7;
+        case 'SURVEY DATE':
+            return 8;
+        case 'UPLOAD KEY':
+            return 9;
+        case 'BATCH NAME':
+            return 10;
+        case 'SPECIES':
+            return 11;
+        case 'SCIENTIFIC NAME':
+            return 12;
+        case 'ENGLISH NAME':
+            return 13;
+        case 'LATITUDE':
+            return 14;
+        case 'LONGITUDE':
+            return 15;
+        case 'PROBABILITY':
+            return 16;
+        case 'TIME':
+            return 17;
+        case 'ORIGINAL FILE NAME':
+            return 18;
+        case 'RECORDING FILE NAME':
+            return 19;
+        case 'ACTUAL DATE':
+            return 20;
+        default:
+            return 21;
+    }
+}
+
+export { integrateNewCSV, columnToBranching };
