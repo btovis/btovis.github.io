@@ -17,6 +17,7 @@ import PageManager from '../PageManager.js';
 export default class TableWidget extends Widget {
     //A SORTED array of table keys:frequencies. It is like that for ease of sorting.
     private tableEntries: [string, number][] = [];
+    private columns: [column: string, columnIndex: number][] = [];
 
     private selectorOption: Selector;
 
@@ -41,33 +42,93 @@ export default class TableWidget extends Widget {
     public generateSidebar(): Sidebar {
         //Re-calculate table entries when this is called based on the options
         //Contains a numerical index of selected columns
-        const selectedIndices = new Set<number>();
+        this.columns = [];
         this.selectorOption.selected.forEach((colName) => {
             try {
-                selectedIndices.add(this.panel.dataFilterer.getColumnIndex(colName));
+                this.columns.push([colName, this.panel.dataFilterer.getColumnIndex(colName)]);
             } catch (e) {
                 /* Data doesn't have that - skip */
             }
         });
 
+        const data = this.panel.dataFilterer.getData()[0];
+        const dataLength = this.panel.dataFilterer.getData()[1];
+        const indices = this.columns.map((c) => c[1]);
+        this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
         //Collect and group the relevant rows.
-        const rowMap = TableWidget.groupByFrequency(
+        /*const rowMap = TableWidget.groupByFrequency(
             this.panel.dataFilterer.getData()[0],
             this.panel.dataFilterer.getData()[1],
             selectedIndices
         );
 
         //Sort the rows by count. Potential for optimisation here if needed, this is insertion sort
-        this.tableEntries = TableWidget.sortByFrequency(rowMap);
+        this.tableEntries = TableWidget.sortByFrequency(rowMap);*/
 
         return new Sidebar(this.options);
+    }
+
+    protected static processAsArray(
+        data: (string | number | SetElement)[][],
+        dataLength: number,
+        indices: number[]
+    ): [string, number][] {
+        // Write rows as strings
+        // Order the strings
+        // Collect same strings, they're consecutive
+        // Sort by frequency
+
+        const arr = [],
+            indicesLength = indices.length;
+
+        // Rows as strings
+
+        // variable "row" reused inside loop
+        const row = new Array(indicesLength);
+        loop: for (let i = 0; i < dataLength; i++) {
+            const dataRow = data[i];
+            for (let x = 0; x < indicesLength; x++) {
+                const val = dataRow[indices[x]];
+                if (val instanceof SetElement) row[x] = val.value;
+                else row[x] = val;
+                if (!row[x]) continue loop; // issue #91: skip or not
+            }
+            arr.push(row.join('\0'));
+        }
+
+        const arrLength = arr.length;
+
+        // needed for the loop later
+        if (arrLength == 0) return [];
+
+        // Order the strings
+        arr.sort((a, b) => (a == b ? 0 : a < b ? -1 : 1));
+
+        // Collect same strings, they're consecutive
+        const newArr = [];
+        let old: string = arr[0],
+            oldCount: number = 1;
+        for (let i = 1; i < arrLength; i++) {
+            if (arr[i] == old) {
+                oldCount++;
+            } else {
+                newArr.push([old, oldCount]);
+                old = arr[i];
+                oldCount = 1;
+            }
+        }
+        newArr.push([old, oldCount]);
+        arr.length = 0;
+        newArr.sort((a, b) => b[1] - a[1]);
+
+        return newArr;
     }
 
     //These are static to facilitate testing.
     protected static groupByFrequency(
         dataRows: any,
         dataLength: number,
-        selectedIndices: Set<number>
+        selectedIndices: number[]
     ) {
         const rowMap: Map<string, number> = new Map();
         for (let i = 0; i < dataLength; i++) {
@@ -78,7 +139,7 @@ export default class TableWidget extends Widget {
                 else keyList.push(row[j]);
             });
             if (keyList.includes('')) continue;
-            const key = keyList.join(',');
+            const key = keyList.join('\0');
 
             const count = rowMap.get(key);
             rowMap.set(key, count ? count + 1 : 1);
@@ -124,12 +185,12 @@ export default class TableWidget extends Widget {
 
         //Build the DOM objects from the sorted list
         const tableRows = [];
-        for (let i = 0; i < this.tableEntries.length; i++) {
+        for (let i = 0; i < Math.min(this.tableEntries.length, 100); i++) {
             const key = this.tableEntries[i][0];
             const freq = this.tableEntries[i][1];
             const row = (
                 <tr>
-                    {key.split(',').map((colVal) => (
+                    {key.split('\0').map((colVal) => (
                         <td>{colVal}</td>
                     ))}
                     <td>{freq}</td>
@@ -143,8 +204,8 @@ export default class TableWidget extends Widget {
             <table className='table'>
                 <thead>
                     <tr>
-                        {Array.from(this.selectorOption.selected).map((colName) => (
-                            <td>{colName}</td>
+                        {this.columns.map((col) => (
+                            <td>{col[0]}</td>
                         ))}
                         <td>#</td>
                     </tr>
