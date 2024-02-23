@@ -10,17 +10,18 @@ function SidebarComp(params: { renderFileProcess: (FileList) => void; pageManage
     const [key, setKey] = useState('globalTab');
 
     params.pageManager.setSidebarTab = setKey;
-
+    //Don't give PanelOptionsComp sidebarContainer, as the children need to handle
+    //their own margins
     return (
         <Tabs activeKey={key} onSelect={(k) => setKey(k)} id='sidebar-tab-handler' justify>
             <Tab
                 eventKey='panelTab'
-                title='Panel Settings'
+                title='Panel Filters'
                 disabled={params.pageManager.selectedPanel < 0}
             >
                 <PanelOptionsComp pageManager={params.pageManager} />
             </Tab>
-            <Tab eventKey='globalTab' title='Global'>
+            <Tab className='sidebarContainer' eventKey='globalTab' title='Global'>
                 <GlobalOptionsComp
                     renderFileProcess={params.renderFileProcess}
                     pageManager={params.pageManager}

@@ -17,17 +17,15 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
 
     //Render options
     const panel = params.pageManager.getSelectedPanel();
-    const renderedOptions = panel
-        .generateSidebar()
-        .options.map((option) => (
-            <div
-                // key must be unique
-                key={option.uuid}
-            >
-                {option.render()}
-            </div>
-        ))
-        .reduce((acc, rendered) => acc.concat(rendered), []);
+    const renderedOptions = panel.generateSidebar().options.map((option) => (
+        <div
+            className='inputOption'
+            // key must be unique
+            key={option.uuid}
+        >
+            {option.render()}
+        </div>
+    ));
 
     // TODO: Display panel name to be deleted
     const deleteButton = (
@@ -58,11 +56,10 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     );
 
     return (
-        <>
-            <h2 key={uuidv4()}>{panel.getName()}</h2>
+        <div key={uuidv4()}>
             {renderedOptions}
             {deleteButton}
-        </>
+        </div>
     );
 }
 

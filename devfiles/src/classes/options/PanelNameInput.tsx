@@ -11,11 +11,10 @@ export default class PanelNameInput extends InputOption {
     private text: string;
 
     public render(): JSX.Element[] {
-        console.log('Rendering PanelNameInput: ' + this.text);
         return [
-            <div>
-                <span>Panel Name: </span>
+            <div className='sidebarContainer'>
                 <input
+                    className='form-control form-control-lg'
                     defaultValue={this.text}
                     onBlur={(e) => this.callback(e.target.value)}
                     onKeyUp={(e) => {
