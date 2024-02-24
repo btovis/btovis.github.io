@@ -11,10 +11,10 @@ function WidgetComp(params: {
 }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [r, dud] = useState(0);
-    const refresh = () => dud(r + 1);
 
     const panel = params.pageManager.panels[params.panelIdx];
     const widget = panel.getWidget(params.widgetIdx);
+    widget.refresh = () => dud(r + 1);
 
     return (
         <div className='widget'>

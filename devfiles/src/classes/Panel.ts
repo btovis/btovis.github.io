@@ -51,7 +51,6 @@ export default class Panel {
     }
 
     private updateInputOptions(): void {
-        console.log('file selector', 0);
         this.fileSelector = new Selector(
             this,
             'Active Files',
@@ -60,7 +59,6 @@ export default class Panel {
             [],
             this.fileSelector
         );
-        console.log('warnings selector', Attribute.warnings);
         this.warningsSelector = new Selector(
             this,
             'Warnings',
@@ -100,6 +98,11 @@ export default class Panel {
 
         //Refresh after internal class state is updated
         this.refreshComponent();
+        this.refreshWidgets();
+    }
+
+    public refreshWidgets(): void {
+        this.widgets.forEach((w) => w.refresh());
     }
 
     /*

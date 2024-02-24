@@ -6,7 +6,7 @@ import WidgetConfig from './WidgetConfig.js';
 import Panel from '../Panel.js';
 import { Attribute, Data } from '../data/Data.js';
 import SetElement from '../data/setutils/SetElement.js';
-import PageManager from '../PageManager.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * This will take in a set of input columns, then
@@ -40,23 +40,6 @@ export default class TableWidget extends Widget {
     }
 
     public generateSidebar(): Sidebar {
-        //Re-calculate table entries when this is called based on the options
-        //Contains a numerical index of selected columns
-        this.columns = [];
-        this.selectorOption.selected.forEach((colName) => {
-            try {
-                this.columns.push([colName, this.panel.dataFilterer.getColumnIndex(colName)]);
-            } catch (e) {
-                /* Data doesn't have that - skip */
-            }
-        });
-
-        const data = this.panel.dataFilterer.getData()[0];
-        const dataLength = this.panel.dataFilterer.getData()[1];
-        const indices = this.columns.map((c) => c[1]);
-        //Collect and group the relevant rows.
-        this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
-
         return new Sidebar(this.options);
     }
 
@@ -118,6 +101,23 @@ export default class TableWidget extends Widget {
     }
 
     public render(): JSX.Element {
+        //Re-calculate table entries when this is called based on the options
+        //Contains a numerical index of selected columns
+        this.columns = [];
+        this.selectorOption.selected.forEach((colName) => {
+            try {
+                this.columns.push([colName, this.panel.dataFilterer.getColumnIndex(colName)]);
+            } catch (e) {
+                /* Data doesn't have that - skip */
+            }
+        });
+
+        const data = this.panel.dataFilterer.getData()[0];
+        const dataLength = this.panel.dataFilterer.getData()[1];
+        const indices = this.columns.map((c) => c[1]);
+        //Collect and group the relevant rows.
+        this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
+
         //If nothing is selected, render an empty table
         if (this.selectorOption.selected.size == 0) {
             return (
@@ -137,9 +137,9 @@ export default class TableWidget extends Widget {
             const key = this.tableEntries[i][0];
             const freq = this.tableEntries[i][1];
             const row = (
-                <tr>
+                <tr key={uuidv4()}>
                     {key.split('\0').map((colVal) => (
-                        <td>{colVal}</td>
+                        <td key={uuidv4()}>{colVal}</td>
                     ))}
                     <td>{freq}</td>
                 </tr>
@@ -153,7 +153,7 @@ export default class TableWidget extends Widget {
                 <thead>
                     <tr>
                         {this.columns.map((col) => (
-                            <td>{col[0]}</td>
+                            <td key={uuidv4()}>{col[0]}</td>
                         ))}
                         <td>#</td>
                     </tr>
