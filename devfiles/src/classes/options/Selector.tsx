@@ -3,6 +3,7 @@ import Panel from '../Panel';
 import { Query } from '../query/Query';
 import SetQueryArray from '../query/SetQueryArray';
 import InputOption from './InputOption';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class Selector extends InputOption {
     //Internal state unique to every option class.
@@ -64,7 +65,7 @@ export default class Selector extends InputOption {
      *
      *
      */
-    public render(): JSX.Element[] {
+    public render(): JSX.Element {
         //If there are more than 5 selections, enable advanced options
         // like search
         let searchBar = <></>;
@@ -78,18 +79,18 @@ export default class Selector extends InputOption {
                         onChange={(event) => {
                             this.searchState = event.target.value;
                             //Optimisation potential: Don't refresh everything for this
-                            this.panel.pageManager.refreshPanelOptions();
+                            this.refreshComponent();
                         }}
                     />
                     <datalist id={this.uuid.toString() + '-search'}>
                         {this.choices.map((item) => {
-                            return <option value={item} />;
+                            return <option key={uuidv4()} value={item} />;
                         })}
                     </datalist>
                 </div>
             );
         }
-        return [
+        return (
             <Accordion defaultActiveKey='0'>
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
@@ -98,7 +99,7 @@ export default class Selector extends InputOption {
                         </span>
                         <input
                             style={{ marginLeft: '10px' }}
-                            key={this.panel.uuid - 11}
+                            key={uuidv4()}
                             onChange={(event) =>
                                 this.callback(event.currentTarget.checked ? this.choices : [])
                             }
@@ -113,6 +114,7 @@ export default class Selector extends InputOption {
                             {this.choices.map((item, itemIdx) => {
                                 return (
                                     <div
+                                        key={uuidv4()}
                                         hidden={
                                             this.searchState.length > 0 &&
                                             !item
@@ -121,7 +123,7 @@ export default class Selector extends InputOption {
                                         }
                                     >
                                         <input
-                                            key={this.panel.uuid + 11 * itemIdx}
+                                            key={uuidv4()}
                                             onChange={(event) =>
                                                 this.callback({
                                                     checked: event.currentTarget.checked,
@@ -146,7 +148,7 @@ export default class Selector extends InputOption {
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
-        ];
+        );
     }
 
     /**
@@ -169,11 +171,13 @@ export default class Selector extends InputOption {
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)
         if (this.columnIndex !== undefined) this.panel.recalculateFilters(this);
-        //Refresh to update the associated widget
+        //Refresh to update the associated widget/panel (Selectors are used for Tables
+        // as well as filters)
         //Potential to optimise here
         this.panel.refreshComponent();
-        //Refresh sidebar to change the state of this inputoption
-        this.panel.pageManager.refreshPanelOptions();
+        this.panel.refreshWidgets();
+        //Refresh this inputoption
+        this.refreshComponent();
     }
 
     /**

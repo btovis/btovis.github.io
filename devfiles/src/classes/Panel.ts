@@ -51,7 +51,6 @@ export default class Panel {
     }
 
     private updateInputOptions(): void {
-        console.log('file selector', 0);
         this.fileSelector = new Selector(
             this,
             'Active Files',
@@ -60,7 +59,6 @@ export default class Panel {
             [],
             this.fileSelector
         );
-        console.log('warnings selector', Attribute.warnings);
         this.warningsSelector = new Selector(
             this,
             'Warnings',
@@ -100,6 +98,11 @@ export default class Panel {
 
         //Refresh after internal class state is updated
         this.refreshComponent();
+        this.refreshWidgets();
+    }
+
+    public refreshWidgets(): void {
+        this.widgets.forEach((w) => w.refresh());
     }
 
     /*
@@ -116,7 +119,12 @@ export default class Panel {
             this.nameInput, //Panel name. Identity filter
             this.fileSelector,
             new Geographic(this, 'Region'), //Positional filter
-            new TimeRange(this, 'Time Range'), //Time range for timestamp filtering
+            new TimeRange(
+                this,
+                'Time Range',
+                new Date('2022-11-14T03:03:03'),
+                new Date('2024-02-01T06:06:00')
+            ), //Time range for timestamp filtering
             new Selector(this, 'Species', []), //Species. TODO: May need special option
             new NumericInput(this, 'Minimum Probability'),
             this.warningsSelector,
