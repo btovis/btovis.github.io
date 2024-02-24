@@ -1,7 +1,6 @@
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimeField } from '@mui/x-date-pickers/DateTimeField';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
@@ -23,9 +22,11 @@ export default class TimeRange extends InputOption {
     public render(): JSX.Element[] {
         return [
             <div className='sidebar-padding'>
-                <p>Filter by time</p>
+                <p>
+                    <strong>Filter by time</strong>
+                </p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateTimeField
+                    <DatePicker
                         label='From'
                         format='YYYY/MM/DD h:mm A'
                         defaultValue={this.minDate}
@@ -39,7 +40,7 @@ export default class TimeRange extends InputOption {
                         }
                     />
                     <p></p>
-                    <DateTimeField
+                    <DatePicker
                         label='To'
                         format='YYYY/MM/DD h:mm A'
                         defaultValue={this.maxDate}
