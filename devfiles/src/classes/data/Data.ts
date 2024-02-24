@@ -51,7 +51,6 @@ class Data {
         return this.sortedDatabase;
     }
 
-    // TODO: implement
     public isEmpty(): boolean {
         return this.readDatabase().length === 0;
     }
