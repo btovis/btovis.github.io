@@ -12,6 +12,7 @@ function MainPage(params: { pageManager: PageManager }) {
         })
         .concat(
             <Tooltip
+                key={uuidv4()}
                 title={params.pageManager.data.isEmpty() ? 'Add a file to start visualising!' : ''}
             >
                 <span>

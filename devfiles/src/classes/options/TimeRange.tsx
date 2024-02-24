@@ -19,8 +19,8 @@ export default class TimeRange extends InputOption {
         this.toDate = this.maxDate;
     }
 
-    public render(): JSX.Element[] {
-        return [
+    public render(): JSX.Element {
+        return (
             <div className='sidebar-padding'>
                 <p>
                     <strong>Filter by time</strong>
@@ -28,7 +28,7 @@ export default class TimeRange extends InputOption {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                         label='From'
-                        format='YYYY/MM/DD h:mm A'
+                        format='YYYY/MM/DD'
                         defaultValue={this.minDate}
                         minDate={this.minDate}
                         maxDate={this.toDate}
@@ -42,7 +42,7 @@ export default class TimeRange extends InputOption {
                     <p></p>
                     <DatePicker
                         label='To'
-                        format='YYYY/MM/DD h:mm A'
+                        format='YYYY/MM/DD'
                         defaultValue={this.maxDate}
                         minDate={this.fromDate}
                         maxDate={this.maxDate}
@@ -56,7 +56,7 @@ export default class TimeRange extends InputOption {
                     <p className='text-warning' id='warning-if-time-range-zero'></p>
                 </LocalizationProvider>
             </div>
-        ];
+        );
     }
     public callback(newValue: any): void {
         if (newValue.which === 0) {
@@ -64,6 +64,12 @@ export default class TimeRange extends InputOption {
         } else {
             this.toDate = newValue.datetime;
         }
+
+        this.panel.recalculateFilters(this);
+        //Refresh to update the associated panel and its widgets
+        this.panel.refreshComponent();
+        //Refresh this inputoption
+        this.refreshComponent();
     }
     public query(): Query {
         throw new Error('Method not implemented.');

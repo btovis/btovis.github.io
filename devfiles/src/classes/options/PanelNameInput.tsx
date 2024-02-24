@@ -10,8 +10,8 @@ import InputOption from './InputOption';
 export default class PanelNameInput extends InputOption {
     private text: string;
 
-    public render(): JSX.Element[] {
-        return [
+    public render(): JSX.Element {
+        return (
             <div className='sidebarContainer'>
                 <input
                     className='form-control form-control-lg'
@@ -26,7 +26,7 @@ export default class PanelNameInput extends InputOption {
                 />
                 <hr></hr>
             </div>
-        ];
+        );
     }
 
     public constructor(panel: Panel, name: string, text) {

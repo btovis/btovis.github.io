@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
 import { v4 as uuidv4 } from 'uuid';
+import InputOptionComp from './InputOptionComp.js';
 
 /**
  * This is for the panel settings inside the sidebar.
@@ -17,15 +18,9 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
 
     //Render options
     const panel = params.pageManager.getSelectedPanel();
-    const renderedOptions = panel.generateSidebar().options.map((option) => (
-        <div
-            className='inputOption'
-            // key must be unique
-            key={option.uuid}
-        >
-            {option.render()}
-        </div>
-    ));
+    const renderedOptions = panel
+        .generateSidebar()
+        .options.map((option) => <InputOptionComp key={option.uuid} inputOption={option} />);
 
     // TODO: Display panel name to be deleted
     const deleteButton = (
