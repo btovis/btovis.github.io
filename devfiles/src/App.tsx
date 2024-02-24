@@ -6,6 +6,13 @@ import MainPage from './ui/MainPage.tsx';
 import PageManager from './classes/PageManager.ts';
 import { Fade, Spinner } from 'react-bootstrap';
 
+// https://caniuse.com/?search=es2020 "Feature support list"
+// We target ES2020, 95% of browsers
+if (!Promise.allSettled) {
+    document.body.innerHTML =
+        "BTO Pipeline CSV visualization tool has detected that you're using an outdated browser. Unfortunately this browser is not supported. Please upgrade to a newer browser. Thank you.";
+}
+
 function App() {
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [overlayMessage, setOverlayMessage] = useState('');
