@@ -29,8 +29,13 @@ export default class PageManager {
         return this.data;
     }
 
-    public addCSV(CSVName: string, CSVFile: Uint8Array) {
-        this.data.addCSV(CSVName, CSVFile);
+    public addCSV(CSVName: string, CSVFile: Uint8Array, finaliseLater: boolean) {
+        this.data.addCSV(CSVName, CSVFile, finaliseLater);
+        if (!finaliseLater) this.panels.forEach((p) => p.refresh());
+    }
+
+    public finaliseAddingCSVs() {
+        this.data.finaliseAdding();
         this.panels.forEach((p) => p.refresh());
     }
 

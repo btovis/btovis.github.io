@@ -40,12 +40,13 @@ function App() {
                 }
                 window['pageManager'] = pageManager;
                 try {
-                    pageManager.addCSV(file.value.name, file.value.data);
+                    pageManager.addCSV(file.value.name, file.value.data, true);
                 } catch (e) {
                     rejected.push(file.value.name + ': ' + e);
                     return;
                 }
             });
+            pageManager.finaliseAddingCSVs();
             if (borderRef.current) borderRef.current.style.opacity = 0;
             if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
             setIsOverlaySuccess(rejected.length == 0);

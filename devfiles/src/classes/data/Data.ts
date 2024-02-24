@@ -57,7 +57,7 @@ class Data {
 
     // Throws an error message (such as: malformed CSV) to be appended to filename to become "abc.csv: malformed CSV"
     /* eslint no-var: off */
-    public addCSV(CSVName: string, CSVFile: Uint8Array) {
+    public addCSV(CSVName: string, CSVFile: Uint8Array, finaliseLater: boolean) {
         CSVName = normaliseIdentifier(CSVName, this.sets[0]);
         const CSVIdentifier = this.sets[0].addRawOrGet(CSVName);
         try {
@@ -76,6 +76,10 @@ class Data {
             this.sets,
             this.cellProcessors
         );
+        if (!finaliseLater) this.dataStats.refresh();
+    }
+
+    public finaliseAdding() {
         this.dataStats.refresh();
     }
 
@@ -97,6 +101,9 @@ class Data {
         db.length = newI;
         this.dataStats.refresh();
     }
+
+    // On delete, rescan the remaining list, and take out from sets
+    public remakeSets() {}
 
     // filename: 0
     public getIndexForColumn(a: Attribute | string): number {
