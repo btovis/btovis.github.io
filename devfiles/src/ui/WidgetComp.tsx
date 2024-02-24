@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import CloseButton from 'react-bootstrap/CloseButton';
 import PageManager from '../classes/PageManager.js';
 import Widget from '../classes/widgets/Widget.js';
 
@@ -12,11 +13,18 @@ function WidgetComp(params: {
     const [r, dud] = useState(0);
     const refresh = () => dud(r + 1);
 
-    const widget = params.pageManager.panels[params.panelIdx].getWidget(params.widgetIdx);
+    const panel = params.pageManager.panels[params.panelIdx];
+    const widget = panel.getWidget(params.widgetIdx);
 
     return (
         <div className='widget'>
-            {widget.constructor.name}
+            <CloseButton
+                className='close-widget'
+                onClick={() => {
+                    panel.removeWidget(params.widgetIdx);
+                    panel.refresh();
+                }}
+            />
             {params.widgetClass.render()}
         </div>
     );

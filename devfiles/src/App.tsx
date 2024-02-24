@@ -21,7 +21,11 @@ function App() {
         //Yes, do this AGAIN to facilitate use from GlobalOptionsComp
         if (borderRef.current) borderRef.current.style.opacity = 0.8;
         if (spinnerRef.current) spinnerRef.current.style.opacity = 1;
-
+        if (files.length == 0) {
+            if (borderRef.current) borderRef.current.style.opacity = 0;
+            if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
+            return;
+        }
         Promise.allSettled(
             Array.prototype.map.call(files, async (file) => ({
                 name: file.name,

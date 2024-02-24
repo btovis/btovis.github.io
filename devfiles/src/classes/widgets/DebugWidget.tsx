@@ -17,7 +17,7 @@ export default class DebugWidget extends Widget {
         );
     }
     public delete(): void {
-        throw new Error('Method not implemented.');
+        //throw new Error('Method not implemented.');
     }
     public clone(): Widget {
         throw new Error('Method not implemented.');

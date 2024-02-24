@@ -14,6 +14,12 @@ enum DateSeparator {
     HYPHEN = '-'
 }
 
+// in our database, for "actual date", use 2024-01-30 etc.
+// assumes: these are int, positive, and in correct ranges
+function stringDate(y: string, m: string, d: string) {
+    return y + '-' + (m.length == 2 ? m : '0' + m) + '-' + (d.length == 2 ? d : '0' + d);
+}
+
 // Only call if there's date column in data
 // processes dataArray, returns data
 export function processDates(
@@ -120,29 +126,29 @@ export function processDates(
         }
     }
 
-    let processor: (s) => Date;
+    let processor: (s) => string;
     if (sep == DateSeparator.NONE) {
         switch (type) {
             case DateType.DDMMYYYY:
-                processor = (s) => new Date(s.slice(4), s.slice(2, 4), s.slice(0, 2));
+                processor = (s) => stringDate(s.slice(4), s.slice(2, 4), s.slice(0, 2));
                 break;
             case DateType.MMDDYYYY:
-                processor = (s) => new Date(s.slice(4), s.slice(0, 2), s.slice(2, 4));
+                processor = (s) => stringDate(s.slice(4), s.slice(0, 2), s.slice(2, 4));
                 break;
             case DateType.YYYYMMDD:
-                processor = (s) => new Date(s.slice(0, 4), s.slice(4, 6), s.slice(6));
+                processor = (s) => stringDate(s.slice(0, 4), s.slice(4, 6), s.slice(6));
                 break;
         }
     } else {
         switch (type) {
             case DateType.DDMMYYYY:
-                processor = (s) => new Date(s.slice(6), s.slice(3, 5), s.slice(0, 2));
+                processor = (s) => stringDate(s.slice(6), s.slice(3, 5), s.slice(0, 2));
                 break;
             case DateType.MMDDYYYY:
-                processor = (s) => new Date(s.slice(6), s.slice(0, 2), s.slice(3, 5));
+                processor = (s) => stringDate(s.slice(6), s.slice(0, 2), s.slice(3, 5));
                 break;
             case DateType.YYYYMMDD:
-                processor = (s) => new Date(s.slice(0, 4), s.slice(5, 7), s.slice(8));
+                processor = (s) => stringDate(s.slice(0, 4), s.slice(5, 7), s.slice(8));
                 break;
         }
     }
