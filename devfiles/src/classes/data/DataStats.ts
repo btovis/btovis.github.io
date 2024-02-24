@@ -9,7 +9,7 @@ export default class DataStats {
     private data: Data;
 
     private species: [species: SetElement, count: number][][] = []; // [[SetElement("Anglican skybird"), 100], [SetElement("Anglican skybird"), 150]]
-    private timeRange: undefined | [string, string, colI: number] = undefined;
+    private timeRange: [] | [low: string, up: string, colI: number] = [];
 
     public constructor(d: Data) {
         this.data = d;
@@ -30,15 +30,13 @@ export default class DataStats {
                 if (d < min) min = d;
                 if (d > max) max = d;
             }
-            this.timeRange[0] = min;
-            this.timeRange[1] = max;
         }
         if (min != 'z') {
             this.timeRange[0] = min;
             this.timeRange[1] = max;
             this.timeRange[2] = dateCol;
         } else {
-            this.timeRange = undefined;
+            this.timeRange.length = 0;
         }
         // species count array
 
