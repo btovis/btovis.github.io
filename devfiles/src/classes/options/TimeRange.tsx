@@ -1,30 +1,36 @@
 import { LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimePicker, dateTimePickerTabsClasses } from '@mui/x-date-pickers/DateTimePicker';
+import { DateTimeField } from '@mui/x-date-pickers/DateTimeField';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
 
 export default class TimeRange extends InputOption {
-    private minDate: Date;
-    private maxDate: Date;
-    public fromDate: Date;
-    public toDate: Date;
+    private minDate: Dayjs;
+    private maxDate: Dayjs;
+    public fromDate: Dayjs;
+    public toDate: Dayjs;
 
     public constructor(panel: Panel, name: string, minDate: Date, maxDate: Date) {
         super(panel, name);
-        this.minDate = minDate;
-        this.maxDate = maxDate;
+        this.minDate = dayjs(minDate);
+        this.maxDate = dayjs(maxDate);
+        this.fromDate = this.minDate;
+        this.toDate = this.maxDate;
     }
 
     public render(): JSX.Element[] {
         return [
-            <div>
-                <p id='elephant'>elephant</p>
+            <div className='sidebar-padding'>
+                <p>Filter by time</p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DateTimePicker
+                    <DateTimeField
                         label='From'
-                        minDateTime={this.minDate}
+                        format='YYYY/MM/DD h:mm A'
+                        defaultValue={this.minDate}
+                        minDate={this.minDate}
+                        maxDate={this.toDate}
                         onChange={(value) =>
                             this.callback({
                                 which: 0,
@@ -32,7 +38,21 @@ export default class TimeRange extends InputOption {
                             })
                         }
                     />
-                    <DateTimePicker label='To' />
+                    <p></p>
+                    <DateTimeField
+                        label='To'
+                        format='YYYY/MM/DD h:mm A'
+                        defaultValue={this.maxDate}
+                        minDate={this.fromDate}
+                        maxDate={this.maxDate}
+                        onChange={(value) =>
+                            this.callback({
+                                which: 1,
+                                datetime: value
+                            })
+                        }
+                    />
+                    <p className='text-warning' id='warning-if-time-range-zero'></p>
                 </LocalizationProvider>
             </div>
         ];
