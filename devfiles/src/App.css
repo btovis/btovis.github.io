@@ -91,6 +91,10 @@
   background-color: var(--element-hover);
 }
 
+.sidebar-padding {
+  padding: 20px;
+}
+
 /**
 * PANER STYLES
 */
@@ -267,6 +271,7 @@
   position: relative;
   float: right;
 }
+
 .delete-btn {
   border-width: medium;
   border-color: #d00000;
@@ -277,4 +282,7 @@
 .add-panel-button {
   margin-top: 16px;
   background-color: #ddd;
+
+.text-warning {
+  color: red;
 }

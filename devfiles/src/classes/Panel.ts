@@ -116,7 +116,12 @@ export default class Panel {
             this.nameInput, //Panel name. Identity filter
             this.fileSelector,
             new Geographic(this, 'Region'), //Positional filter
-            new TimeRange(this, 'Time Range'), //Time range for timestamp filtering
+            new TimeRange(
+                this,
+                'Time Range',
+                new Date('2022-11-14T03:03:03'),
+                new Date('2024-02-01T06:06:00')
+            ), //Time range for timestamp filtering
             new Selector(this, 'Species', []), //Species. TODO: May need special option
             new NumericInput(this, 'Minimum Probability'),
             this.warningsSelector,
