@@ -51,6 +51,11 @@ class Data {
         return this.sortedDatabase;
     }
 
+    // TODO: implement
+    public isEmpty(): boolean {
+        return this.readDatabase().length === 0;
+    }
+
     // see the method below to access it
     private titleToColumnIndex = new Map<string, number>([['_FILE', 0]]);
     private cellProcessors = [(a) => this.sets[0].addRawOrGet(a)];

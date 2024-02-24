@@ -273,3 +273,8 @@
   background-color: #f33333;
   color: white;
 }
+
+.add-panel-button {
+  margin-top: 16px;
+  background-color: #ddd;
+}
