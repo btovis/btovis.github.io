@@ -9,11 +9,7 @@ export default class DataStats {
     private data: Data;
 
     private species: [species: SetElement, count: number][][] = []; // [[SetElement("Anglican skybird"), 100], [SetElement("Anglican skybird"), 150]]
-    private timeRange: [Date, Date, colI: number | undefined] = [
-        -Infinity as unknown as Date,
-        +Infinity as unknown as Date,
-        undefined
-    ];
+    private timeRange: undefined | [string, string, colI: number] = undefined;
 
     public constructor(d: Data) {
         this.data = d;
@@ -23,29 +19,26 @@ export default class DataStats {
     public refresh() {
         // date range ('ACTUAL DATE')
         const dateCol = this.data.getIndexForColumn(Attribute.actualDate);
+        let min = 'z';
+        let max = '0';
         if (dateCol) {
-            let min = +Infinity as unknown as Date;
-            let max = -Infinity as unknown as Date;
             const db = this.data.readDatabase(),
                 l = db.length;
             for (let i = 0; i < l; i++) {
-                const d = db[i][dateCol];
-                if (!(d instanceof Date)) continue;
-                if ((db[i][dateCol] as unknown as Date) < min)
-                    min = db[i][dateCol] as unknown as Date;
-                if ((db[i][dateCol] as unknown as Date) > max)
-                    max = db[i][dateCol] as unknown as Date;
+                const d = db[i][dateCol] as string;
+                if (!d.startsWith('20')) continue;
+                if (d < min) min = d;
+                if (d > max) max = d;
             }
             this.timeRange[0] = min;
             this.timeRange[1] = max;
-        } else {
-            this.timeRange[0] = -Infinity as unknown as Date;
-            this.timeRange[1] = +Infinity as unknown as Date;
         }
-        if (!dateCol || this.timeRange[0] == (-Infinity as unknown as Date)) {
-            this.timeRange[2] = undefined;
-        } else {
+        if (min != 'z') {
+            this.timeRange[0] = min;
+            this.timeRange[1] = max;
             this.timeRange[2] = dateCol;
+        } else {
+            this.timeRange = undefined;
         }
         // species count array
 
