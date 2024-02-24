@@ -77,7 +77,7 @@ export default class TableWidget extends Widget {
         if (arrLength == 0) return [];
 
         // Order the strings
-        arr.sort((a, b) => (a == b ? 0 : a < b ? -1 : 1));
+        arr.sort();
 
         // Collect same strings, they're consecutive
         //Potential optimisation to build the DOM straight in here
@@ -111,6 +111,8 @@ export default class TableWidget extends Widget {
                 /* Data doesn't have that - skip */
             }
         });
+
+        this.columns.sort((a, b) => a[1] - b[1]);
 
         const data = this.panel.dataFilterer.getData()[0];
         const dataLength = this.panel.dataFilterer.getData()[1];
