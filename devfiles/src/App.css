@@ -64,6 +64,10 @@
   color: var(--text-color);
 }
 
+.sidebar strong {
+  color: #052c65;
+}
+
 .sidebarContainer {
   padding: 20px;
   text-align: left;

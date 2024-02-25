@@ -24,7 +24,6 @@ export default class PanelNameInput extends InputOption {
                         }
                     }}
                 />
-                <hr></hr>
             </div>
         );
     }
@@ -40,7 +39,7 @@ export default class PanelNameInput extends InputOption {
         //Refresh to show new panel name
         this.panel.refreshComponent();
         //Refresh sidebar for new panel name too
-        this.panel.pageManager.refreshPanelOptions();
+        this.refreshComponent();
     }
     public query(): Query {
         throw new Error('Method not implemented.');

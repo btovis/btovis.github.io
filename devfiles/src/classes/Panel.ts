@@ -12,6 +12,7 @@ import DataFilterer from './data/DataFilterer';
 import { v4 as uuidv4 } from 'uuid';
 import InputOption from './options/InputOption';
 import { Attribute } from './data/Data';
+import SpeciesSelector from './options/SpeciesSelector';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -24,7 +25,13 @@ export default class Panel {
 
     private readonly nameInput: PanelNameInput;
     private fileSelector: Selector;
+    private speciesSelector: SpeciesSelector;
     private warningsSelector: Selector;
+    private calltypeSelector: Selector;
+    private projectSelector: Selector;
+    private classifierSelector: Selector;
+    private batchnameSelector: Selector;
+    private useridSelector: Selector;
 
     public dataFilterer: DataFilterer;
     public readonly uuid: number;
@@ -59,6 +66,7 @@ export default class Panel {
             [],
             this.fileSelector
         );
+        this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
             'Warnings',
@@ -66,6 +74,46 @@ export default class Panel {
             true,
             [],
             this.warningsSelector
+        );
+        this.calltypeSelector = new Selector(
+            this,
+            'Call Type',
+            this.dataFilterer.getColumnIndex(Attribute.callType),
+            true,
+            [],
+            this.calltypeSelector
+        );
+        this.projectSelector = new Selector(
+            this,
+            'Project',
+            this.dataFilterer.getColumnIndex(Attribute.projectName),
+            true,
+            [],
+            this.projectSelector
+        );
+        this.classifierSelector = new Selector(
+            this,
+            'Classifier',
+            this.dataFilterer.getColumnIndex(Attribute.classifierName),
+            true,
+            [],
+            this.classifierSelector
+        );
+        this.batchnameSelector = new Selector(
+            this,
+            'Batch',
+            this.dataFilterer.getColumnIndex(Attribute.batchName),
+            true,
+            [],
+            this.batchnameSelector
+        );
+        this.useridSelector = new Selector(
+            this,
+            'UserID',
+            this.dataFilterer.getColumnIndex(Attribute.userID),
+            true,
+            [],
+            this.useridSelector
         );
     }
 
@@ -76,10 +124,9 @@ export default class Panel {
      * Does not refresh the panel's sidebar or the panel's react component.
      */
     public recalculateFilters(changedOption: InputOption): void {
-        let query = null;
-        //Remove instanceof and null guard once all the filters are implemented
+        //Remove null guard once all the filters are implemented
         //we can just call changedOption.query.
-        if (changedOption instanceof Selector) query = changedOption.query();
+        const query = changedOption.query();
 
         if (query === null) return;
         this.dataFilterer.processQuery(query);
@@ -125,14 +172,14 @@ export default class Panel {
                 new Date('2022-11-14T03:03:03'),
                 new Date('2024-02-01T06:06:00')
             ), //Time range for timestamp filtering
-            new Selector(this, 'Species', []), //Species. TODO: May need special option
+            this.speciesSelector,
             new NumericInput(this, 'Minimum Probability'),
             this.warningsSelector,
-            new Selector(this, 'Call Type', []),
-            new Selector(this, 'Project', []),
-            new Selector(this, 'Classifier Name', []),
-            new Selector(this, 'Batch Name', []),
-            new Selector(this, 'User ID', [])
+            this.calltypeSelector,
+            this.projectSelector,
+            this.classifierSelector,
+            this.batchnameSelector,
+            this.useridSelector
         ]);
 
         //InputOption sidebars DO NOT contain filters, only widget-specific

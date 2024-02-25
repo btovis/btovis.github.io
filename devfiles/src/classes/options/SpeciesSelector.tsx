@@ -4,14 +4,17 @@ import { Query } from '../query/Query';
 import SetQueryArray from '../query/SetQueryArray';
 import InputOption from './InputOption';
 import { v4 as uuidv4 } from 'uuid';
+import SpeciesMeta from '../queryMeta/SpeciesMeta';
+import SetElement from '../data/setutils/SetElement';
+import { Attribute } from '../data/Data';
 
-export default class Selector extends InputOption {
+export default class SpeciesSelector extends InputOption {
     //Internal state unique to every option class.
     //Use this to store current selections
-    protected choices: string[];
     protected searchState: string = '';
-    public selected: Set<string> = new Set();
-    public readonly columnIndex;
+    public selected: Set<SetElement> = new Set<SetElement>(); //Set of latin names
+
+    private speciesMeta: SpeciesMeta;
 
     /**
      * @param panel The associated panel
@@ -25,32 +28,26 @@ export default class Selector extends InputOption {
     public constructor(
         panel: Panel,
         name: string,
-        choices: string[] | number,
         allSelected: boolean = true,
         defaults?: string[],
-        template: Selector = undefined
+        template: SpeciesSelector = undefined
     ) {
         super(panel, name);
-        //If a column index is provided, set choices to the unique column values
-        if (typeof choices === 'number') {
-            this.columnIndex = choices;
-            this.choices = [...panel.pageManager.data.sets[this.columnIndex].raws.keys()];
-        } //if not, this is a list of strings.
-        else this.choices = choices;
-
-        if (template === undefined) {
-            if (allSelected) this.selected = new Set(this.choices);
-            else if (defaults) this.selected = new Set(defaults);
-        } else {
-            //If a template Selector is available, copy its currently selected settings.
-            //If the template has everything selected, just set everything to be selected.
-            if (template.isEverythingSelected()) this.selected = new Set(this.choices);
-            else this.selected = template.selected;
-        }
+        this.speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
+        this.choices().forEach((elem) => this.selected.add(elem));
+        //if (template === undefined) {
+        //    if (allSelected) this.selected = new Set(this.choices);
+        //    else if (defaults) this.selected = new Set(defaults);
+        // } else {
+        //     //If a template Selector is available, copy its currently selected settings.
+        //     //If the template has everything selected, just set everything to be selected.
+        //     if (template.isEverythingSelected()) this.selected = new Set(this.choices);
+        //     else this.selected = template.selected;
+        // }
     }
 
     public isEverythingSelected(): boolean {
-        return this.choices.length == this.selected.size;
+        return this.selected.size == this.choices().size;
     }
 
     /**
@@ -66,30 +63,6 @@ export default class Selector extends InputOption {
      *
      */
     public render(): JSX.Element {
-        //If there are more than 5 selections, enable advanced options
-        // like search
-        let searchBar = <></>;
-        if (this.choices.length > 5) {
-            searchBar = (
-                <div style={{ paddingBottom: '5px' }}>
-                    <input
-                        type='text'
-                        list={this.uuid.toString() + '-search'}
-                        placeholder='Search'
-                        onChange={(event) => {
-                            this.searchState = event.target.value;
-                            //Optimisation potential: Don't refresh everything for this
-                            this.refreshComponent();
-                        }}
-                    />
-                    <datalist id={this.uuid.toString() + '-search'}>
-                        {this.choices.map((item) => {
-                            return <option key={uuidv4()} value={item} />;
-                        })}
-                    </datalist>
-                </div>
-            );
-        }
         return (
             <Accordion defaultActiveKey='0'>
                 <Accordion.Item eventKey='0'>
@@ -101,23 +74,41 @@ export default class Selector extends InputOption {
                             style={{ marginLeft: '10px' }}
                             key={uuidv4()}
                             onChange={(event) =>
-                                this.callback(event.currentTarget.checked ? this.choices : [])
+                                this.callback({
+                                    checked: event.currentTarget.checked,
+                                    item: this.choices()
+                                })
                             }
-                            checked={this.selected.size == this.choices.length}
+                            checked={this.isEverythingSelected()}
                             className='form-check-input'
                             type='checkbox'
                         />
                     </Accordion.Header>
                     <Accordion.Body>
-                        {searchBar}
+                        <div style={{ paddingBottom: '5px' }}>
+                            <input
+                                type='text'
+                                list={this.uuid.toString() + '-search'}
+                                placeholder='Search'
+                                onChange={(event) => {
+                                    this.searchState = event.target.value;
+                                    this.refreshComponent();
+                                }}
+                            />
+                            <datalist id={this.uuid.toString() + '-search'}>
+                                {[...this.choices()].map((item) => {
+                                    return <option key={uuidv4()} value={item.value} />;
+                                })}
+                            </datalist>
+                        </div>
                         <div className='form-check'>
-                            {this.choices.map((item, itemIdx) => {
+                            {[...this.choices()].map((item, itemIdx) => {
                                 return (
                                     <div
                                         key={uuidv4()}
                                         hidden={
                                             this.searchState.length > 0 &&
-                                            !item
+                                            !item.value
                                                 .toLowerCase()
                                                 .startsWith(this.searchState.toLowerCase())
                                         }
@@ -127,7 +118,7 @@ export default class Selector extends InputOption {
                                             onChange={(event) =>
                                                 this.callback({
                                                     checked: event.currentTarget.checked,
-                                                    item: item
+                                                    item: new Set<SetElement>([item])
                                                 })
                                             }
                                             id={this.uuid.toString() + item}
@@ -139,7 +130,7 @@ export default class Selector extends InputOption {
                                             className='form-check-label selectorLabel'
                                             htmlFor={this.uuid.toString() + item}
                                         >
-                                            {item.trim() == '' ? 'No Warning' : item}
+                                            {item.value}
                                         </label>
                                     </div>
                                 );
@@ -151,26 +142,28 @@ export default class Selector extends InputOption {
         );
     }
 
+    private choices(): Set<SetElement> {
+        return this.panel.pageManager.data.sets[
+            this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName)
+        ].refs;
+    }
+
     /**
      * this.panel.recalculateFilters(this) will tell panel to execute the
      * filter
      *
      * @param newValue In this case, contains the "checked" status of
-     * a tickbox and the string value of the item that was ticked
+     * a tickbox and a SetElement of what was ticked.
+     *
+     * If an array was passed,
      */
-    public callback(newValue: any): void {
-        //If this is a boolean, that means this is a single change
-        if (typeof newValue.checked === 'boolean') {
-            if (newValue.checked) this.selected.add(newValue.item);
-            else this.selected.delete(newValue.item);
-        } //If not, its an array and we can apply it entirely.
-        else {
-            this.selected = new Set<string>(newValue as string[]);
-        }
-        //Ask the panel to re-calculate its filters ONLY if the
-        //column index is defined. Some selectors do not use
-        //columns (i.e. tablewidget)
-        if (this.columnIndex !== undefined) this.panel.recalculateFilters(this);
+    public callback(newValue: { checked: boolean; item: Set<SetElement> }): void {
+        if (newValue.checked) newValue.item.forEach((elem) => this.selected.add(elem));
+        else newValue.item.forEach((elem) => this.selected.delete(elem));
+
+        //Ask the panel to re-calculate its filters
+        this.panel.recalculateFilters(this);
+
         //Refresh to update the associated widget/panel (Selectors are used for Tables
         // as well as filters)
         //Potential to optimise here
@@ -181,10 +174,12 @@ export default class Selector extends InputOption {
     }
 
     /**
-     * DO NOT RUN THIS IF SELECTOR WAS NOT INITIALISED WITH A COLUMN INDEX.
+     * Optimisation potential: possibly costly string unboxing
      * @returns Query object to be applied by the panel in recalculateFilters(this)
      */
     public query(): Query {
-        return new SetQueryArray(this.columnIndex).query([...this.selected]);
+        return new SetQueryArray(
+            this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName)
+        ).query([...this.selected].map((setElem) => setElem.value as string));
     }
 }
