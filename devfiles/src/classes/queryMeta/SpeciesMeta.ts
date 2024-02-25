@@ -3,7 +3,7 @@ import SetElement from '../data/setutils/SetElement';
 
 export default class SpeciesMeta {
     //No writing to this
-    public readonly species: Map<
+    private readonly species: Map<
         SetElement,
         [
             species: SetElement,
@@ -12,6 +12,10 @@ export default class SpeciesMeta {
             status: EndangermentStatus
         ]
     >;
+
+    //A map of group SetElements to a list of latinNames
+    public readonly groupByGroup: Map<SetElement, SetElement[]>;
+
     public constructor(
         species: Map<
             SetElement,
@@ -24,6 +28,12 @@ export default class SpeciesMeta {
         >
     ) {
         this.species = species;
+        this.groupByGroup = new Map();
+        [...this.species.keys()].forEach((latinName) => {
+            const group = this.speciesGroup(latinName);
+            if (!this.groupByGroup.has(group)) this.groupByGroup.set(group, [latinName]);
+            else this.groupByGroup.get(group).push(latinName);
+        });
     }
 
     public englishName(latinName: SetElement): SetElement {

@@ -139,7 +139,7 @@ export default class Selector extends InputOption {
                                             className='form-check-label selectorLabel'
                                             htmlFor={this.uuid.toString() + item}
                                         >
-                                            {item.trim() == '' ? 'No Warning' : item}
+                                            {item.trim() == '' ? 'None' : item}
                                         </label>
                                     </div>
                                 );

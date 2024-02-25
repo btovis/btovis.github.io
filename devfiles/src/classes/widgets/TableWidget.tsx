@@ -34,7 +34,7 @@ export default class TableWidget extends Widget {
             'Table Columns',
             panel.dataFilterer.getColumns(),
             false,
-            [Attribute.species, Attribute.warnings]
+            [Attribute.speciesEnglishName, Attribute.warnings]
         );
         this.options = [this.selectorOption];
     }

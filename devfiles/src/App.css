@@ -123,6 +123,9 @@
   width: 30%;
   float: right;
 }
+.speciesGroupRowDiv {
+  padding-bottom: 3px;
+}
 .speciesTooltip {
   width:300px;
   max-width: 100%;

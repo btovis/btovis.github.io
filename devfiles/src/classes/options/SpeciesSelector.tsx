@@ -168,9 +168,17 @@ export default class SpeciesSelector extends InputOption {
                         </div>
                         {/* Every species row */}
                         <div className='form-check'>
-                            {[...this.choices()].map((item, itemIdx) => {
-                                return this.speciesRow(item);
-                            })}
+                            {[...this.speciesMeta.groupByGroup.keys()].map((group) => (
+                                <div key={uuidv4()}>
+                                    <div className='speciesGroupRowDiv' key={uuidv4()}>
+                                        <hr />
+                                        <strong>{group.value}</strong>
+                                    </div>
+                                    {this.speciesMeta.groupByGroup
+                                        .get(group)
+                                        .map((latinName) => this.speciesRow(latinName))}
+                                </div>
+                            ))}
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
@@ -221,6 +229,7 @@ export default class SpeciesSelector extends InputOption {
                 <ToggleButton
                     className='mb-2 speciesEndangermentFilterBtn'
                     id={uuidv4()}
+                    key={uuidv4()}
                     type='checkbox'
                     variant='outline-info'
                     checked={this.allowedGroups.has(group)}
