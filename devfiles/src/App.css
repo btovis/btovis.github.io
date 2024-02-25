@@ -52,6 +52,10 @@
   color: #888;
 } */
 
+.font-italic {
+  font-style: italic;
+}
+
 /**
 * SIDEBAR STYLES
 */
@@ -62,6 +66,10 @@
   position: fixed;
   overflow: auto;
   color: var(--text-color);
+}
+
+.sidebar strong {
+  color: #052c65;
 }
 
 .sidebarContainer {
@@ -89,6 +97,45 @@
 .selectorLabel:hover {
   width: 100%;
   background-color: var(--element-hover);
+}
+
+/**
+* Handles the styling on each row in the species filter UI
+*/
+.speciesRowLabel {
+  width: 100%;
+  background-color: var(--element-bg);
+  display: block;
+  white-space:nowrap;
+  display: inline-flex;
+}
+.speciesRowLabel:hover {
+  width: 100%;
+  background-color: var(--element-hover);
+}
+.speciesRowLabelText{
+  width: 65%;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+}
+.speciesRowLabel .btn {
+  padding: 0;
+  width: 30%;
+  float: right;
+}
+.speciesGroupRowDiv {
+  padding-bottom: 3px;
+}
+.speciesTooltip {
+  width:300px;
+  max-width: 100%;
+  background-color: rgba(0, 0, 0, 0);
+}
+.speciesTooltipCard {
+  text-align: left;
+}
+.speciesEndangermentFilterBtn {
+  margin-right: 5px;
 }
 
 .sidebar-padding {

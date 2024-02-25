@@ -1,3 +1,4 @@
+import { EndangermentStatus, getSpeciesEndangerment } from '../../utils/speciesVulnerability';
 import RangeMeta from '../queryMeta/RangeMeta';
 import SetMeta from '../queryMeta/SetMeta';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
@@ -7,9 +8,20 @@ import SetElement from './setutils/SetElement';
 // currently, recalculates for all data whenever updated
 export default class DataStats {
     private data: Data;
-
-    private species: [species: SetElement, count: number][][] = []; // [[SetElement("Anglican skybird"), 100], [SetElement("Anglican skybird"), 150]]
     private timeRange: [] | [low: string, up: string, colI: number] = [];
+
+    // count was removed. Was it wanted?
+    // Scientific name to species tuple of values
+    // SetElement("Barbastella barbastellus"): [SetElement("Barbar"), SetElement("Barbastelle"),SetElement("bat"),UNKNOWN][]
+    private species: Map<
+        SetElement,
+        [
+            species: SetElement,
+            englishName: SetElement,
+            group: SetElement,
+            status: EndangermentStatus
+        ]
+    > = new Map();
 
     public constructor(d: Data) {
         this.data = d;
@@ -39,8 +51,30 @@ export default class DataStats {
             this.timeRange.length = 0;
         }
         // species count array
-
-        //const this.data.getIndexForColumn(Attribute.actualDate);
+        //This is placed outside the loop above to facilitate merging later
+        //Purge species list to force a complete refresh
+        this.species.clear();
+        const uniqueSpecies =
+            this.data.sets[this.data.getIndexForColumn(Attribute.speciesLatinName)].size();
+        const latinNameCol = this.data.getIndexForColumn(Attribute.speciesLatinName);
+        const speciesCol = this.data.getIndexForColumn(Attribute.species);
+        const speciesEnglishCol = this.data.getIndexForColumn(Attribute.speciesEnglishName);
+        const groupCol = this.data.getIndexForColumn(Attribute.speciesGroup);
+        const db = this.data.readDatabase(),
+            l = db.length;
+        let rowIndex = 0;
+        while (this.species.size < uniqueSpecies && rowIndex < l) {
+            const latinName = db[rowIndex][latinNameCol];
+            if (!this.species.has(latinName as SetElement)) {
+                this.species.set(latinName as SetElement, [
+                    db[rowIndex][speciesCol] as SetElement,
+                    db[rowIndex][speciesEnglishCol] as SetElement,
+                    db[rowIndex][groupCol] as SetElement,
+                    getSpeciesEndangerment((latinName as SetElement).value)
+                ]);
+            }
+            rowIndex++;
+        }
     }
 
     // You shouldn't need to call this more than once but no harm otherwise

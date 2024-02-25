@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 export default class Selector extends InputOption {
     //Internal state unique to every option class.
     //Use this to store current selections
-    private choices: string[];
-    private searchState: string = '';
+    protected choices: string[];
+    protected searchState: string = '';
     public selected: Set<string> = new Set();
     public readonly columnIndex;
 
@@ -139,7 +139,7 @@ export default class Selector extends InputOption {
                                             className='form-check-label selectorLabel'
                                             htmlFor={this.uuid.toString() + item}
                                         >
-                                            {item.trim() == '' ? 'No Warning' : item}
+                                            {item.trim() == '' ? 'None' : item}
                                         </label>
                                     </div>
                                 );
