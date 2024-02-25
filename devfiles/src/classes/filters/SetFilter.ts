@@ -2,23 +2,7 @@ import { Filter, PredicateType } from './Filter.ts';
 import ReferenceSet from '../data/setutils/ReferenceSet.ts';
 import SetElement from '../data/setutils/SetElement.ts';
 
-function setDifferenceNew(a: Set<any>, b: Set<any>) {
-    // @ts-expect-error: Use new feature if possible
-    return a.difference(b);
-}
-
-function setDifferenceOld(a: Set<any>, b: Set<any>) {
-    const s2 = new Set();
-    for (const x of a) {
-        if (!b.has(x)) {
-            s2.add(x);
-        }
-    }
-    return s2;
-}
-
-// @ts-expect-error: Use new feature if possible
-const setDifference = new Set().difference ? setDifferenceNew : setDifferenceOld;
+import { setDifference } from '../data/setutils/setDifference.ts';
 
 // Note: SetFilter receives SetManager not JS Set from UI!
 // PageManager should store SetElements along with texts!
