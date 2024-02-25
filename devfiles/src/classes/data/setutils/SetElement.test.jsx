@@ -50,5 +50,12 @@ describe('SetElement', () => {
             elementA.value = 'testValue';
             expect(elementA == elementB).toBe(false);
         });
+
+        //This isn't a property that holds. We should block new SetElement
+        // it('Standard TS Data Structure equality', ()=>{
+        //     const setA = new Set([new SetElement('test')]);
+        //     setA.delete(new SetElement('test'));
+        //     expect(setA.size == 0).toBe(true);
+        // });
     });
 });
