@@ -1,10 +1,10 @@
-function setDifferenceNew(a: Set<any>, b: Set<any>) {
+function setDifferenceNew<T>(a: Set<T>, b: Set<T>): Set<T> {
     // @ts-expect-error: Use new feature if possible
     return a.difference(b);
 }
 
-function setDifferenceOld(a: Set<any>, b: Set<any>) {
-    const s2 = new Set();
+function setDifferenceOld<T>(a: Set<T>, b: Set<T>): Set<T> {
+    const s2: Set<T> = new Set();
     for (const x of a) {
         if (!b.has(x)) {
             s2.add(x);
