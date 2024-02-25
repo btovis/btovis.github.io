@@ -73,6 +73,10 @@ class Data {
             throw 'Malformed CSV ' + e;
         }
 
+        if (content.length == 0) {
+            window.alert('Warning: the file ' + CSVName + ' contains no data');
+        }
+
         integrateNewCSV(
             this.columnList,
             this.titleToColumnIndex,

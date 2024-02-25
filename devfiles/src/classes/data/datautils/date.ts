@@ -28,8 +28,10 @@ export function processDates(
     columnI
 ): [DateType | undefined, DateSeparator | undefined] {
     // pick a random cell
-    if (dataArr.length == 0) return undefined;
-    const example: string = dataArr[Math.floor(startI + (dataArr.length - startI) / 2)][columnI];
+    // empty new database:
+    if (startI == dataArr.length) return undefined;
+    const random = startI + Math.floor((dataArr.length - startI) / 2);
+    const example: string = dataArr[random][columnI];
     let separators = '',
         sep: DateSeparator,
         type: DateType;
