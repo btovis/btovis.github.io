@@ -255,7 +255,7 @@ export default class SpeciesSelector extends InputOption {
                         this.callback({ checked: false, item: new Set([]) });
                     }}
                 >
-                    {group.value}
+                    {group.value.trim() === '' ? 'none' : group.value}
                 </ToggleButton>
             );
         });
@@ -352,7 +352,9 @@ export default class SpeciesSelector extends InputOption {
                         htmlFor={this.uuid.toString() + latinName.value}
                     >
                         <div className='speciesRowLabelText'>
-                            {this.speciesMeta.englishName(latinName).value}
+                            {this.speciesMeta.englishName(latinName).value.trim() !== ''
+                                ? this.speciesMeta.englishName(latinName).value
+                                : 'No ID'}
                         </div>
                         <button
                             type='button'

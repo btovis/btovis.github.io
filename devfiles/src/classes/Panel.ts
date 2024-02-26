@@ -4,7 +4,7 @@ import Geographic from './options/Geographic';
 import NumericInput from './options/NumericInput';
 import Selector from './options/Selector';
 import PanelNameInput from './options/PanelNameInput';
-import TimeRange from './options/TimeRange';
+import DateRange from './options/DateRange';
 import BarChart from './widgets/BarChart';
 import Widget from './widgets/Widget';
 import WidgetConfig from './widgets/WidgetConfig';
@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import InputOption from './options/InputOption';
 import { Attribute } from './data/Data';
 import SpeciesSelector from './options/SpeciesSelector';
+import TimeOfDayRange from './options/TimeOfDayRange';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -25,7 +26,8 @@ export default class Panel {
 
     private readonly nameInput: PanelNameInput;
     private fileSelector: Selector;
-    private timeRange: TimeRange;
+    private dateRange: DateRange;
+    private timeOfDay: TimeOfDayRange;
     private speciesSelector: SpeciesSelector;
     private warningsSelector: Selector;
     private calltypeSelector: Selector;
@@ -67,7 +69,8 @@ export default class Panel {
             [],
             this.fileSelector
         );
-        this.timeRange = new TimeRange(this, 'Time Range', this.timeRange);
+        this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
+        this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
         this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
@@ -172,7 +175,8 @@ export default class Panel {
             this.nameInput, //Panel name. Identity filter
             this.fileSelector,
             new Geographic(this, 'Region'), //Positional filter
-            this.timeRange,
+            this.dateRange,
+            this.timeOfDay,
             this.speciesSelector,
             new NumericInput(this, 'Minimum Probability'),
             this.warningsSelector,

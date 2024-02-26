@@ -25,6 +25,7 @@ enum Attribute {
     userID = 'USER ID',
     actualDate = 'ACTUAL DATE',
     surveyDate = 'SURVEY DATE',
+    time = 'TIME',
     uploadKey = 'UPLOAD KEY',
     batchName = 'BATCH NAME',
     projectName = 'PROJECT NAME'

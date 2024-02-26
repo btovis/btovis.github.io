@@ -35,7 +35,7 @@ export default class TimeRange extends InputOption {
         return (
             <div className='sidebar-padding'>
                 <p>
-                    <strong>Filter by time</strong>
+                    <strong>{this.name}</strong>
                 </p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -70,7 +70,7 @@ export default class TimeRange extends InputOption {
             </div>
         );
     }
-    public callback(newValue: any): void {
+    public callback(newValue: { which: number; datetime: Dayjs }): void {
         if (newValue.which === 0) {
             this.fromDate = newValue.datetime;
         } else {
