@@ -20,6 +20,7 @@ export default class SpeciesSelector extends InputOption {
     public selected: Set<SetElement> = new Set<SetElement>(); //Set of latin names
     public allowedEndangerment = new Set<EndangermentStatus>();
     public allowedGroups = new Set<SetElement>();
+    private accordionOpen = true;
 
     private speciesMeta: SpeciesMeta;
 
@@ -43,19 +44,26 @@ export default class SpeciesSelector extends InputOption {
         this.speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
 
         //Default all selected:
-        this.choices().forEach((elem) => this.selected.add(elem));
-        this.allowedEndangerment = new Set(endangermentValues);
-        this.possibleGroups().forEach((group) => this.allowedGroups.add(group));
 
-        //if (template === undefined) {
-        //    if (allSelected) this.selected = new Set(this.choices);
-        //    else if (defaults) this.selected = new Set(defaults);
-        // } else {
-        //     //If a template Selector is available, copy its currently selected settings.
-        //     //If the template has everything selected, just set everything to be selected.
-        //     if (template.isEverythingSelected()) this.selected = new Set(this.choices);
-        //     else this.selected = template.selected;
-        // }
+        if (template === undefined) {
+            this.choices().forEach((elem) => this.selected.add(elem));
+            this.allowedEndangerment = new Set(endangermentValues);
+            this.possibleGroups().forEach((group) => this.allowedGroups.add(group));
+            this.accordionOpen = true;
+        } else {
+            //If a template Selector is available, copy its currently selected settings.
+            //If the template has everything selected, just set everything to be selected.
+            if (template.isEverythingSelected()) {
+                this.choices().forEach((elem) => this.selected.add(elem));
+                this.possibleGroups().forEach((group) => this.allowedGroups.add(group));
+            } else {
+                this.selected = template.selected;
+                this.allowedGroups = template.allowedGroups;
+            }
+
+            this.allowedEndangerment = template.allowedEndangerment;
+            this.accordionOpen = template.accordionOpen;
+        }
     }
 
     public isEverythingSelected(): boolean {
@@ -76,7 +84,12 @@ export default class SpeciesSelector extends InputOption {
      */
     public render(): JSX.Element {
         return (
-            <Accordion defaultActiveKey='0'>
+            <Accordion
+                onSelect={(eventKey) => {
+                    this.accordionOpen = typeof eventKey === 'string';
+                }}
+                defaultActiveKey={this.accordionOpen ? '0' : []}
+            >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
