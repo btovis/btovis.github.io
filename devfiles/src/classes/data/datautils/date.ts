@@ -1,5 +1,8 @@
-// High frequency was seen to use 30/01/2024, 01/30/2024
+// High frequency was seen to use 30/01/2024
 // Bird data was seen to use 20240130
+
+// Note: this code does't allow YY instead of YYYY
+// and D instead of DD or M instead of MM
 
 enum DateType {
     DDMMYYYY,
@@ -85,6 +88,7 @@ export function processDates(
                 scanNeeded = true;
                 processBeforeScan = (s) => [s.slice(0, 2), s.slice(2, 4)];
             } else {
+                // Here reject DD/MM/YY as this isn't used
                 return [undefined, undefined];
             }
         }
@@ -114,7 +118,8 @@ export function processDates(
     }
 
     if (scanNeeded) {
-        for (let i = startI; i < dataArr.length; i++) {
+        let i = startI;
+        for (; i < dataArr.length; i++) {
             const y = processBeforeScan(dataArr[i][columnI]);
             if (y[0] > '12' || y[1] > '12') {
                 if (y[0] > '12') {
@@ -124,6 +129,19 @@ export function processDates(
                     type = DateType.MMDDYYYY;
                     break;
                 }
+            }
+        }
+        if (i == dataArr.length) {
+            // assert DD MM YYYY for highfreq, YYYYMMDD for birds
+            switch (sep) {
+                case DateSeparator.NONE:
+                    type = DateType.YYYYMMDD;
+                    break;
+                case DateSeparator.SLASH:
+                    type = DateType.DDMMYYYY;
+                    break;
+                default:
+                    return [undefined, undefined];
             }
         }
     }
