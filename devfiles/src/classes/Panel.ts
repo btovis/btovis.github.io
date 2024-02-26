@@ -4,7 +4,7 @@ import Geographic from './options/Geographic';
 import NumericInput from './options/NumericInput';
 import Selector from './options/Selector';
 import PanelNameInput from './options/PanelNameInput';
-import TimeRange from './options/TimeRange';
+import DateRange from './options/DateRange';
 import BarChart from './widgets/BarChart';
 import Widget from './widgets/Widget';
 import WidgetConfig from './widgets/WidgetConfig';
@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import InputOption from './options/InputOption';
 import { Attribute } from './data/Data';
 import SpeciesSelector from './options/SpeciesSelector';
+import TimeOfDayRange from './options/TimeOfDayRange';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -25,6 +26,8 @@ export default class Panel {
 
     private readonly nameInput: PanelNameInput;
     private fileSelector: Selector;
+    private dateRange: DateRange;
+    private timeOfDay: TimeOfDayRange;
     private speciesSelector: SpeciesSelector;
     private warningsSelector: Selector;
     private calltypeSelector: Selector;
@@ -66,6 +69,8 @@ export default class Panel {
             [],
             this.fileSelector
         );
+        this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
+        this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
         this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
@@ -89,7 +94,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.projectName),
             true,
             [],
-            this.projectSelector
+            this.projectSelector,
+            false
         );
         this.classifierSelector = new Selector(
             this,
@@ -97,7 +103,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.classifierName),
             true,
             [],
-            this.classifierSelector
+            this.classifierSelector,
+            false
         );
         this.batchnameSelector = new Selector(
             this,
@@ -105,7 +112,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.batchName),
             true,
             [],
-            this.batchnameSelector
+            this.batchnameSelector,
+            false
         );
         this.useridSelector = new Selector(
             this,
@@ -113,7 +121,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.userID),
             true,
             [],
-            this.useridSelector
+            this.useridSelector,
+            false
         );
     }
 
@@ -166,12 +175,8 @@ export default class Panel {
             this.nameInput, //Panel name. Identity filter
             this.fileSelector,
             new Geographic(this, 'Region'), //Positional filter
-            new TimeRange(
-                this,
-                'Time Range',
-                new Date('2022-11-14T03:03:03'),
-                new Date('2024-02-01T06:06:00')
-            ), //Time range for timestamp filtering
+            this.dateRange,
+            this.timeOfDay,
             this.speciesSelector,
             new NumericInput(this, 'Minimum Probability'),
             this.warningsSelector,

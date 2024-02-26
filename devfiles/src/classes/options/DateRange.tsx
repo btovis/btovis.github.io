@@ -4,6 +4,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
+import RangeQuery from '../query/RangeQuery';
+import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
     private minDate: Dayjs;
@@ -11,25 +13,35 @@ export default class TimeRange extends InputOption {
     public fromDate: Dayjs;
     public toDate: Dayjs;
 
-    public constructor(panel: Panel, name: string, minDate: Date, maxDate: Date) {
+    public constructor(panel: Panel, name: string, template?: TimeRange) {
         super(panel, name);
-        this.minDate = dayjs(minDate);
-        this.maxDate = dayjs(maxDate);
-        this.fromDate = this.minDate;
-        this.toDate = this.maxDate;
+        const timeMeta = panel.dataFilterer.getDataStats().getTimeMeta();
+        this.minDate = dayjs(new Date(timeMeta.low()));
+        this.maxDate = dayjs(new Date(timeMeta.up()));
+
+        //Copy the current state from the old template
+        if (template === undefined) {
+            this.fromDate = this.minDate;
+            this.toDate = this.maxDate;
+        } else {
+            this.fromDate = this.minDate.isBefore(template.fromDate)
+                ? template.fromDate
+                : this.minDate;
+            this.toDate = this.maxDate.isAfter(template.toDate) ? template.toDate : this.maxDate;
+        }
     }
 
     public render(): JSX.Element {
         return (
             <div className='sidebar-padding'>
                 <p>
-                    <strong>Filter by time</strong>
+                    <strong>{this.name}</strong>
                 </p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                         label='From'
                         format='YYYY/MM/DD'
-                        defaultValue={this.minDate}
+                        value={this.fromDate}
                         minDate={this.minDate}
                         maxDate={this.toDate}
                         onChange={(value) =>
@@ -43,7 +55,7 @@ export default class TimeRange extends InputOption {
                     <DatePicker
                         label='To'
                         format='YYYY/MM/DD'
-                        defaultValue={this.maxDate}
+                        value={this.toDate}
                         minDate={this.fromDate}
                         maxDate={this.maxDate}
                         onChange={(value) =>
@@ -58,7 +70,7 @@ export default class TimeRange extends InputOption {
             </div>
         );
     }
-    public callback(newValue: any): void {
+    public callback(newValue: { which: number; datetime: Dayjs }): void {
         if (newValue.which === 0) {
             this.fromDate = newValue.datetime;
         } else {
@@ -72,6 +84,9 @@ export default class TimeRange extends InputOption {
         this.refreshComponent();
     }
     public query(): Query {
-        throw new Error('Method not implemented.');
+        return new RangeQuery(this.panel.dataFilterer.getColumnIndex(Attribute.actualDate)).query(
+            this.fromDate.format('YYYY-MM-DD'),
+            this.toDate.format('YYYY-MM-DD')
+        );
     }
 }
