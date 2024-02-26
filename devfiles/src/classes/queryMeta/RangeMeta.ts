@@ -6,13 +6,13 @@ export default class RangeMeta {
         this.value = arr;
     }
 
-    public colI(): number | undefined {
+    public colI(): number {
         return this.value[2];
     }
-    public low(): string | undefined {
+    public low(): string {
         return this.value[0];
     }
-    public up(): string | undefined {
+    public up(): string {
         return this.value[1];
     }
 }
