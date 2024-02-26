@@ -84,9 +84,21 @@ export default class TimeRange extends InputOption {
         this.refreshComponent();
     }
     public query(): Query {
+        let lowerLimit: number | string | dayjs.Dayjs = this.fromDate;
+        if (lowerLimit.isSame(this.minDate) || lowerLimit.isBefore(this.minDate)) {
+            lowerLimit = -Infinity;
+        } else {
+            lowerLimit = lowerLimit.format('YYYY-MM-DD');
+        }
+        let upperLimit: number | string | dayjs.Dayjs = this.toDate;
+        if (upperLimit.isSame(this.maxDate) || upperLimit.isAfter(this.maxDate)) {
+            upperLimit = Infinity;
+        } else {
+            upperLimit = upperLimit.format('YYYY-MM-DD');
+        }
         return new RangeQuery(this.panel.dataFilterer.getColumnIndex(Attribute.actualDate)).query(
-            this.fromDate.format('YYYY-MM-DD'),
-            this.toDate.format('YYYY-MM-DD')
+            lowerLimit,
+            upperLimit
         );
     }
 }
