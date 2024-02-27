@@ -1,6 +1,6 @@
 import { it, expect, beforeEach, describe, afterAll } from 'vitest';
 import SetFilter from '../filters/SetFilter';
-import { RangeQuery, SetElemQuery, SetQuery, QueryType } from '../query/Query';
+import { RangeQueryT, SetElemQueryT, SetQueryT, QueryType, Query } from '../query/Query';
 import RangeFilter from '../filters/RangeFilter';
 import DataFilterer from './DataFilterer';
 import { Attribute, Data } from './Data';
@@ -28,7 +28,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select values less than 0.5', () => {
                 const query = [columnIdx, QueryType.Range, -Infinity, 0.5];
-                filterer.processQuery(query);
+                filterer.processQuery(query as unknown as Query);
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -38,7 +38,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select values between 0.5 and 0.9', () => {
                 const query = [columnIdx, QueryType.Range, 0.5, 0.9];
-                filterer.processQuery(query);
+                filterer.processQuery(query as unknown as Query);
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -49,7 +49,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select values greater than 0.9', () => {
                 const query = [columnIdx, QueryType.Range, 0.9, Infinity];
-                filterer.processQuery(query);
+                filterer.processQuery(query as unknown as Query);
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
