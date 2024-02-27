@@ -7,7 +7,16 @@ import {
     readBytes
 } from '../../tests/utils.test';
 import SetElement from '../data/setutils/SetElement';
-import { Grouping, BatchNameGrouping, ProjectNameGrouping, FilenameGrouping } from './Grouping';
+import {
+    Grouping,
+    BatchNameGrouping,
+    ProjectNameGrouping,
+    FilenameGrouping,
+    TimeGrouping,
+    HourGrouping,
+    MonthGrouping,
+    YearGrouping
+} from './Grouping';
 import DataFilterer from '../data/DataFilterer';
 
 describe('Grouping', async () => {
@@ -73,6 +82,39 @@ describe('Grouping', async () => {
                         }
                     }
                 }
+            });
+        });
+        [
+            {
+                grouping: YearGrouping,
+                allowed: ['2023']
+            },
+            {
+                grouping: HourGrouping,
+                allowed: ['6', '7', '10', '12', '18', '21']
+            },
+            {
+                grouping: MonthGrouping,
+                allowed: ['May', 'June']
+            }
+        ].forEach(({ grouping, allowed }) => {
+            it(`should select values using ${grouping}`, () => {
+                const groupingInstance = new grouping(filter);
+                const [dataSubset, _] = filter.getData();
+                const values = dataSubset.map((row) => groupingInstance.selectX(row));
+                const recordedValues = new Set();
+                for (const v1 of values) {
+                    expect(v1).toBeInstanceOf(SetElement);
+                    recordedValues.add(v1.value);
+                    for (const v2 of values) {
+                        if (v1.value == v2.value) {
+                            expect(v1).toEqual(v2);
+                        } else {
+                            expect(v1).not.toEqual(v2);
+                        }
+                    }
+                }
+                expect(recordedValues).toEqual(new Set(allowed));
             });
         });
     });
