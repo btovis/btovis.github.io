@@ -4,12 +4,14 @@ import InputOption from './InputOption';
 import Form from 'react-bootstrap/Form';
 import RangeQuery from '../query/RangeQuery';
 import { Attribute } from '../data/Data';
+import { Accordion } from 'react-bootstrap';
 
 export default class NumericInput extends InputOption {
     private value: number;
     private min: number;
     private max: number;
     private step: number;
+    private accordionOpen = false;
 
     public constructor(panel: Panel, name: string, min: number, max: number, step: number) {
         super(panel, name);
@@ -25,21 +27,35 @@ export default class NumericInput extends InputOption {
 
     public render(): JSX.Element {
         return (
-            <div className='sidebar-padding'>
-                <Form.Label>
-                    <strong>{this.name}</strong>
-                </Form.Label>
-                <Form.Range
-                    value={this.value}
-                    min={this.min}
-                    max={this.max}
-                    step={this.step}
-                    onChange={(event) => {
-                        this.callback(event.target.valueAsNumber);
-                    }}
-                />
-                <p>Selected Value: {this.value}</p>
-            </div>
+            <Accordion
+                onSelect={(eventKey) => {
+                    this.accordionOpen = typeof eventKey === 'string';
+                    this.refreshComponent();
+                }}
+                defaultActiveKey={this.accordionOpen ? '0' : []}
+            >
+                <Accordion.Item eventKey='0'>
+                    <Accordion.Header>
+                        <span>
+                            <strong>{this.name}</strong>
+                        </span>
+                    </Accordion.Header>
+                    <Accordion.Body>
+                        <div className='sidebar-padding'>
+                            <Form.Range
+                                value={this.value}
+                                min={this.min}
+                                max={this.max}
+                                step={this.step}
+                                onChange={(event) => {
+                                    this.callback(event.target.valueAsNumber);
+                                }}
+                            />
+                            <p>Selected Value: {this.value}</p>
+                        </div>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
         );
     }
     public callback(newValue: number): void {
