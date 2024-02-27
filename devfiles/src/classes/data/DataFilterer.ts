@@ -223,6 +223,7 @@ export default class DataFilterer {
     // This gives you an array of full size, but one shouldn't access it beyond the first dataArrLen elements.
     // So please use for (var i = 0; i < dataArrLen ; i++ ) { ...}
     // and don't use map, forEach.
+    // You may want to say const [data, length] = filterer.getData(); const dataSubset = data.slice(0, length); but this can be slow.
     public getData(): [dataArr: Array<any>, dataArrLen: number] {
         return [this.filteredData, this.filteredDataArrLen];
     }
