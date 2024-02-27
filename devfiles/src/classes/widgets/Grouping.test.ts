@@ -223,4 +223,20 @@ describe('Grouping', async () => {
             });
         });
     });
+    describe('getTraces', () => {
+        it('should get traces with selected properties', () => {
+            const grouping = new BatchNameGrouping(filter);
+            const traces = grouping.getTraces({
+                type: 'bar'
+            });
+            for (const trace of traces) {
+                expect(trace).toHaveProperty('x');
+                expect(trace).toHaveProperty('y');
+                expect(trace).toHaveProperty('name');
+                expect(trace['type']).toBe('bar');
+                expect(trace.x).toBeInstanceOf(Array);
+                expect(trace.y).toBeInstanceOf(Array);
+            }
+        });
+    });
 });
