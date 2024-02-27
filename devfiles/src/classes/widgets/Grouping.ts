@@ -90,8 +90,9 @@ abstract class Grouping {
         additionalLayoutConfig: { [key: string]: any }
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
+        const xIndexMap = this.xIndexMap();
         const labelAlias = Object.fromEntries(
-            Array.from(this.xIndexMap().entries()).map(([x, i]) => [i, x.value])
+            Array.from(xIndexMap.entries()).map(([x, i]) => [i, x.value])
         );
         return {
             traces: partialTraces.map((trace) => {
@@ -103,7 +104,9 @@ abstract class Grouping {
             layout: {
                 xaxis: {
                     title: 'xaxistitle',
-                    labelalias: labelAlias
+                    labelalias: labelAlias,
+                    nticks: xIndexMap.size,
+                    tickmode: 'auto'
                 },
                 yaxis: {
                     title: 'yaxistitle'
