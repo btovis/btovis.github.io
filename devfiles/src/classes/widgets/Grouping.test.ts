@@ -91,7 +91,7 @@ describe('Grouping', async () => {
             },
             {
                 grouping: HourGrouping,
-                allowed: ['6', '7', '10', '12', '18', '21']
+                allowed: ['06:00', '07:00', '10:00', '12:00', '18:00', '21:00']
             },
             {
                 grouping: MonthGrouping,

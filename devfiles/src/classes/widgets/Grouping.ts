@@ -91,7 +91,7 @@ abstract class TimeGrouping extends Grouping {
 
 class HourGrouping extends TimeGrouping {
     public timeToValue(datetime: Date): string {
-        return datetime.getHours().toString();
+        return `${datetime.getHours().toString().padStart(2, '0')}:00`;
     }
 }
 
