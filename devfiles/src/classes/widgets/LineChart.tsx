@@ -1,18 +1,15 @@
 import Widget from './Widget.js';
-import WidgetConfig from './WidgetConfig.js';
-import { Data } from '../data/Data.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
-import React from 'react';
 import Plot from 'react-plotly.js';
-import { DayGrouping, MonthGrouping } from './Grouping.js';
+import { ContinuousMonthGrouping } from './Grouping.js';
 
 export default class LineChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar([]);
     }
     public render(): JSX.Element {
-        const grouping = new DayGrouping(this.panel.dataFilterer);
+        const grouping = new ContinuousMonthGrouping(this.panel.dataFilterer);
         const plotLayout = {
             width: 400,
             height: 210,
