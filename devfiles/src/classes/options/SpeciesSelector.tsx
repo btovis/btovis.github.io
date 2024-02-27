@@ -20,7 +20,7 @@ export default class SpeciesSelector extends InputOption {
     public selected: Set<SetElement> = new Set<SetElement>(); //Set of latin names
     public allowedEndangerment = new Set<EndangermentStatus>();
     public allowedGroups = new Set<SetElement>();
-    private accordionOpen = true;
+    private accordionOpen = false;
     private choices: Set<SetElement>;
     private possibleGroups: Set<SetElement>;
 
@@ -63,7 +63,6 @@ export default class SpeciesSelector extends InputOption {
             this.choices.forEach((elem) => this.selected.add(elem));
             this.allowedEndangerment = new Set(endangermentValues);
             this.possibleGroups.forEach((group) => this.allowedGroups.add(group));
-            this.accordionOpen = true;
         } else {
             //If a template Selector is available, copy its currently selected settings.
             //If the template has everything selected, just set everything to be selected.
@@ -92,7 +91,6 @@ export default class SpeciesSelector extends InputOption {
             }
 
             this.allowedEndangerment = template.allowedEndangerment;
-            this.accordionOpen = template.accordionOpen;
         }
     }
 
