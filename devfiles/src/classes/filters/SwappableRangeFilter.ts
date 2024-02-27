@@ -1,8 +1,11 @@
 import { Filter, PredicateType } from './Filter.ts';
 
-// accepts if l <= a <= h
+// if l == h, accept all
+// if l is Infinity and h is -Infinity, rejects all
+// if l <= h, (such as l: "03:00", h = "18:00") then accepts if l <= a and a < h
+// if l >= h, (such as l: "22:00", h = "03:00") then accepts if l <= a or a < h
 // Remember to use -Infinity or Infinity if using max range
-export default class RangeFilter implements Filter {
+export default class SwappableRangeFilter implements Filter {
     private l: number;
     private h: number;
     private pred: [PredicateType, undefined | ((a) => boolean)] | any[] = new Array(2);
@@ -24,21 +27,28 @@ export default class RangeFilter implements Filter {
     }
 
     private updatePred(l, h) {
-        if (l == -Infinity && h == +Infinity) {
+        if (l == h || (l == -Infinity && h == +Infinity)) {
             this.pred[0] = PredicateType.Transparent;
             this.pred[1] = undefined;
-        } else if (l > h) {
+        } else if (l == Infinity || h == -Infinity) {
             this.pred[0] = PredicateType.Opaque;
             this.pred[1] = undefined;
-        } else if (l == -Infinity) {
+        } else if (h > l) {
             this.pred[0] = PredicateType.CheckEveryItem;
-            this.pred[1] = (a) => a <= h;
-        } else if (h == +Infinity) {
-            this.pred[0] = PredicateType.CheckEveryItem;
-            this.pred[1] = (a) => a >= l;
+            if (h == Infinity) {
+                this.pred[1] = (a) => a >= l;
+            } else if (l == -Infinity) {
+                this.pred[1] = (a) => a < h;
+            } else {
+                this.pred[1] = (a) => a >= l && a < h;
+            }
         } else {
             this.pred[0] = PredicateType.CheckEveryItem;
-            this.pred[1] = (a) => a >= l && a <= h;
+            if (l == Infinity) {
+                this.pred[1] = (a) => a < h;
+            } else if (h == -Infinity) {
+                this.pred[1] = (a) => a >= l;
+            } else this.pred[1] = (a) => a >= l || a < h;
         }
     }
 
