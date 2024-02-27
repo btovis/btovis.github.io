@@ -66,12 +66,7 @@ describe('DataFilterer', async () => {
                 columnIdx = filterer.getColumnIndex(Attribute.warnings);
             });
             it('it should select non-null warnings', () => {
-                const query = [
-                    columnIdx,
-                    QueryType.SetElemQuery,
-                    data.sets[columnIdx].getRef(' '),
-                    0
-                ];
+                const query = [columnIdx, QueryType.SetElem, data.sets[columnIdx].getRef(' '), 0];
                 filterer.processQuery(query);
                 let [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
@@ -81,17 +76,11 @@ describe('DataFilterer', async () => {
                 }
             });
             it('it should select empty warnings', () => {
-                const query = [
-                    columnIdx,
-                    QueryType.SetElemQuery,
-                    data.sets[columnIdx].getRef(' '),
-                    1
-                ];
+                const query = [columnIdx, QueryType.SetElem, data.sets[columnIdx].getRef(' '), 1];
                 filterer.processQuery(query);
                 let [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
-                console.log('dataSubset', dataSubset.slice(0, length));
                 for (const row of dataSubset.slice(0, length)) {
                     expect(row[columnIdx].value).toBe(' ');
                 }
