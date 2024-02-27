@@ -12,7 +12,7 @@ export default abstract class InputOption {
         this.panel = panel;
         this.name = name;
     }
-    public abstract query(): Query;
+    public abstract query(): Query | { compound: boolean; queries: Query[] };
     public abstract render(): JSX.Element;
     public abstract callback(newValue: any);
 }

@@ -50,7 +50,7 @@ export default class MapWidget extends Widget {
                 lon: [...coords].map((c) => parseFloat(c.split('\0')[1])),
                 mode: 'markers',
                 marker: {
-                    size: 5,
+                    size: 7,
                     color: 'red'
                 },
                 text: ['Germany', 'Germany']
@@ -61,15 +61,13 @@ export default class MapWidget extends Widget {
         const plotLayout = {
             width: 290,
             height: 210,
-            autosize: true,
+            autosize: false,
             hovermode: 'closest',
             mapbox: {
-                bearing: 0,
                 center: {
                     lat: min[0] + (max[0] - min[0]) / 2,
                     lon: min[1] + (max[1] - min[1]) / 2
                 },
-                pitch: 0,
                 zoom: zoom
             },
             margin: {
@@ -116,7 +114,7 @@ export default class MapWidget extends Widget {
             ]
         };
 
-        return { plotData, plotLayout, plotConfig };
+        return { plotData, plotLayout, plotConfig, min, max };
     }
 
     public generateSidebar(): Sidebar {
