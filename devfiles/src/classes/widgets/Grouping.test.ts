@@ -174,4 +174,37 @@ describe('Grouping', async () => {
             }
         });
     });
+    describe('xValueMap', () => {
+        [
+            {
+                grouping: BatchNameGrouping,
+                attribute: Attribute.batchName
+            },
+            {
+                grouping: ProjectNameGrouping,
+                attribute: Attribute.projectName
+            },
+            {
+                grouping: FilenameGrouping,
+                attribute: Attribute.originalFileName
+            }
+        ].forEach(({ grouping, attribute }) => {
+            it(`should map values for ${attribute} to unique integers`, () => {
+                const groupingInstance = new grouping(filter);
+                const pairs = groupingInstance.generatePairs();
+                const xValueMap = groupingInstance.xValueMap();
+                const mappings = new Set();
+                for (const [x, y] of pairs) {
+                    const mapping = xValueMap.get(x);
+                    console.log(x, mapping, y);
+                    expect(mapping).not.toBeUndefined();
+                    expect(mapping).not.toBeNaN();
+                    mappings.add(mapping);
+                }
+                for (let i = 0; i < mappings.size; i++) {
+                    expect(mappings).toContain(i);
+                }
+            });
+        });
+    });
 });
