@@ -73,4 +73,60 @@ class FilenameGrouping extends Grouping {
     }
 }
 
-export { Grouping, BatchNameGrouping, FilenameGrouping, ProjectNameGrouping };
+abstract class TimeGrouping extends Grouping {
+    timeColumnIdx: number;
+    dateColumnIdx: number;
+    constructor(filter: DataFilterer) {
+        super(filter);
+        this.timeColumnIdx = filter.getColumnIndex(Attribute.time);
+        this.dateColumnIdx = filter.getColumnIndex(Attribute.actualDate);
+    }
+    public selectX(row: Row): SetElement {
+        return this.referenceSet.addRawOrGet(
+            this.timeToValue(new Date(row[this.dateColumnIdx] + ' ' + row[this.timeColumnIdx]))
+        );
+    }
+    public abstract timeToValue(datetime: Date): string;
+}
+
+class HourGrouping extends TimeGrouping {
+    public timeToValue(datetime: Date): string {
+        return datetime.getHours().toString();
+    }
+}
+
+class MonthGrouping extends TimeGrouping {
+    public timeToValue(datetime: Date): string {
+        return [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
+        ][datetime.getMonth()];
+    }
+}
+
+class YearGrouping extends TimeGrouping {
+    public timeToValue(datetime: Date): string {
+        return datetime.getFullYear().toString();
+    }
+}
+
+export {
+    Grouping,
+    BatchNameGrouping,
+    FilenameGrouping,
+    ProjectNameGrouping,
+    TimeGrouping,
+    HourGrouping,
+    MonthGrouping,
+    YearGrouping
+};
