@@ -11,7 +11,7 @@ async function loadData(filename = testDataFilename) {
     const byteArray = await readBytes(filename);
 
     expect(data.readDatabase()).toStrictEqual([]);
-    data.addCSV(filename, byteArray);
+    data.addCSV(filename, byteArray, false);
     return data;
 }
 

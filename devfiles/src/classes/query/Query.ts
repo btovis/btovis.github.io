@@ -10,37 +10,37 @@ export enum QueryType {
     SetAsArrayForReject = 4
 }
 
-export type RangeQuery = [
+export type RangeQueryT = [
     colI: number,
     QueryType.Range,
     low: number | string,
     high: number | string
 ];
-export type SwappableRangeQuery = [
+export type SwappableRangeQueryT = [
     colI: number,
     QueryType.SwappableRange,
     low: number | string,
     high: number | string
 ];
-export type SetElemQuery = [
+export type SetElemQueryT = [
     colI: number,
     QueryType.SetElem,
     e: SetElement,
     oneOrTrueForAccept0orFalseForReject: number | boolean
 ];
-export type SetQuery = [
+export type SetQueryT = [
     colI: number,
     QueryType.Set,
     twoForInvertOneOrTrueForAccept0orFalseForReject: number | boolean
 ];
 
-export type SetAsArray = [colI: number, QueryType.SetAsArray, array: string[]];
-export type SetAsArrayForReject = [colI: number, QueryType.SetAsArrayForReject, array: string[]];
+export type SetAsArrayT = [colI: number, QueryType.SetAsArray, array: string[]];
+export type SetAsArrayForRejectT = [colI: number, QueryType.SetAsArrayForReject, array: string[]];
 
 export type Query =
-    | RangeQuery
-    | SwappableRangeQuery
-    | SetElemQuery
-    | SetQuery
-    | SetAsArray
-    | SetAsArrayForReject;
+    | RangeQueryT
+    | SwappableRangeQueryT
+    | SetElemQueryT
+    | SetQueryT
+    | SetAsArrayT
+    | SetAsArrayForRejectT;

@@ -57,6 +57,10 @@ class Data {
         return this.readDatabase().length === 0;
     }
 
+    public length(): number {
+        return this.readDatabase().length;
+    }
+
     // see the method below to access it
     private titleToColumnIndex = new Map<string, number>([['_FILE', 0]]);
     private cellProcessors = [(a) => this.sets[0].addRawOrGet(a)];
