@@ -5,7 +5,8 @@ export enum QueryType {
     Range = 0,
     SetElem = 1,
     Set = 2,
-    SetAsArray = 3
+    SetAsArray = 3,
+    SetAsArrayForReject = 4
 }
 
 export type RangeQuery = [
@@ -27,5 +28,6 @@ export type SetQuery = [
 ];
 
 export type SetAsArray = [colI: number, QueryType.SetAsArray, array: string[]];
+export type SetAsArrayForReject = [colI: number, QueryType.SetAsArrayForReject, array: string[]];
 
-export type Query = RangeQuery | SetElemQuery | SetQuery | SetAsArray;
+export type Query = RangeQuery | SetElemQuery | SetQuery | SetAsArray | SetAsArrayForReject;
