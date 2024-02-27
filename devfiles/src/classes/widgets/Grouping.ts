@@ -29,7 +29,9 @@ abstract class Grouping {
     }
     // Select pairs of x-y values that will be aggregated and plotted.
     public generatePairs(): [SetElement, SetElement][] {
-        return [];
+        const [data, length] = this.filter.getData();
+        const dataSubset = data.slice(0, length);
+        return dataSubset.map((row) => [this.selectX(row), this.selectY(row)]);
     }
     // Aggregate the pairs of x-y values.
     public aggregatePairs() {}
