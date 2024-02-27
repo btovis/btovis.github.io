@@ -1,4 +1,5 @@
 import { EndangermentStatus, getSpeciesEndangerment } from '../../utils/speciesVulnerability';
+import PositionMeta from '../queryMeta/PositionMeta';
 import RangeMeta from '../queryMeta/RangeMeta';
 import SetMeta from '../queryMeta/SetMeta';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
@@ -23,26 +24,48 @@ export default class DataStats {
         ]
     > = new Map();
 
+    private positionMeta: PositionMeta;
+
     public constructor(d: Data) {
         this.data = d;
         if (!d) throw 'Stats uninitialized'; // can be removed
     }
 
     public refresh() {
-        // date range ('ACTUAL DATE')
+        //Required Columns
         const dateCol = this.data.getIndexForColumn(Attribute.actualDate);
+        const latCol = this.data.getIndexForColumn(Attribute.latitude);
+        const lonCol = this.data.getIndexForColumn(Attribute.longitude);
+
+        //TimeMeta Initialisers
         let min = 'z';
         let max = '0';
-        if (dateCol) {
-            const db = this.data.readDatabase(),
-                l = db.length;
-            for (let i = 0; i < l; i++) {
-                const d = db[i][dateCol] as string;
-                if (!d.startsWith('20')) continue;
+        //PositionMeta Initialisers
+        const uniquePositions = new Set<string>();
+        const globalMin = [Infinity, Infinity];
+        const globalMax = [-Infinity, -Infinity];
+
+        //Iterate every row. Process stuff here
+        const db = this.data.readDatabase();
+        const l = db.length;
+        for (let i = 0; i < l; i++) {
+            const row = db[i];
+            //TimeMeta processing
+            const d = row[dateCol] as string;
+            if (d.startsWith('20')) {
                 if (d < min) min = d;
                 if (d > max) max = d;
             }
+
+            //PositionMeta processing
+            uniquePositions.add(row[latCol].toString() + '\0' + row[lonCol].toString());
+            globalMin[0] = Math.min(globalMin[0], row[latCol] as number);
+            globalMin[1] = Math.min(globalMin[1], row[lonCol] as number);
+            globalMax[0] = Math.max(globalMax[0], row[latCol] as number);
+            globalMax[1] = Math.max(globalMax[1], row[lonCol] as number);
         }
+
+        //TimeMeta Post-Processing
         if (min != 'z') {
             this.timeRange[0] = min;
             this.timeRange[1] = max;
@@ -50,6 +73,9 @@ export default class DataStats {
         } else {
             this.timeRange.length = 0;
         }
+        //PositionMeta Post-Processing
+        this.positionMeta = new PositionMeta(uniquePositions, globalMin, globalMax);
+
         // species count array
         //This is placed outside the loop above to facilitate merging later
         //Purge species list to force a complete refresh
@@ -60,8 +86,6 @@ export default class DataStats {
         const speciesCol = this.data.getIndexForColumn(Attribute.species);
         const speciesEnglishCol = this.data.getIndexForColumn(Attribute.speciesEnglishName);
         const groupCol = this.data.getIndexForColumn(Attribute.speciesGroup);
-        const db = this.data.readDatabase(),
-            l = db.length;
         let rowIndex = 0;
         while (this.species.size < uniqueSpecies && rowIndex < l) {
             const latinName = db[rowIndex][latinNameCol];
@@ -89,5 +113,9 @@ export default class DataStats {
     // You shouldn't need to call this more than once but no harm otherwise
     public getTimeMeta() {
         return new RangeMeta(this.timeRange);
+    }
+
+    public getPositionMeta() {
+        return this.positionMeta;
     }
 }

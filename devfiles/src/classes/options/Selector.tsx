@@ -53,6 +53,7 @@ export default class Selector extends InputOption {
             [...template.excluded]
                 .filter((elem) => elem in this.choices)
                 .forEach((elem) => this.excluded.add(elem));
+            this.accordionOpen = template.accordionOpen;
         }
     }
 

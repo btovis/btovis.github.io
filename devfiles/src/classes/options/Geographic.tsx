@@ -8,15 +8,13 @@ import { Attribute } from '../data/Data';
 import PageManager from '../PageManager';
 import RangeQuery from '../query/RangeQuery';
 import { v4 as uuidv4 } from 'uuid';
+import PositionMeta from '../queryMeta/PositionMeta';
 
 export default class Geographic extends InputOption {
     private accordionOpen = false;
 
-    private choices = new Set<string>();
     private globalLatDiameter = 0;
     private globalLonDiameter = 0;
-    private globalMin = [Infinity, Infinity];
-    private globalMax = [-Infinity, -Infinity];
     private renderedMap = false;
 
     private minLat = -Infinity;
@@ -27,21 +25,9 @@ export default class Geographic extends InputOption {
     public constructor(panel: Panel, name: string, template: Geographic = undefined) {
         super(panel, name);
 
-        //Optimisation opportunity: Set query for lat/lon
-        const latCol = panel.dataFilterer.getColumnIndex(Attribute.latitude);
-        const lonCol = panel.dataFilterer.getColumnIndex(Attribute.longitude);
-        for (let i = 0; i < PageManager.get().data.readDatabase().length; i++) {
-            const row = PageManager.get().data.readDatabase()[i];
-            this.choices.add(row[latCol].toString() + '\0' + row[lonCol].toString());
-            this.globalMin[0] = Math.min(this.globalMin[0], row[latCol] as number);
-            this.globalMin[1] = Math.min(this.globalMin[1], row[lonCol] as number);
-            this.globalMax[0] = Math.max(this.globalMax[0], row[latCol] as number);
-            this.globalMax[1] = Math.max(this.globalMax[1], row[lonCol] as number);
-        }
-
         //map zoom settings
-        this.globalLatDiameter = this.globalMax[0] - this.globalMin[0];
-        this.globalLonDiameter = this.globalMax[0] - this.globalMin[0];
+        this.globalLatDiameter = this.posMeta().globalMax[0] - this.posMeta().globalMin[0];
+        this.globalLonDiameter = this.posMeta().globalMax[1] - this.posMeta().globalMin[1];
 
         if (template !== undefined) {
             this.minLat = template.minLat;
@@ -50,6 +36,10 @@ export default class Geographic extends InputOption {
             this.maxLon = template.maxLon;
             this.accordionOpen = template.accordionOpen;
         }
+    }
+
+    private posMeta(): PositionMeta {
+        return this.panel.dataFilterer.getDataStats().getPositionMeta();
     }
 
     public render(): JSX.Element {
@@ -74,7 +64,7 @@ export default class Geographic extends InputOption {
                                     this.callback(
                                         event.currentTarget.checked
                                             ? {
-                                                  pointCount: this.choices.size,
+                                                  pointCount: this.posMeta().uniquePositions.size,
                                                   bounds: [
                                                       [0, 0],
                                                       [0, 0]
@@ -129,8 +119,8 @@ export default class Geographic extends InputOption {
         const maxBound = Math.max(this.globalLatDiameter, this.globalLonDiameter) * 600;
         const zoom = 11.5 - Math.log(maxBound);
 
-        const lat = [...this.choices].map((c) => parseFloat(c.split('\0')[0]));
-        const lon = [...this.choices].map((c) => parseFloat(c.split('\0')[1]));
+        const lat = [...this.posMeta().uniquePositions].map((c) => parseFloat(c.split('\0')[0]));
+        const lon = [...this.posMeta().uniquePositions].map((c) => parseFloat(c.split('\0')[1]));
         const col = lat.map((l, ind) => {
             const lo = lon[ind];
             if (
@@ -163,8 +153,12 @@ export default class Geographic extends InputOption {
             hovermode: 'closest',
             mapbox: {
                 center: {
-                    lat: this.globalMin[0] + (this.globalMax[0] - this.globalMin[0]) / 2,
-                    lon: this.globalMin[1] + (this.globalMax[1] - this.globalMin[1]) / 2
+                    lat:
+                        this.posMeta().globalMin[0] +
+                        (this.posMeta().globalMax[0] - this.posMeta().globalMin[0]) / 2,
+                    lon:
+                        this.posMeta().globalMin[1] +
+                        (this.posMeta().globalMax[1] - this.posMeta().globalMin[1]) / 2
                 },
                 zoom: zoom
             },
@@ -199,7 +193,7 @@ export default class Geographic extends InputOption {
      */
     public callback(newValue: { pointCount: number; bounds: [number, number][] }): void {
         //Iterate and collect the points
-        if (newValue.pointCount === this.choices.size) {
+        if (newValue.pointCount === this.posMeta().uniquePositions.size) {
             this.minLat = -Infinity;
             this.maxLat = Infinity;
             this.minLon = -Infinity;
