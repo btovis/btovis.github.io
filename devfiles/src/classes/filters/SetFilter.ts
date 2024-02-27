@@ -7,9 +7,8 @@ import { setDifference } from '../data/setutils/setDifference.ts';
 // Note: SetFilter receives SetManager not JS Set from UI!
 // PageManager should store SetElements along with texts!
 export default class SetFilter implements Filter {
-    private e: ReferenceSet; // exclude
-    private a: ReferenceSet; // all elements
-    private prevACopy: Set<SetElement>; // previous "all elements"
+    private e: ReferenceSet;
+    private a: ReferenceSet;
 
     private pred: [PredicateType, undefined | ((a) => boolean)] | any[] = new Array(2);
     private mode: number; // 0: transparent 1: opaque, 2: "reject some" mode 3: "accept some" mode
@@ -23,32 +22,11 @@ export default class SetFilter implements Filter {
     public constructor(filterAwayThisSet: ReferenceSet, allVals: ReferenceSet) {
         this.e = filterAwayThisSet;
         this.a = allVals;
-        this.prevACopy = new Set(allVals.refs);
         this.recalculateAll();
     }
 
-    // Assume new items added, or old items removed, but not both.
-    public updateSetReference(sr: ReferenceSet) {
+    public updateSetReference(sr) {
         this.a = sr;
-        if (sr.size() < this.prevACopy.size) {
-            // See which elements no longer in new set - no longer exclude them
-            const diff = setDifference(this.e.refs, sr.refs);
-            for (const e of diff) {
-                this.e.removeRef(e);
-            }
-        } else if (sr.size() > this.prevACopy.size) {
-            // Some elements are new.
-            // Match sidebar: select everything new only if all were selected before
-            const allWereSelected = this.e.size() == 0;
-            if (!allWereSelected) {
-                // add new ones to exclude list
-                const diff = setDifference(sr.refs, this.prevACopy);
-                for (const e of diff) {
-                    this.e.addRef(e);
-                }
-            }
-        }
-        this.prevACopy = new Set(sr.refs);
         this.recalculateAll();
     }
 
