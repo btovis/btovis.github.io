@@ -124,32 +124,69 @@ abstract class TimeGrouping extends Grouping {
 
 class HourGrouping extends TimeGrouping {
     public timeToValue(datetime: Date): string {
-        return `${datetime.getHours().toString().padStart(2, '0')}:00`;
+        return this.formatHour(datetime.getHours());
+    }
+    private formatHour(hour: number): string {
+        return `${hour.toString().padStart(2, '0')}:00`;
+    }
+
+    public xValueMap() {
+        const hours = Array.from(this.xValues).map((x) => parseInt(x.value.split(':')[0]));
+        const minHour = Math.min(...hours);
+        const maxHour = Math.max(...hours);
+        const valueMap = new Map<SetElement, number>();
+        for (let i = minHour; i <= maxHour; i++) {
+            valueMap.set(this.referenceSet.addRawOrGet(this.formatHour(i)), i - minHour);
+        }
+        return valueMap;
     }
 }
 
 class MonthGrouping extends TimeGrouping {
+    static months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ];
     public timeToValue(datetime: Date): string {
-        return [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December'
-        ][datetime.getMonth()];
+        return MonthGrouping.months[datetime.getMonth()];
+    }
+    public xValueMap() {
+        const monthIndices = Array.from(this.xValues).map((x) =>
+            MonthGrouping.months.indexOf(x.value)
+        );
+        const minMonth = Math.min(...monthIndices);
+        const maxMonth = Math.max(...monthIndices);
+        const valueMap = new Map<SetElement, number>();
+        for (let i = minMonth; i <= maxMonth; i++) {
+            valueMap.set(this.referenceSet.addRawOrGet(MonthGrouping.months[i]), i - minMonth);
+        }
+        return valueMap;
     }
 }
 
 class YearGrouping extends TimeGrouping {
     public timeToValue(datetime: Date): string {
         return datetime.getFullYear().toString();
+    }
+    public xValueMap() {
+        const years = Array.from(this.xValues).map((x) => parseInt(x.value));
+        const minYear = Math.min(...years);
+        const maxYear = Math.max(...years);
+        const valueMap = new Map<SetElement, number>();
+        for (let i = minYear; i <= maxYear; i++) {
+            valueMap.set(this.referenceSet.addRawOrGet(i.toString()), i - minYear);
+        }
+        return valueMap;
     }
 }
 
