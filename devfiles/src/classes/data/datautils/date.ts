@@ -31,7 +31,6 @@ export function processDates(
     columnI
 ): [DateType | undefined, DateSeparator | undefined] {
     // pick a random cell
-    // empty new database:
     if (startI == dataArr.length) return undefined;
     const random = startI + Math.floor((dataArr.length - startI) / 2);
     const example: string = dataArr[random][columnI];
@@ -176,5 +175,61 @@ export function processDates(
     const l = dataArr.length;
     for (let i = startI; i < l; i++) {
         dataArr[i][columnI] = processor(dataArr[i][columnI]);
+    }
+}
+
+enum TimeSeparator {
+    NONE = '', // bird pipeline
+    COLON = ':' // high frequency pipeline
+}
+
+enum TimePrecision {
+    TWO = 2, // HHMM
+    THREE = 3 // HHMMSS both pipelines
+}
+
+// Only call if there's TIME column in data
+// processes dataArray, returns data
+export function processTimes(
+    dataArr,
+    startI,
+    columnI
+): [TimeSeparator | undefined, TimePrecision | undefined] {
+    // pick a random cell
+    if (startI == dataArr.length) return undefined;
+    const random = startI + Math.floor((dataArr.length - startI) / 2);
+    const example: string = dataArr[random][columnI];
+    let sep: TimeSeparator, prec: TimePrecision | number;
+    if (example.includes(':')) {
+        sep = TimeSeparator.COLON;
+        prec = example.split(':').length;
+        switch (prec) {
+            case 2:
+                break;
+            case 3:
+                break;
+            default: // 4 or more:
+                // nothing after seconds is supported currently
+                return [undefined, undefined];
+        }
+        return [sep, prec];
+    } else {
+        sep = TimeSeparator.NONE;
+        let processor: (s) => string;
+        switch (example.length) {
+            case 4:
+                processor = (s) => s.slice(0, 2) + ':' + s.slice(2);
+                break;
+            case 6:
+                processor = (s) => s.slice(0, 2) + ':' + s.slice(2, 4) + ':' + s.slice(4);
+                break;
+            default:
+                return [undefined, undefined];
+        }
+
+        const l = dataArr.length;
+        for (let i = startI; i < l; i++) {
+            dataArr[i][columnI] = processor(dataArr[i][columnI]);
+        }
     }
 }
