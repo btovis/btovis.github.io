@@ -79,17 +79,9 @@ export default class TimeRange extends InputOption {
         this.refreshComponent();
     }
     public query(): Query {
-        let lowerLimit: number | string = this.fromTime.format('HH:mm:ss');
-        if (lowerLimit == '00:00:00') {
-            lowerLimit = -Infinity;
-        }
-        const upperLimit: number | string = this.toTime.format('HH:mm:ss');
-        if (lowerLimit == '23:59:59') {
-            lowerLimit = Infinity;
-        }
         return new RangeQuery(this.panel.dataFilterer.getColumnIndex(Attribute.time)).query(
-            lowerLimit,
-            upperLimit
+            this.fromTime.format('HH:mm:ss'),
+            this.toTime.format('HH:mm:ss')
         );
     }
 }
