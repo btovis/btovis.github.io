@@ -19,7 +19,7 @@ describe('Data', async () => {
         it('should add more data with second CSV', async () => {
             const length = data.readDatabase().length;
             const data2 = await readBytes(filename2);
-            await data.addCSV(filename2, data2);
+            data.addCSV(filename2, data2, true);
             expect(data.readDatabase().length).toBeGreaterThan(length);
         });
     });
@@ -32,21 +32,21 @@ describe('Data', async () => {
         it('should remove the second CSV only', async () => {
             const length = data.readDatabase().length;
             const data2 = await readBytes(filename2);
-            await data.addCSV(filename2, data2);
+            await data.addCSV(filename2, data2, true);
             data.removeCSV(filename2);
             expect(data.readDatabase().length).toEqual(length);
         });
         it('should remove the first CSV only', async () => {
             const length1 = data.readDatabase().length;
             const data2 = await readBytes(filename2);
-            await data.addCSV(filename2, data2);
+            await data.addCSV(filename2, data2, true);
             const length2 = data.readDatabase().length - length1;
             data.removeCSV(filename);
             expect(data.readDatabase().length).toEqual(length2);
         });
         it('should remove all data', async () => {
             const data2 = await readBytes(filename2);
-            await data.addCSV(filename2, data2);
+            await data.addCSV(filename2, data2, true);
             data.removeCSV(filename);
             data.removeCSV(filename2);
             expect(data.readDatabase()).toStrictEqual([]);
@@ -80,12 +80,16 @@ describe('Data', async () => {
                     const idx = data.getIndexForColumn(attribute);
                     expect(idx).not.toBeNull();
                     const dataValue = data.readDatabase()[index][idx];
-                    if (isNaN(dataValue) && isNaN(expected)) {
+                    if (isNaN(Number(dataValue)) && isNaN(Number(expected))) {
                         console.log('dataValue: ' + typeof dataValue);
                         switch (typeof dataValue) {
                             case 'string':
                                 // Check if expected is a string
                                 expect(dataValue).toBe(expected);
+                                break;
+                            case 'number':
+                                // This branch should never be reached.
+                                assert(false);
                                 break;
                             default:
                                 // Check if expected is a setItem (filename)
@@ -94,7 +98,7 @@ describe('Data', async () => {
                         }
                     } else {
                         // Check if expected is a number
-                        expect(dataValue).toBeCloseTo(expected);
+                        expect(dataValue).toBeCloseTo(Number(expected));
                     }
                 }
             );
