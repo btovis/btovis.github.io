@@ -187,6 +187,18 @@ describe('Grouping', async () => {
             {
                 grouping: FilenameGrouping,
                 attribute: Attribute.originalFileName
+            },
+            {
+                grouping: YearGrouping,
+                attribute: 'year'
+            },
+            {
+                grouping: HourGrouping,
+                attribute: 'hour'
+            },
+            {
+                grouping: MonthGrouping,
+                attribute: 'month'
             }
         ].forEach(({ grouping, attribute }) => {
             it(`should map values for ${attribute} to unique integers`, () => {
@@ -196,10 +208,14 @@ describe('Grouping', async () => {
                 const mappings = new Set();
                 for (const [x, y] of pairs) {
                     const mapping = xValueMap.get(x);
-                    console.log(x, mapping, y);
                     expect(mapping).not.toBeUndefined();
                     expect(mapping).not.toBeNaN();
                     mappings.add(mapping);
+                }
+                if (groupingInstance instanceof TimeGrouping) {
+                    for (const i of xValueMap.values()) {
+                        mappings.add(i);
+                    }
                 }
                 for (let i = 0; i < mappings.size; i++) {
                     expect(mappings).toContain(i);
