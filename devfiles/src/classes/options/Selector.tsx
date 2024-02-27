@@ -13,7 +13,7 @@ export default class Selector extends InputOption {
     protected searchState: string = '';
     public excluded: Set<string> = new Set();
     public readonly columnIndex;
-    private accordionOpen = true;
+    private accordionOpen = false;
 
     /**
      * @param panel The associated panel
@@ -30,8 +30,7 @@ export default class Selector extends InputOption {
         choices: string[] | number,
         allSelected: boolean = true,
         defaults?: string[],
-        template: Selector = undefined,
-        defaultOpen: boolean = true
+        template: Selector = undefined
     ) {
         super(panel, name);
         //If a column index is provided, set choices to the unique column values
@@ -49,15 +48,12 @@ export default class Selector extends InputOption {
                     [...this.choices].filter((choice) => !defaultSet.has(choice))
                 );
             }
-            this.accordionOpen = defaultOpen;
         } else {
             //If a template Selector is available, copy its currently excluded settings.
             //If the template has everything selected, template.excluded will be empty
             [...template.excluded]
                 .filter((elem) => elem in this.choices)
                 .forEach((elem) => this.excluded.add(elem));
-
-            this.accordionOpen = template.accordionOpen;
         }
     }
 
@@ -87,7 +83,7 @@ export default class Selector extends InputOption {
                     <input
                         type='text'
                         list={this.uuid.toString() + '-search'}
-                        placeholder='Search'
+                        placeholder={'Search ' + this.name}
                         onChange={(event) => {
                             this.searchState = event.target.value;
                             //Optimisation potential: Don't refresh everything for this
