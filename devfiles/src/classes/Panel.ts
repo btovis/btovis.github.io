@@ -28,6 +28,7 @@ export default class Panel {
     private fileSelector: Selector;
     private dateRange: DateRange;
     private timeOfDay: TimeOfDayRange;
+    private minimumProbability: NumericInput;
     private speciesSelector: SpeciesSelector;
     private warningsSelector: Selector;
     private calltypeSelector: Selector;
@@ -71,6 +72,7 @@ export default class Panel {
         );
         this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
         this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
+        this.minimumProbability = new NumericInput(this, 'Minimum Probability', 0, 1, 0.01);
         this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
@@ -177,8 +179,8 @@ export default class Panel {
             new Geographic(this, 'Region'), //Positional filter
             this.dateRange,
             this.timeOfDay,
+            this.minimumProbability,
             this.speciesSelector,
-            new NumericInput(this, 'Minimum Probability'),
             this.warningsSelector,
             this.calltypeSelector,
             this.projectSelector,
