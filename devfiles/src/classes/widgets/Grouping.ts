@@ -58,7 +58,7 @@ abstract class Grouping {
     }
     // Convert x values to integers to display on chart.
     // Must be called after all pairs have been generated.
-    public xValueMap() {
+    public xIndexMap() {
         const sortedXValues = Array.from(this.xValues).sort((a, b) =>
             a.value.localeCompare(b.value)
         );
@@ -71,14 +71,16 @@ abstract class Grouping {
     // Generate a trace that includes the core data but excludes the additional config.
     public getPartialTraces() {
         const plottingData = this.aggregatePairs();
-        const xValueMap = this.xValueMap();
-        return Array.from(plottingData.entries()).map(([group, xMap]) => {
-            const xValues = Array.from(xMap.keys());
-            const yValues = Array.from(xMap.values());
-            const x = xValues.map((x) => xValueMap.get(x));
+        const xIndexMap = this.xIndexMap();
+        return Array.from(plottingData.entries()).map(([group, xValueMap]) => {
+            const x = Array.from(Array(xIndexMap.size).keys());
+            const y = new Array(xIndexMap.size).fill(0);
+            for (const [xValue, yValue] of xValueMap.entries()) {
+                y[xIndexMap.get(xValue)] = yValue;
+            }
             return {
                 x: x,
-                y: yValues,
+                y: y,
                 name: group.value
             };
         });
@@ -88,8 +90,9 @@ abstract class Grouping {
         additionalLayoutConfig: { [key: string]: any }
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
+        const xIndexMap = this.xIndexMap();
         const labelAlias = Object.fromEntries(
-            Array.from(this.xValueMap().entries()).map(([x, i]) => [i, x.value])
+            Array.from(xIndexMap.entries()).map(([x, i]) => [i, x.value])
         );
         return {
             traces: partialTraces.map((trace) => {
@@ -101,7 +104,9 @@ abstract class Grouping {
             layout: {
                 xaxis: {
                     title: 'xaxistitle',
-                    labelalias: labelAlias
+                    labelalias: labelAlias,
+                    nticks: xIndexMap.size,
+                    tickmode: 'auto'
                 },
                 yaxis: {
                     title: 'yaxistitle'
@@ -169,13 +174,84 @@ class HourGrouping extends TimeGrouping {
         return `${hour.toString().padStart(2, '0')}:00`;
     }
 
-    public xValueMap() {
+    public xIndexMap() {
         const hours = Array.from(this.xValues).map((x) => parseInt(x.value.split(':')[0]));
         const minHour = Math.min(...hours);
         const maxHour = Math.max(...hours);
         const valueMap = new Map<SetElement, number>();
         for (let i = minHour; i <= maxHour; i++) {
             valueMap.set(this.referenceSet.addRawOrGet(this.formatHour(i)), i - minHour);
+        }
+        return valueMap;
+    }
+}
+
+class DayGrouping extends TimeGrouping {
+    public timeToValue(datetime: Date): string {
+        return this.formatDate(datetime.getDate(), datetime.getMonth() + 1, datetime.getFullYear());
+    }
+    private formatDate(day: number, month: number, year: number): string {
+        return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+    }
+
+    public xIndexMap() {
+        const dates = Array.from(this.xValues).map((x) => {
+            const [day, month, year] = x.value.split('-').map((s) => parseInt(s));
+            return new Date(year, month - 1, day);
+        });
+        const timestamps = dates.map((date) => date.getTime());
+        const minTimestamp = Math.min(...timestamps);
+        const maxTimestamp = Math.max(...timestamps);
+        const valueMap = new Map<SetElement, number>();
+        for (let i = minTimestamp; i <= maxTimestamp; i += 24 * 60 * 60 * 1000) {
+            const date = new Date(i);
+            const formattedDate = this.formatDate(
+                date.getDate(),
+                date.getMonth() + 1,
+                date.getFullYear()
+            );
+            valueMap.set(
+                this.referenceSet.addRawOrGet(formattedDate),
+                (i - minTimestamp) / (24 * 60 * 60 * 1000)
+            );
+        }
+        return valueMap;
+    }
+}
+
+class ContinuousMonthGrouping extends TimeGrouping {
+    static months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+    ];
+    public timeToValue(datetime: Date): string {
+        return this.formatDate(datetime.getMonth(), datetime.getFullYear());
+    }
+    private formatDate(month: number, year: number): string {
+        return `${ContinuousMonthGrouping.months[month]}-${year}`;
+    }
+    public xIndexMap() {
+        const combinations = Array.from(this.xValues).map((x) => {
+            const [month, strYear] = x.value.split('-');
+            return ContinuousMonthGrouping.months.indexOf(month) + parseInt(strYear) * 12;
+        });
+        const minCombination = Math.min(...combinations);
+        const maxCombination = Math.max(...combinations);
+        const valueMap = new Map<SetElement, number>();
+        for (let i = minCombination; i <= maxCombination; i++) {
+            const [month, year] = [i % 12, Math.floor(i / 12)];
+            const formattedDate = this.formatDate(month, year);
+            valueMap.set(this.referenceSet.addRawOrGet(formattedDate), i - minCombination);
         }
         return valueMap;
     }
@@ -199,7 +275,7 @@ class MonthGrouping extends TimeGrouping {
     public timeToValue(datetime: Date): string {
         return MonthGrouping.months[datetime.getMonth()];
     }
-    public xValueMap() {
+    public xIndexMap() {
         const monthIndices = Array.from(this.xValues).map((x) =>
             MonthGrouping.months.indexOf(x.value)
         );
@@ -217,7 +293,7 @@ class YearGrouping extends TimeGrouping {
     public timeToValue(datetime: Date): string {
         return datetime.getFullYear().toString();
     }
-    public xValueMap() {
+    public xIndexMap() {
         const years = Array.from(this.xValues).map((x) => parseInt(x.value));
         const minYear = Math.min(...years);
         const maxYear = Math.max(...years);
@@ -236,6 +312,8 @@ export {
     ProjectNameGrouping,
     TimeGrouping,
     HourGrouping,
+    DayGrouping,
+    ContinuousMonthGrouping,
     MonthGrouping,
     YearGrouping
 };
