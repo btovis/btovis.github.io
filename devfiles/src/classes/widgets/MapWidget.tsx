@@ -12,35 +12,33 @@ export default class MapWidget extends Widget {
     }
     public render(): JSX.Element {
         //fake data to implement map scaling
-        const data = {
-            lat: ['48.89697', '48.95'],
-            lon: ['13.44842', '13.45']
-        };
+        const data = this.panel.dataFilterer.getData()[0];
+        const latitudeColumnIdx = this.panel.dataFilterer.getColumnIndex('LATITUDE');
+        const longitudeColumnIdx = this.panel.dataFilterer.getColumnIndex('LONGITUDE');
+        const latitude = data.map((row) => Number(row[latitudeColumnIdx]));
+        const longitude = data.map((row) => Number(row[longitudeColumnIdx]));
 
         //map zoom settings
-        const latBound = Math.max(...data.lat.map(Number)) - Math.min(...data.lat.map(Number));
-        const lonBound = Math.max(...data.lon.map(Number)) - Math.min(...data.lon.map(Number));
+        const latMax = Math.max(...latitude);
+        const latMin = Math.min(...latitude);
+        const lonMax = Math.max(...longitude);
+        const lonMin = Math.min(...longitude);
+
+        const latBound = latMax - latMin + 1e-4;
+        const lonBound = lonMax - lonMin + 1e-4;
         const maxBound = Math.max(latBound, lonBound) * 600;
         const zoom = 11.5 - Math.log(maxBound);
 
         //map center settings
-        let avgLat = 0;
-        let avgLon = 0;
-        data.lat.map(Number).forEach((num) => {
-            avgLat += num;
-        });
-        data.lon.map(Number).forEach((num) => {
-            avgLon += num;
-        });
-        avgLat /= data.lat.length;
-        avgLon /= data.lon.length;
+        const avgLat = (latMax + latMin) / 2;
+        const avgLon = (lonMax + lonMin) / 2;
 
         //plot data for plotly
         const plotData = [
             {
                 type: 'scattermapbox',
-                lat: data.lat,
-                lon: data.lon,
+                lat: latitude,
+                lon: longitude,
                 mode: 'markers',
                 marker: {
                     size: 14
