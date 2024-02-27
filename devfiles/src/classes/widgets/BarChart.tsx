@@ -39,10 +39,16 @@ export default class BarChart extends Widget {
         groupIndices.splice(0, 1);
         const speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
         const speciesColIdx = this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName);
+        // Produce a length-#species array of length-12 array of counts
         const traces = speciesMeta.speciesList().map((species, idx) => {
-            const counts = groupIndices.map((indices) =>
-                indices.reduce((a, b) => a + (data[b][speciesColIdx] == species ? 1 : 0), 0)
-            );
+            const counts = [];
+            for (const indices of groupIndices) {
+                let count = 0;
+                for (const b of indices) {
+                    if (data[b][speciesColIdx] == species) count++;
+                }
+                counts.push(count);
+            }
             return {
                 type: 'bar',
                 x: months,
