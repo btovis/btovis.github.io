@@ -40,23 +40,12 @@ export default class BarChart extends Widget {
             speciesListLen = speciesList.length;
         speciesList.forEach((species) => map.set(species, new Array(12).fill(0)));
         for (let i = 0; i < length; i++) {
-            /*
             const row = data[i];
             const date = row[dateColIdx];
-            const month = date.slice(5, 7) - 1; (5-7 means take mm from yyyy-mm-...)
+            const month = date.slice(5, 7) - 1; // (5-7 means take mm from yyyy-mm-...)
             const speciesForRow = row[speciesColIdx];
             const arr = map.get(speciesForRow);
             ++arr[month];
-
-            ++(arr[month]);
-            => ++(arr[date.slice(5, 7) - 1]);
-            => ++(arr[row[dateColIdx].slice(5, 7) - 1]);
-            => ++(map.get(speciesForRow)[row[dateColIdx].slice(5, 7) - 1]);
-            => ++(map.get(row[speciesColIdx])[row[dateColIdx].slice(5, 7) - 1]);
-            */
-
-            const row = data[i];
-            ++map.get(row[speciesColIdx])[row[dateColIdx].slice(5, 7) - 1];
         }
 
         const traces = new Array(speciesListLen),
