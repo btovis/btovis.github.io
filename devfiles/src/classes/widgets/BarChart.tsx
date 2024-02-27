@@ -5,6 +5,7 @@ import Row from '../data/Row.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
+import SetElement from '../data/setutils/SetElement.js';
 
 export default class BarChart extends Widget {
     public generateSidebar(): Sidebar {
@@ -26,30 +27,43 @@ export default class BarChart extends Widget {
             'November',
             'December'
         ];
-        const timeColIdx = this.panel.dataFilterer.getColumnIndex(Attribute.time);
         const dateColIdx = this.panel.dataFilterer.getColumnIndex(Attribute.actualDate);
         const [data, length]: [any[][], number] = this.panel.dataFilterer.getData();
-        const groupIndices = Array(13) // use 13 and remove the 0th element later, saves us lots of subtractions
-            .fill(0)
-            .map(() => []);
-        for (let i = 0; i < length; i++) {
-            const date = data[i][dateColIdx];
-            groupIndices[+date.slice(5, 7)].push(i);
-        }
-        groupIndices.splice(0, 1);
         const speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
         const speciesColIdx = this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName);
-        // Produce a length-#species array of length-12 array of counts
-        const traces = speciesMeta.speciesList().map((species, idx) => {
-            const counts = [];
-            for (const indices of groupIndices) {
-                let count = 0;
-                for (const b of indices) {
-                    if (data[b][speciesColIdx] == species) count++;
-                }
-                counts.push(count);
-            }
-            return {
+
+        // this maps species to a map of months to counts
+        // in other words to an array of counts
+        // so it is something like [species:[month:count]]
+        const map = new Map<SetElement, number[]>();
+        const speciesList = speciesMeta.speciesList(),
+            speciesListLen = speciesList.length;
+        speciesList.forEach((species) => map.set(species, new Array(12).fill(0)));
+        for (let i = 0; i < length; i++) {
+            /*
+            const row = data[i];
+            const date = row[dateColIdx];
+            const month = date.slice(5, 7) - 1; (5-7 means take mm from yyyy-mm-...)
+            const speciesForRow = row[speciesColIdx];
+            const arr = map.get(speciesForRow);
+            ++arr[month];
+
+            ++(arr[month]);
+            => ++(arr[date.slice(5, 7) - 1]);
+            => ++(arr[row[dateColIdx].slice(5, 7) - 1]);
+            => ++(map.get(speciesForRow)[row[dateColIdx].slice(5, 7) - 1]);
+            => ++(map.get(row[speciesColIdx])[row[dateColIdx].slice(5, 7) - 1]);
+            */
+
+            const row = data[i];
+            ++map.get(row[speciesColIdx])[row[dateColIdx].slice(5, 7) - 1];
+        }
+
+        const traces = new Array(speciesListLen),
+            iterator = map.entries();
+        for (let idx = 0; idx < speciesListLen; idx++) {
+            const [species, counts] = iterator.next().value;
+            traces[idx] = {
                 type: 'bar',
                 x: months,
                 y: counts,
@@ -58,7 +72,7 @@ export default class BarChart extends Widget {
                 },
                 name: speciesMeta.formattedName(species)
             };
-        });
+        }
         const plotData = traces;
         const plotLayout = {
             width: 400,
