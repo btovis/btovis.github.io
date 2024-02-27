@@ -96,4 +96,24 @@ describe('Grouping', async () => {
             }
         });
     });
+    describe('generatePairs', () => {
+        it('should generate name, species pairs', () => {
+            const grouping = new BatchNameGrouping(filter);
+            const pairs = grouping.generatePairs();
+            for (const [x, y] of pairs) {
+                expect(x).toBeInstanceOf(SetElement);
+                expect(y).toBeInstanceOf(SetElement);
+                expect(
+                    data.readDatabase().reduce((acc, row) => {
+                        const batchName = row[data.getIndexForColumn(Attribute.batchName)];
+                        const species = row[data.getIndexForColumn(Attribute.speciesLatinName)];
+                        if (batchName == x && species == y) {
+                            return true;
+                        }
+                        return acc;
+                    }, false)
+                ).toBe(true);
+            }
+        });
+    });
 });
