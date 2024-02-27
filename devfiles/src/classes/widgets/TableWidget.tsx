@@ -60,13 +60,14 @@ export default class TableWidget extends Widget {
 
         // variable "row" reused inside loop
         const row = new Array(indicesLength);
-        loop: for (let i = 0; i < dataLength; i++) {
+        for (let i = 0; i < dataLength; i++) {
             const dataRow = data[i];
             for (let x = 0; x < indicesLength; x++) {
                 const val = dataRow[indices[x]];
                 if (val instanceof SetElement) row[x] = val.value;
                 else row[x] = val;
-                if (!row[x]) continue loop; // issue #91: skip or not
+                // issue #91: skip or not (Do not skip)
+                //if (!row[x]) continue loop;
             }
             arr.push(row.join('\0'));
         }
@@ -104,13 +105,15 @@ export default class TableWidget extends Widget {
         //Re-calculate table entries when this is called based on the options
         //Contains a numerical index of selected columns
         this.columns = [];
-        this.selectorOption.selected.forEach((colName) => {
-            try {
-                this.columns.push([colName, this.panel.dataFilterer.getColumnIndex(colName)]);
-            } catch (e) {
-                /* Data doesn't have that - skip */
-            }
-        });
+        [...this.selectorOption.choices]
+            .filter((choice) => !this.selectorOption.excluded.has(choice))
+            .forEach((colName) => {
+                try {
+                    this.columns.push([colName, this.panel.dataFilterer.getColumnIndex(colName)]);
+                } catch (e) {
+                    /* Data doesn't have that - skip */
+                }
+            });
 
         this.columns.sort((a, b) => a[1] - b[1]);
 
@@ -121,7 +124,7 @@ export default class TableWidget extends Widget {
         this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
 
         //If nothing is selected, render an empty table
-        if (this.selectorOption.selected.size == 0) {
+        if (this.selectorOption.excluded.size == 0) {
             return (
                 <table className='table'>
                     <thead>
