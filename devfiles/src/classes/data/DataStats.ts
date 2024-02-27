@@ -23,6 +23,8 @@ export default class DataStats {
         ]
     > = new Map();
 
+    private speciesMeta: SpeciesMeta;
+
     public constructor(d: Data) {
         this.data = d;
         if (!d) throw 'Stats uninitialized'; // can be removed
@@ -75,11 +77,13 @@ export default class DataStats {
             }
             rowIndex++;
         }
+
+        this.speciesMeta = new SpeciesMeta(this.species);
     }
 
     // You shouldn't need to call this more than once but no harm otherwise
     public getSpeciesMeta() {
-        return new SpeciesMeta(this.species);
+        return this.speciesMeta;
     }
 
     public getFilesMeta() {
