@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import { useState } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
@@ -22,38 +23,53 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         .generateSidebar()
         .options.map((option) => <InputOptionComp key={option.uuid} inputOption={option} />);
 
-    // TODO: Display panel name to be deleted
-    const deleteButton = (
-        <div key={uuidv4()}>
-            <button
-                className='delete-btn'
-                onClick={() => {
-                    document.getElementById('delete_panel_modal').style.display = 'block';
-                    document.getElementById('delete_modal_name').innerText = params.pageManager
-                        .getSelectedPanel()
-                        .getName();
-                    document.getElementById('delete_modal_btn').onclick = () => {
-                        params.pageManager.deletePanel(params.pageManager.selectedPanel);
-                        params.pageManager.unselectPanel();
-                        params.pageManager.selectedPanel = -1;
+    const cloneButton = (
+        <button
+            key={uuidv4()}
+            onClick={() => {
+                params.pageManager.getPanel(
+                    params.pageManager.addPanel(cloneDeep(params.pageManager.getSelectedPanel()))
+                ).uuid = uuidv4();
+                params.pageManager.refreshEverything();
+            }}
+        >
+            Duplicate panel
+        </button>
+    );
 
-                        // No longer a valid panel sidebar as there is no selected panel.
-                        // Consider bundling with PageManager.unselectPanel()
-                        params.pageManager.setSidebarTab('globalTab');
-                        params.pageManager.refreshEverything();
-                        document.getElementById('delete_panel_modal').style.display = 'none';
-                    };
-                }}
-            >
-                Delete panel
-            </button>
-        </div>
+    const deleteButton = (
+        <button
+            key={uuidv4()}
+            className='delete-btn'
+            onClick={() => {
+                document.getElementById('delete_panel_modal').style.display = 'block';
+                document.getElementById('delete_modal_name').innerText = params.pageManager
+                    .getSelectedPanel()
+                    .getName();
+                document.getElementById('delete_modal_btn').onclick = () => {
+                    params.pageManager.deletePanel(params.pageManager.selectedPanel);
+                    params.pageManager.unselectPanel();
+                    params.pageManager.selectedPanel = -1;
+
+                    // No longer a valid panel sidebar as there is no selected panel.
+                    // Consider bundling with PageManager.unselectPanel()
+                    params.pageManager.setSidebarTab('globalTab');
+                    params.pageManager.refreshEverything();
+                    document.getElementById('delete_panel_modal').style.display = 'none';
+                };
+            }}
+        >
+            Delete panel
+        </button>
     );
 
     return (
         <div key={uuidv4()}>
             {renderedOptions}
-            {deleteButton}
+            <div>
+                {cloneButton}
+                {deleteButton}
+            </div>
         </div>
     );
 }

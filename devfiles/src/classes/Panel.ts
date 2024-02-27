@@ -37,7 +37,7 @@ export default class Panel {
     private useridSelector: Selector;
 
     public dataFilterer: DataFilterer;
-    public readonly uuid: number;
+    public uuid: number;
 
     public constructor(pageManager: PageManager) {
         this.uuid = uuidv4();

@@ -46,6 +46,7 @@ export default class PageManager {
 
     public addPanel(panel: Panel) {
         this.panels.push(panel);
+        return this.panels.length - 1;
     }
 
     public deletePanel(panelIdx: number) {
