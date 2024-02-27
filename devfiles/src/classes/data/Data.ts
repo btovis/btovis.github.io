@@ -6,6 +6,7 @@ import { parseCSVFromByteArray } from './datautils/csvreader';
 import SetElement from './setutils/SetElement';
 import ReferenceSet from './setutils/ReferenceSet.ts';
 import DataStats from './DataStats.ts';
+import { setDifference } from './setutils/setDifference.ts';
 
 enum Attribute {
     csvName = '_FILE',
@@ -36,8 +37,8 @@ enum Attribute {
 // TODO: delete file function? scan database, remake sets by rescanning all, recall statistician for all of it, keep columns the same.
 class Data {
     // sortedDatabase is actually unsorted
-    private sortedDatabase: (SetElement | string | number)[][] = [];
-    public sets = [new ReferenceSet()]; // The 0th element are the files
+    private readonly sortedDatabase: (SetElement | string | number)[][] = [];
+    public readonly sets = [new ReferenceSet()]; // The 0th element are the files
 
     // 0th element in this array is column 1
     // column 0 is file identifier
@@ -72,6 +73,10 @@ class Data {
             throw 'Malformed CSV ' + e;
         }
 
+        if (content.length == 0) {
+            window.alert('Warning: the file ' + CSVName + ' contains no data');
+        }
+
         integrateNewCSV(
             this.columnList,
             this.titleToColumnIndex,
@@ -104,11 +109,51 @@ class Data {
             }
         }
         db.length = newI;
+        this.remakeSets();
         this.dataStats.refresh();
     }
 
-    // On delete, rescan the remaining list, and take out from sets
-    public remakeSets() {}
+    // On delete, rescan the remaining list, and reset sets to remaining elements only
+    // won't work if there are new items
+    public remakeSets() {
+        const columnsWithSets = [];
+        const updatedSets: ReferenceSet[] = [];
+        // Skip "files", the first column
+        for (let i = 1; i < this.sets.length; i++) {
+            if (this.sets[i] instanceof ReferenceSet) columnsWithSets.push(i);
+        }
+        const db = this.sortedDatabase,
+            dbLen = db.length,
+            prevSets = this.sets,
+            setLen = columnsWithSets.length;
+
+        for (let i = 0; i < setLen; i++) {
+            updatedSets[i] = new ReferenceSet();
+        }
+
+        // add to set those that appear.
+        // in the end, remove difference from old
+        for (let i = 0; i < dbLen; i++) {
+            const row = db[i];
+            for (let c = 0; c < setLen; c++) {
+                const ref = row[columnsWithSets[c]] as SetElement; //prevSets[columnsWithSets[c]].getRef(row[columnsWithSets[c]] as string);
+                /*if (!(ref instanceof SetElement)) {
+                    // shouldn't happen, a new data item?
+                    console.error("error: new data item on delete??")
+                    throw row[columnsWithSets[c]] + ' ' + this.columnList[columnsWithSets[c]]
+                    //continue;
+                }*/
+                updatedSets[c].addRef(ref);
+            }
+        }
+
+        for (let i = 0; i < setLen; i++) {
+            const diff = setDifference(prevSets[columnsWithSets[i]].refs, updatedSets[i].refs);
+            for (const e of diff) {
+                prevSets[columnsWithSets[i]].removeRef(e);
+            }
+        }
+    }
 
     // filename: 0
     public getIndexForColumn(a: Attribute | string): number {
