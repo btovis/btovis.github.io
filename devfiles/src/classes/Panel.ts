@@ -18,7 +18,6 @@ import TimeOfDayRange from './options/TimeOfDayRange';
 export default class Panel {
     //TODO: Consider protecting with private
     //Mutator methods below do more than touch this list
-    //Someone's editing widgetcomp now
     public widgets: Widget[];
 
     public refreshComponent: () => void = () => {};
