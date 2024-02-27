@@ -216,6 +216,44 @@ class DayGrouping extends TimeGrouping {
     }
 }
 
+class ContinuousMonthGrouping extends TimeGrouping {
+    static months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+    ];
+    public timeToValue(datetime: Date): string {
+        return this.formatDate(datetime.getMonth(), datetime.getFullYear());
+    }
+    private formatDate(month: number, year: number): string {
+        return `${ContinuousMonthGrouping.months[month]}-${year}`;
+    }
+    public xIndexMap() {
+        const combinations = Array.from(this.xValues).map((x) => {
+            const [month, strYear] = x.value.split('-');
+            return ContinuousMonthGrouping.months.indexOf(month) + parseInt(strYear) * 12;
+        });
+        const minCombination = Math.min(...combinations);
+        const maxCombination = Math.max(...combinations);
+        const valueMap = new Map<SetElement, number>();
+        for (let i = minCombination; i <= maxCombination; i++) {
+            const [month, year] = [i % 12, Math.floor(i / 12)];
+            const formattedDate = this.formatDate(month, year);
+            valueMap.set(this.referenceSet.addRawOrGet(formattedDate), i - minCombination);
+        }
+        return valueMap;
+    }
+}
+
 class MonthGrouping extends TimeGrouping {
     static months = [
         'January',
@@ -272,6 +310,7 @@ export {
     TimeGrouping,
     HourGrouping,
     DayGrouping,
+    ContinuousMonthGrouping,
     MonthGrouping,
     YearGrouping
 };
