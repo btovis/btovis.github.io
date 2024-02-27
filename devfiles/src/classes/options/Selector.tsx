@@ -81,7 +81,7 @@ export default class Selector extends InputOption {
                     <input
                         type='text'
                         list={this.uuid.toString() + '-search'}
-                        placeholder='Search'
+                        placeholder={'Search ' + this.name}
                         onChange={(event) => {
                             this.searchState = event.target.value;
                             //Optimisation potential: Don't refresh everything for this
@@ -101,7 +101,7 @@ export default class Selector extends InputOption {
                 onSelect={(eventKey) => {
                     this.accordionOpen = typeof eventKey === 'string';
                 }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
+                //defaultActiveKey={this.accordionOpen ? '0' : []}
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>

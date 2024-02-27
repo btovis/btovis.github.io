@@ -88,7 +88,7 @@ export default class SpeciesSelector extends InputOption {
                 onSelect={(eventKey) => {
                     this.accordionOpen = typeof eventKey === 'string';
                 }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
+                //defaultActiveKey={this.accordionOpen ? '0' : []}
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
