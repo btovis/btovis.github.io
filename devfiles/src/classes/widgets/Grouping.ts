@@ -183,6 +183,39 @@ class HourGrouping extends TimeGrouping {
     }
 }
 
+class DayGrouping extends TimeGrouping {
+    public timeToValue(datetime: Date): string {
+        return this.formatDate(datetime.getDate(), datetime.getMonth() + 1, datetime.getFullYear());
+    }
+    private formatDate(day: number, month: number, year: number): string {
+        return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+    }
+
+    public xIndexMap() {
+        const dates = Array.from(this.xValues).map((x) => {
+            const [day, month, year] = x.value.split('-').map((s) => parseInt(s));
+            return new Date(year, month - 1, day);
+        });
+        const timestamps = dates.map((date) => date.getTime());
+        const minTimestamp = Math.min(...timestamps);
+        const maxTimestamp = Math.max(...timestamps);
+        const valueMap = new Map<SetElement, number>();
+        for (let i = minTimestamp; i <= maxTimestamp; i += 24 * 60 * 60 * 1000) {
+            const date = new Date(i);
+            const formattedDate = this.formatDate(
+                date.getDate(),
+                date.getMonth() + 1,
+                date.getFullYear()
+            );
+            valueMap.set(
+                this.referenceSet.addRawOrGet(formattedDate),
+                (i - minTimestamp) / (24 * 60 * 60 * 1000)
+            );
+        }
+        return valueMap;
+    }
+}
+
 class MonthGrouping extends TimeGrouping {
     static months = [
         'January',
@@ -238,6 +271,7 @@ export {
     ProjectNameGrouping,
     TimeGrouping,
     HourGrouping,
+    DayGrouping,
     MonthGrouping,
     YearGrouping
 };
