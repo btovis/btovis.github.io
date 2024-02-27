@@ -6,6 +6,7 @@ import ReferenceSet from './setutils/ReferenceSet';
 import { Attribute } from './Data';
 import { Query, QueryType } from '../query/Query';
 import RangeFilter from '../filters/RangeFilter';
+import SwappableRangeFilter from '../filters/SwappableRangeFilter';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
@@ -159,6 +160,9 @@ export default class DataFilterer {
             case QueryType.Range:
                 this.replaceFilter(q[0], new RangeFilter(q[2], q[3]));
                 break;
+            case QueryType.SwappableRange:
+                this.replaceFilter(q[0], new SwappableRangeFilter(q[2], q[3]));
+                break;
             case QueryType.SetElem:
                 this.updateSetFilter(q[0], q[2], !q[3]);
                 break;
@@ -201,6 +205,17 @@ export default class DataFilterer {
                     this.replaceFilter(q[0], this.filtersClasses[q[0]]);
                 }
                 return;
+            case QueryType.SetAsArrayForReject:
+                {
+                    const excludes = new ReferenceSet();
+                    for (const e of q[2]) {
+                        const ref = this.data.sets[q[0]].getRef(e);
+                        if (!ref) continue;
+                        excludes.addRef(ref);
+                    }
+                    this.replaceFilter(q[0], new SetFilter(excludes, this.data.sets[q[0]]));
+                }
+                return;
         }
         this.recalculateFilteredData();
     }
@@ -208,6 +223,7 @@ export default class DataFilterer {
     // This gives you an array of full size, but one shouldn't access it beyond the first dataArrLen elements.
     // So please use for (var i = 0; i < dataArrLen ; i++ ) { ...}
     // and don't use map, forEach.
+    // You may want to say const [data, length] = filterer.getData(); const dataSubset = data.slice(0, length); but this can be slow.
     public getData(): [dataArr: Array<any>, dataArrLen: number] {
         return [this.filteredData, this.filteredDataArrLen];
     }

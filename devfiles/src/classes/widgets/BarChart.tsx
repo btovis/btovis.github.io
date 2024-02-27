@@ -1,6 +1,8 @@
 import Widget from './Widget.js';
 import WidgetConfig from './WidgetConfig.js';
-import { Data } from '../data/Data.js';
+import { Data, Attribute } from '../data/Data.js';
+import Row from '../data/Row.js';
+import { MonthGrouping } from './Grouping.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
@@ -10,25 +12,9 @@ export default class BarChart extends Widget {
         return new Sidebar([]);
     }
     public render(): JSX.Element {
-        const trace1 = {
-            type: 'bar',
-            x: [1, 2, 3],
-            y: [2, 5, 3],
-            marker: {
-                color: Array(3).fill(this.config.traceColor[0])
-            }
-        };
-        const trace2 = {
-            type: 'bar',
-            x: [1, 2, 3],
-            y: [4, 2, 6],
-            marker: {
-                color: Array(3).fill(this.config.traceColor[1])
-            }
-        };
-        const plotData = [trace1, trace2];
+        const grouping = new MonthGrouping(this.panel.dataFilterer);
         const plotLayout = {
-            width: 290,
+            width: 400,
             height: 210,
             title: {
                 text: 'Bar Chart',
@@ -41,11 +27,17 @@ export default class BarChart extends Widget {
                 t: 65
             }
         };
+        const { traces, layout } = grouping.getChart(
+            {
+                type: 'bar'
+            },
+            plotLayout
+        );
         const plotConfig = {
             //staticPlot: true,
             modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
         };
-        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
+        return <Plot data={traces} layout={layout} config={plotConfig} />;
     }
     public delete(): void {
         //throw new Error('Method not implemented.');

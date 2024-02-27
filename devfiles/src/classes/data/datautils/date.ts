@@ -1,5 +1,8 @@
-// High frequency was seen to use 30/01/2024, 01/30/2024
+// High frequency was seen to use 30/01/2024
 // Bird data was seen to use 20240130
+
+// Note: this code does't allow YY instead of YYYY
+// and D instead of DD or M instead of MM
 
 enum DateType {
     DDMMYYYY,
@@ -28,8 +31,9 @@ export function processDates(
     columnI
 ): [DateType | undefined, DateSeparator | undefined] {
     // pick a random cell
-    if (dataArr.length == 0) return undefined;
-    const example: string = dataArr[Math.floor(startI + (dataArr.length - startI) / 2)][columnI];
+    if (startI == dataArr.length) return undefined;
+    const random = startI + Math.floor((dataArr.length - startI) / 2);
+    const example: string = dataArr[random][columnI];
     let separators = '',
         sep: DateSeparator,
         type: DateType;
@@ -83,6 +87,7 @@ export function processDates(
                 scanNeeded = true;
                 processBeforeScan = (s) => [s.slice(0, 2), s.slice(2, 4)];
             } else {
+                // Here reject DD/MM/YY as this isn't used
                 return [undefined, undefined];
             }
         }
@@ -112,7 +117,8 @@ export function processDates(
     }
 
     if (scanNeeded) {
-        for (let i = startI; i < dataArr.length; i++) {
+        let i = startI;
+        for (; i < dataArr.length; i++) {
             const y = processBeforeScan(dataArr[i][columnI]);
             if (y[0] > '12' || y[1] > '12') {
                 if (y[0] > '12') {
@@ -122,6 +128,19 @@ export function processDates(
                     type = DateType.MMDDYYYY;
                     break;
                 }
+            }
+        }
+        if (i == dataArr.length) {
+            // assert DD MM YYYY for highfreq, YYYYMMDD for birds
+            switch (sep) {
+                case DateSeparator.NONE:
+                    type = DateType.YYYYMMDD;
+                    break;
+                case DateSeparator.SLASH:
+                    type = DateType.DDMMYYYY;
+                    break;
+                default:
+                    return [undefined, undefined];
             }
         }
     }
@@ -156,5 +175,61 @@ export function processDates(
     const l = dataArr.length;
     for (let i = startI; i < l; i++) {
         dataArr[i][columnI] = processor(dataArr[i][columnI]);
+    }
+}
+
+enum TimeSeparator {
+    NONE = '', // bird pipeline
+    COLON = ':' // high frequency pipeline
+}
+
+enum TimePrecision {
+    TWO = 2, // HHMM
+    THREE = 3 // HHMMSS both pipelines
+}
+
+// Only call if there's TIME column in data
+// processes dataArray, returns data
+export function processTimes(
+    dataArr,
+    startI,
+    columnI
+): [TimeSeparator | undefined, TimePrecision | undefined] {
+    // pick a random cell
+    if (startI == dataArr.length) return undefined;
+    const random = startI + Math.floor((dataArr.length - startI) / 2);
+    const example: string = dataArr[random][columnI];
+    let sep: TimeSeparator, prec: TimePrecision | number;
+    if (example.includes(':')) {
+        sep = TimeSeparator.COLON;
+        prec = example.split(':').length;
+        switch (prec) {
+            case 2:
+                break;
+            case 3:
+                break;
+            default: // 4 or more:
+                // nothing after seconds is supported currently
+                return [undefined, undefined];
+        }
+        return [sep, prec];
+    } else {
+        sep = TimeSeparator.NONE;
+        let processor: (s) => string;
+        switch (example.length) {
+            case 4:
+                processor = (s) => s.slice(0, 2) + ':' + s.slice(2);
+                break;
+            case 6:
+                processor = (s) => s.slice(0, 2) + ':' + s.slice(2, 4) + ':' + s.slice(4);
+                break;
+            default:
+                return [undefined, undefined];
+        }
+
+        const l = dataArr.length;
+        for (let i = startI; i < l; i++) {
+            dataArr[i][columnI] = processor(dataArr[i][columnI]);
+        }
     }
 }
