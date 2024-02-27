@@ -14,6 +14,8 @@ import {
     FilenameGrouping,
     TimeGrouping,
     HourGrouping,
+    DayGrouping,
+    ContinuousMonthGrouping,
     MonthGrouping,
     YearGrouping
 } from './Grouping';
@@ -96,6 +98,14 @@ describe('Grouping', async () => {
             {
                 grouping: MonthGrouping,
                 allowed: ['May', 'June']
+            },
+            {
+                grouping: DayGrouping,
+                allowed: ['08-05-2023', '21-06-2023', '17-05-2023', '01-06-2023', '18-05-2023']
+            },
+            {
+                grouping: ContinuousMonthGrouping,
+                allowed: ['May-2023', 'Jun-2023']
             }
         ].forEach(({ grouping, allowed }) => {
             it(`should select values using ${grouping}`, () => {
@@ -199,12 +209,20 @@ describe('Grouping', async () => {
             {
                 grouping: MonthGrouping,
                 attribute: 'month'
+            },
+            {
+                grouping: ContinuousMonthGrouping,
+                attribute: 'month/year'
+            },
+            {
+                grouping: DayGrouping,
+                attribute: 'day'
             }
         ].forEach(({ grouping, attribute }) => {
             it(`should map values for ${attribute} to unique integers`, () => {
                 const groupingInstance = new grouping(filter);
                 const pairs = groupingInstance.generatePairs();
-                const xValueMap = groupingInstance.xValueMap();
+                const xValueMap = groupingInstance.xIndexMap();
                 const mappings = new Set();
                 for (const [x, y] of pairs) {
                     const mapping = xValueMap.get(x);
