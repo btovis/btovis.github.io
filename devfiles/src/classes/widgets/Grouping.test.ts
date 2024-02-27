@@ -223,12 +223,17 @@ describe('Grouping', async () => {
             });
         });
     });
-    describe('getTraces', () => {
+    describe('getChart', () => {
         it('should get traces with selected properties', () => {
             const grouping = new BatchNameGrouping(filter);
-            const traces = grouping.getTraces({
-                type: 'bar'
-            });
+            const { traces, layout } = grouping.getChart(
+                {
+                    type: 'bar'
+                },
+                {
+                    title: 'Bar Chart'
+                }
+            );
             for (const trace of traces) {
                 expect(trace).toHaveProperty('x');
                 expect(trace).toHaveProperty('y');
@@ -237,6 +242,8 @@ describe('Grouping', async () => {
                 expect(trace.x).toBeInstanceOf(Array);
                 expect(trace.y).toBeInstanceOf(Array);
             }
+            expect(layout).toHaveProperty('xaxis');
+            expect(layout.title).toEqual('Bar Chart');
         });
     });
 });
