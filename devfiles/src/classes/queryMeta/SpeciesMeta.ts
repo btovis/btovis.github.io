@@ -45,7 +45,15 @@ export default class SpeciesMeta {
     public speciesGroup(latinName: SetElement): SetElement {
         return this.species.get(latinName)[2];
     }
+    public formattedName(latinName: SetElement): string {
+        return this.englishName(latinName).value;
+        return `${this.englishName(latinName).value} (${latinName.value})`;
+    }
     public endStatus(latinName: SetElement): EndangermentStatus {
         return this.species.get(latinName)[3];
+    }
+
+    public speciesList(): SetElement[] {
+        return [...this.species.keys()];
     }
 }
