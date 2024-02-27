@@ -24,10 +24,19 @@ export default class TimeRange extends InputOption {
             this.fromDate = this.minDate;
             this.toDate = this.maxDate;
         } else {
-            this.fromDate = this.minDate.isBefore(template.fromDate)
-                ? template.fromDate
-                : this.minDate;
-            this.toDate = this.maxDate.isAfter(template.toDate) ? template.toDate : this.maxDate;
+            //If the template was set to minimum date, follow suit.
+            //If not, follow the template
+            if (template.fromDate.isSame(template.minDate)) this.fromDate = this.minDate;
+            else
+                this.fromDate = this.minDate.isBefore(template.fromDate)
+                    ? template.fromDate
+                    : this.minDate;
+            //same for max
+            if (template.toDate.isSame(template.toDate)) this.toDate = this.maxDate;
+            else
+                this.toDate = this.maxDate.isAfter(template.toDate)
+                    ? template.toDate
+                    : this.maxDate;
         }
     }
 

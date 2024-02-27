@@ -4,13 +4,14 @@ import { Query } from '../query/Query';
 import SetQueryArray from '../query/SetQueryArray';
 import InputOption from './InputOption';
 import { v4 as uuidv4 } from 'uuid';
+import SetQueryArrayReject from '../query/SetQueryArrayReject';
 
 export default class Selector extends InputOption {
     //Internal state unique to every option class.
     //Use this to store current selections
-    protected choices: string[];
+    public choices: Set<string>;
     protected searchState: string = '';
-    public selected: Set<string> = new Set();
+    public excluded: Set<string> = new Set();
     public readonly columnIndex;
     private accordionOpen = true;
 
@@ -36,27 +37,32 @@ export default class Selector extends InputOption {
         //If a column index is provided, set choices to the unique column values
         if (typeof choices === 'number') {
             this.columnIndex = choices;
-            this.choices = [...panel.pageManager.data.sets[this.columnIndex].raws.keys()];
+            this.choices = new Set([...panel.pageManager.data.sets[this.columnIndex].raws.keys()]);
         } //if not, this is a list of strings.
-        else this.choices = choices;
+        else this.choices = new Set(choices);
 
         if (template === undefined) {
-            if (allSelected) this.selected = new Set(this.choices);
-            else if (defaults) this.selected = new Set(defaults);
-
+            //allSelected makes excluded be empty
+            if (!allSelected && defaults) {
+                const defaultSet = new Set(defaults);
+                this.excluded = new Set(
+                    [...this.choices].filter((choice) => !defaultSet.has(choice))
+                );
+            }
             this.accordionOpen = defaultOpen;
         } else {
-            //If a template Selector is available, copy its currently selected settings.
-            //If the template has everything selected, just set everything to be selected.
-            if (template.isEverythingSelected()) this.selected = new Set(this.choices);
-            else this.selected = template.selected;
+            //If a template Selector is available, copy its currently excluded settings.
+            //If the template has everything selected, template.excluded will be empty
+            [...template.excluded]
+                .filter((elem) => elem in this.choices)
+                .forEach((elem) => this.excluded.add(elem));
 
             this.accordionOpen = template.accordionOpen;
         }
     }
 
     public isEverythingSelected(): boolean {
-        return this.choices.length == this.selected.size;
+        return this.excluded.size === 0;
     }
 
     /**
@@ -75,7 +81,7 @@ export default class Selector extends InputOption {
         //If there are more than 5 selections, enable advanced options
         // like search
         let searchBar = <></>;
-        if (this.choices.length > 5) {
+        if (this.choices.size > 5) {
             searchBar = (
                 <div style={{ paddingBottom: '5px' }}>
                     <input
@@ -89,7 +95,7 @@ export default class Selector extends InputOption {
                         }}
                     />
                     <datalist id={this.uuid.toString() + '-search'}>
-                        {this.choices.map((item) => {
+                        {[...this.choices].map((item) => {
                             return <option key={uuidv4()} value={item} />;
                         })}
                     </datalist>
@@ -112,9 +118,9 @@ export default class Selector extends InputOption {
                             style={{ marginLeft: '10px' }}
                             key={uuidv4()}
                             onChange={(event) =>
-                                this.callback(event.currentTarget.checked ? this.choices : [])
+                                this.callback(event.currentTarget.checked ? [] : this.choices)
                             }
-                            checked={this.selected.size == this.choices.length}
+                            checked={this.isEverythingSelected()}
                             className='form-check-input'
                             type='checkbox'
                         />
@@ -122,7 +128,7 @@ export default class Selector extends InputOption {
                     <Accordion.Body>
                         {searchBar}
                         <div className='form-check'>
-                            {this.choices.map((item, itemIdx) => {
+                            {[...this.choices].map((item, itemIdx) => {
                                 return (
                                     <div
                                         key={uuidv4()}
@@ -142,7 +148,7 @@ export default class Selector extends InputOption {
                                                 })
                                             }
                                             id={this.uuid.toString() + item}
-                                            checked={this.selected.has(item)}
+                                            checked={!this.excluded.has(item)}
                                             className='form-check-input'
                                             type='checkbox'
                                         />
@@ -172,11 +178,11 @@ export default class Selector extends InputOption {
     public callback(newValue: any): void {
         //If this is a boolean, that means this is a single change
         if (typeof newValue.checked === 'boolean') {
-            if (newValue.checked) this.selected.add(newValue.item);
-            else this.selected.delete(newValue.item);
+            if (newValue.checked) this.excluded.delete(newValue.item);
+            else this.excluded.add(newValue.item);
         } //If not, its an array and we can apply it entirely.
         else {
-            this.selected = new Set<string>(newValue as string[]);
+            this.excluded = new Set<string>(newValue as string[]);
         }
         //Ask the panel to re-calculate its filters ONLY if the
         //column index is defined. Some selectors do not use
@@ -196,6 +202,6 @@ export default class Selector extends InputOption {
      * @returns Query object to be applied by the panel in recalculateFilters(this)
      */
     public query(): Query {
-        return new SetQueryArray(this.columnIndex).query([...this.selected]);
+        return new SetQueryArrayReject(this.columnIndex).query([...this.excluded]);
     }
 }
