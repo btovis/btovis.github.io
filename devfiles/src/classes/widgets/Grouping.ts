@@ -8,11 +8,13 @@ import DataFilterer from '../data/DataFilterer';
 abstract class Grouping {
     filter: DataFilterer;
     referenceSet: ReferenceSet;
+    xValues: Set<SetElement>;
     speciesColumnIdx: number;
     constructor(filter: DataFilterer) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();
         this.speciesColumnIdx = filter.getColumnIndex(Attribute.speciesLatinName);
+        this.xValues = new Set();
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
@@ -31,7 +33,11 @@ abstract class Grouping {
     public generatePairs(): [SetElement, SetElement][] {
         const [data, length] = this.filter.getData();
         const dataSubset = data.slice(0, length);
-        return dataSubset.map((row) => [this.selectX(row), this.selectY(row)]);
+        return dataSubset.map((row) => {
+            const x = this.selectX(row);
+            this.xValues.add(x);
+            return [x, this.selectY(row)];
+        });
     }
     // Aggregate the pairs of x-y values.
     public aggregatePairs() {
@@ -49,6 +55,18 @@ abstract class Grouping {
             }
         }
         return aggregated;
+    }
+    // Convert x values to integers to display on chart.
+    // Must be called after all pairs have been generated.
+    public xValueMap() {
+        const sortedXValues = Array.from(this.xValues).sort((a, b) =>
+            a.value.localeCompare(b.value)
+        );
+        const xValueMap = new Map<SetElement, number>();
+        for (let i = 0; i < sortedXValues.length; i++) {
+            xValueMap.set(sortedXValues[i], i);
+        }
+        return xValueMap;
     }
     // Generate a trace that includes the core data but excludes the additional config.
     public getPartialTraces() {}
