@@ -15,6 +15,7 @@ import { Attribute } from './data/Data';
 import SpeciesSelector from './options/SpeciesSelector';
 import TimeOfDayRange from './options/TimeOfDayRange';
 import { Query } from './query/Query';
+import LineChart from './widgets/LineChart.tsx';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -55,7 +56,7 @@ export default class Panel {
         this.updateInputOptions();
 
         const testConfig = new WidgetConfig();
-        this.widgets = [new BarChart(this, testConfig)];
+        this.widgets = [new LineChart(this, testConfig)];
     }
 
     public getName(): string {

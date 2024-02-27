@@ -1,7 +1,9 @@
 enum BarChartGrouping {
     HOUR,
     MONTH,
-    YEAR
+    YEAR,
+    PROJECT,
+    LOCATION
 }
 
 enum LineChartGrouping {
