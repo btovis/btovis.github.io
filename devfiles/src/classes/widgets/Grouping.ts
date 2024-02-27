@@ -8,9 +8,11 @@ import DataFilterer from '../data/DataFilterer';
 abstract class Grouping {
     filter: DataFilterer;
     referenceSet: ReferenceSet;
+    speciesColumnIdx: number;
     constructor(filter: DataFilterer) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();
+        this.speciesColumnIdx = filter.getColumnIndex(Attribute.speciesLatinName);
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
@@ -22,8 +24,8 @@ abstract class Grouping {
         return this.referenceSet.addRawOrGet(row[columnIdx]);
     }
     // Select the value to be used for the y-axis.
-    public selectY(): SetElement {
-        return new SetElement();
+    public selectY(row: Row): SetElement {
+        return this.selectByColumnIndex(row, this.speciesColumnIdx);
     }
     // Select pairs of x-y values that will be aggregated and plotted.
     public generatePairs(): [SetElement, SetElement][] {
