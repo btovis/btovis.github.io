@@ -14,6 +14,7 @@ import {
     FilenameGrouping,
     TimeGrouping,
     HourGrouping,
+    DayGrouping,
     MonthGrouping,
     YearGrouping
 } from './Grouping';
@@ -96,6 +97,10 @@ describe('Grouping', async () => {
             {
                 grouping: MonthGrouping,
                 allowed: ['May', 'June']
+            },
+            {
+                grouping: DayGrouping,
+                allowed: ['08-05-2023', '21-06-2023', '17-05-2023', '01-06-2023', '18-05-2023']
             }
         ].forEach(({ grouping, allowed }) => {
             it(`should select values using ${grouping}`, () => {
@@ -199,6 +204,10 @@ describe('Grouping', async () => {
             {
                 grouping: MonthGrouping,
                 attribute: 'month'
+            },
+            {
+                grouping: DayGrouping,
+                attribute: 'day'
             }
         ].forEach(({ grouping, attribute }) => {
             it(`should map values for ${attribute} to unique integers`, () => {
