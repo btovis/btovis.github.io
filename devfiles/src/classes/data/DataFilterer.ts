@@ -6,6 +6,7 @@ import ReferenceSet from './setutils/ReferenceSet';
 import { Attribute } from './Data';
 import { Query, QueryType } from '../query/Query';
 import RangeFilter from '../filters/RangeFilter';
+import SwappableRangeFilter from '../filters/SwappableRangeFilter';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
@@ -158,6 +159,9 @@ export default class DataFilterer {
         switch (q[1]) {
             case QueryType.Range:
                 this.replaceFilter(q[0], new RangeFilter(q[2], q[3]));
+                break;
+            case QueryType.SwappableRange:
+                this.replaceFilter(q[0], new SwappableRangeFilter(q[2], q[3]));
                 break;
             case QueryType.SetElem:
                 this.updateSetFilter(q[0], q[2], !q[3]);
