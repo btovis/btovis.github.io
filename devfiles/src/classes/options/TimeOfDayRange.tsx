@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
-import RangeQuery from '../query/RangeQuery';
+import SwappableRangeQuery from '../query/SwappableRangeQuery';
 import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
@@ -18,8 +18,8 @@ export default class TimeRange extends InputOption {
 
         //Copy the current state from the old template
         if (template === undefined) {
-            this.fromTime = dayjs('00:00:00', 'HH:mm:ss');
-            this.toTime = dayjs('23:59:59', 'HH:mm:ss');
+            this.fromTime = dayjs('00:00', 'HH:mm');
+            this.toTime = dayjs('23:59', 'HH:mm');
         } else {
             this.fromTime = template.fromTime;
             this.toTime = template.toTime;
@@ -80,9 +80,9 @@ export default class TimeRange extends InputOption {
     }
     public callback(newValue: { which: number; time: Dayjs }): void {
         if (newValue.which === 0) {
-            this.fromTime = newValue.time.isBefore(this.toTime) ? newValue.time : this.toTime;
+            this.fromTime = newValue.time;
         } else {
-            this.toTime = newValue.time.isAfter(this.fromTime) ? newValue.time : this.fromTime;
+            this.toTime = newValue.time;
         }
 
         this.panel.recalculateFilters(this);
@@ -92,9 +92,22 @@ export default class TimeRange extends InputOption {
         this.refreshComponent();
     }
     public query(): Query {
-        return new RangeQuery(this.panel.dataFilterer.getColumnIndex(Attribute.time)).query(
-            this.fromTime.format('HH:mm:ss'),
-            this.toTime.format('HH:mm:ss')
-        );
+        let fromTime: string | number = this.fromTime.format('HH:mm');
+        let toTime: string | number = this.toTime.add(1, 'm').format('HH:mm');
+        if (fromTime.endsWith(':00')) {
+            fromTime = fromTime.slice(0, -3);
+            if (fromTime == '00') {
+                fromTime = -Infinity;
+            }
+        }
+        if (toTime.endsWith(':00')) {
+            toTime = toTime.slice(0, -3);
+            if (toTime == '00') {
+                toTime = Infinity;
+            }
+        }
+        return new SwappableRangeQuery(
+            this.panel.dataFilterer.getColumnIndex(Attribute.time)
+        ).query(fromTime, toTime);
     }
 }
