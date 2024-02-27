@@ -204,7 +204,7 @@ describe('Grouping', async () => {
             it(`should map values for ${attribute} to unique integers`, () => {
                 const groupingInstance = new grouping(filter);
                 const pairs = groupingInstance.generatePairs();
-                const xValueMap = groupingInstance.xValueMap();
+                const xValueMap = groupingInstance.xIndexMap();
                 const mappings = new Set();
                 for (const [x, y] of pairs) {
                     const mapping = xValueMap.get(x);
