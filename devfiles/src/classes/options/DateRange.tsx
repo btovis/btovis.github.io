@@ -1,3 +1,4 @@
+import { Accordion } from 'react-bootstrap';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -12,6 +13,7 @@ export default class TimeRange extends InputOption {
     private maxDate: Dayjs;
     public fromDate: Dayjs;
     public toDate: Dayjs;
+    private accordionOpen = false;
 
     public constructor(panel: Panel, name: string, template?: TimeRange) {
         super(panel, name);
@@ -42,41 +44,52 @@ export default class TimeRange extends InputOption {
 
     public render(): JSX.Element {
         return (
-            <div className='sidebar-padding'>
-                <p>
-                    <strong>{this.name}</strong>
-                </p>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                        label='From'
-                        format='YYYY/MM/DD'
-                        value={this.fromDate}
-                        minDate={this.minDate}
-                        maxDate={this.toDate}
-                        onChange={(value) =>
-                            this.callback({
-                                which: 0,
-                                datetime: value
-                            })
-                        }
-                    />
-                    <p></p>
-                    <DatePicker
-                        label='To'
-                        format='YYYY/MM/DD'
-                        value={this.toDate}
-                        minDate={this.fromDate}
-                        maxDate={this.maxDate}
-                        onChange={(value) =>
-                            this.callback({
-                                which: 1,
-                                datetime: value
-                            })
-                        }
-                    />
-                    <p className='text-warning' id='warning-if-time-range-zero'></p>
-                </LocalizationProvider>
-            </div>
+            <Accordion
+                onSelect={(eventKey) => {
+                    this.accordionOpen = typeof eventKey === 'string';
+                }}
+                defaultActiveKey={this.accordionOpen ? '0' : []}
+            >
+                <Accordion.Item eventKey='0'>
+                    <Accordion.Header>
+                        <span>
+                            <strong>{this.name}</strong>
+                        </span>
+                    </Accordion.Header>
+                    <Accordion.Body>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                                label='From'
+                                format='YYYY/MM/DD'
+                                value={this.fromDate}
+                                minDate={this.minDate}
+                                maxDate={this.toDate}
+                                onChange={(value) =>
+                                    this.callback({
+                                        which: 0,
+                                        datetime: value
+                                    })
+                                }
+                            />
+                            <p></p>
+                            <DatePicker
+                                label='To'
+                                format='YYYY/MM/DD'
+                                value={this.toDate}
+                                minDate={this.fromDate}
+                                maxDate={this.maxDate}
+                                onChange={(value) =>
+                                    this.callback({
+                                        which: 1,
+                                        datetime: value
+                                    })
+                                }
+                            />
+                            <p className='text-warning' id='warning-if-time-range-zero'></p>
+                        </LocalizationProvider>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
         );
     }
     public callback(newValue: { which: number; datetime: Dayjs }): void {
