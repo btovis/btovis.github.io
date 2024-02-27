@@ -29,36 +29,34 @@ describe('DataFilterer', async () => {
                 filterer.processQuery(query);
                 let [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
-                for (let i = 0; i < length; i++) {
-                    expect(dataSubset[i][columnIdx]).toBeLessThanOrEqual(0.5);
-                }
                 totalMatched += length;
+                for (const row of dataSubset.slice(0, length)) {
+                    expect(row[columnIdx]).toBeLessThanOrEqual(0.5);
+                }
             });
             it('it should select values between 0.5 and 0.9', () => {
                 const query = [columnIdx, QueryType.Range, 0.5, 0.9];
                 filterer.processQuery(query);
                 let [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
-                for (let i = 0; i < length; i++) {
-                    const row = dataSubset[i];
+                totalMatched += length;
+                for (const row of dataSubset.slice(0, length)) {
                     expect(row[columnIdx]).toBeGreaterThanOrEqual(0.5);
                     expect(row[columnIdx]).toBeLessThanOrEqual(0.9);
                 }
-                totalMatched += length;
             });
             it('it should select values greater than 0.9', () => {
                 const query = [columnIdx, QueryType.Range, 0.9, Infinity];
                 filterer.processQuery(query);
                 let [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
-                for (let i = 0; i < length; i++) {
-                    const row = dataSubset[i];
+                totalMatched += length;
+                for (const row of dataSubset.slice(0, length)) {
                     expect(row[columnIdx]).toBeGreaterThanOrEqual(0.9);
                 }
-                totalMatched += length;
             });
             afterAll(() => {
-                expect(totalMatched).toBe(data.length);
+                expect(totalMatched).toBe(data.length());
             });
         });
         describe('Test set element filter', () => {
@@ -68,17 +66,6 @@ describe('DataFilterer', async () => {
                 columnIdx = filterer.getColumnIndex(Attribute.warnings);
             });
             it('it should select non-null warnings', () => {
-                const query = [columnIdx, QueryType.SetElemQuery, 'Test warning'];
-                filterer.processQuery(query);
-                let [dataSubset, length] = filterer.getData();
-                expect(length).toBeLessThanOrEqual(dataSubset.length);
-                for (const row of dataSubset) {
-                    expect(row[columnIdx].value).toBe('Test warning');
-                }
-                totalMatched += length;
-            });
-            it('it should select empty warnings', () => {
-                //throw data.sets[columnIdx].getRef(' ')
                 const query = [
                     columnIdx,
                     QueryType.SetElemQuery,
@@ -87,15 +74,30 @@ describe('DataFilterer', async () => {
                 ];
                 filterer.processQuery(query);
                 let [dataSubset, length] = filterer.getData();
-                expect(dataSubset.length).toEqual(length);
-                for (let i = 0; i < length; i++) {
-                    const row = dataSubset[i];
+                expect(length).toBeLessThanOrEqual(dataSubset.length);
+                totalMatched += length;
+                for (const row of dataSubset.slice(0, length)) {
+                    expect(row[columnIdx].value).toBe('Test warning');
+                }
+            });
+            it('it should select empty warnings', () => {
+                const query = [
+                    columnIdx,
+                    QueryType.SetElemQuery,
+                    data.sets[columnIdx].getRef(' '),
+                    1
+                ];
+                filterer.processQuery(query);
+                let [dataSubset, length] = filterer.getData();
+                expect(length).toBeLessThanOrEqual(dataSubset.length);
+                totalMatched += length;
+                console.log('dataSubset', dataSubset.slice(0, length));
+                for (const row of dataSubset.slice(0, length)) {
                     expect(row[columnIdx].value).toBe(' ');
                 }
-                totalMatched += length;
             });
             afterAll(() => {
-                expect(totalMatched).toBe(data.length);
+                expect(totalMatched).toBe(data.length());
             });
         });
     });
