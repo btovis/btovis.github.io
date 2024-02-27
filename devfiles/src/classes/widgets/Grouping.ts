@@ -83,13 +83,32 @@ abstract class Grouping {
             };
         });
     }
-    public getTraces(additionalConfig: { [key: string]: any }) {
-        return this.getPartialTraces().map((trace) => {
-            return {
-                ...trace,
-                ...additionalConfig
-            };
-        });
+    public getChart(
+        additionalTracesConfig: { [key: string]: any },
+        additionalLayoutConfig: { [key: string]: any }
+    ): { traces: any[]; layout: any } {
+        const partialTraces = this.getPartialTraces();
+        const labelAlias = Object.fromEntries(
+            Array.from(this.xValueMap().entries()).map(([x, i]) => [i, x.value])
+        );
+        return {
+            traces: partialTraces.map((trace) => {
+                return {
+                    ...trace,
+                    ...additionalTracesConfig
+                };
+            }),
+            layout: {
+                xaxis: {
+                    title: 'xaxistitle',
+                    labelalias: labelAlias
+                },
+                yaxis: {
+                    title: 'yaxistitle'
+                },
+                ...additionalLayoutConfig
+            }
+        };
     }
 }
 
