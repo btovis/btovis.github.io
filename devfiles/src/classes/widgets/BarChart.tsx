@@ -29,24 +29,19 @@ export default class BarChart extends Widget {
         const timeColIdx = this.panel.dataFilterer.getColumnIndex(Attribute.time);
         const dateColIdx = this.panel.dataFilterer.getColumnIndex(Attribute.actualDate);
         const [data, length]: [any[][], number] = this.panel.dataFilterer.getData();
-        const dataSubset: any[][] = data.slice(0, length);
-        const groupIndices = Array(12)
+        const groupIndices = Array(13) // use 13 and remove the 0th element later, saves us lots of subtractions
             .fill(0)
             .map(() => []);
-        for (let i = 0; i < dataSubset.length; i++) {
-            const time = dataSubset[i][timeColIdx];
-            const date = dataSubset[i][dateColIdx];
-            const datetime = new Date(date + ' ' + time);
-            const group = datetime.getMonth();
-            groupIndices[group].push(i);
+        for (let i = 0; i < length; i++) {
+            const date = data[i][dateColIdx];
+            groupIndices[+date.slice(5, 7)].push(i);
         }
+        groupIndices.splice(0, 1);
         const speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
+        const speciesColIdx = this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName);
         const traces = speciesMeta.speciesList().map((species, idx) => {
-            const speciesColIdx = this.panel.dataFilterer.getColumnIndex(
-                Attribute.speciesLatinName
-            );
             const counts = groupIndices.map((indices) =>
-                indices.reduce((a, b) => (a + (dataSubset[b][speciesColIdx] == species) ? 1 : 0), 0)
+                indices.reduce((a, b) => a + (data[b][speciesColIdx] == species ? 1 : 0), 0)
             );
             return {
                 type: 'bar',
