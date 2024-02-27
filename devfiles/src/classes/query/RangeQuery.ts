@@ -9,6 +9,6 @@ export default class RangeQuery {
     // this will allow keeping rows that perhaps don't have a date
     // for this, check if the slider is touching the border of line or the textinput has value same as its limit, then pass infinity if so
     public query(low: number | string, up: number | string): Query {
-        return [this.colI, QueryType.SwappableRange, low, up];
+        return [this.colI, QueryType.Range, low, up];
     }
 }

@@ -4,7 +4,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
-import SwappableRangeQuery from '../query/RangeQuery';
+import SwappableRangeQuery from '../query/SwappableRangeQuery';
 import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
