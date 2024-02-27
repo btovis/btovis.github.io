@@ -5,39 +5,19 @@ import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import React from 'react';
 import Plot from 'react-plotly.js';
+import { ContinuousMonthGrouping } from './Grouping.js';
 
 export default class StackedLineChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar([]);
     }
     public render(): JSX.Element {
-        const trace1 = {
-            type: 'scatter',
-            x: [1, 2, 3],
-            y: [2, 5, 3],
-            fill: 'tozeroy',
-            stackgroup: 'one',
-            line: {
-                color: this.config.traceColor[0]
-            }
-        };
-        const trace2 = {
-            type: 'scatter',
-            x: [1, 2, 3],
-            y: [1, 1, 2],
-            fiill: 'tozeroy',
-            stackgroup: 'one',
-            line: {
-                color: this.config.traceColor[1]
-            }
-        };
-        const plotData = [trace1, trace2];
+        const grouping = new ContinuousMonthGrouping(this.panel.dataFilterer);
         const plotLayout = {
-            width: 290,
+            width: 400,
             height: 210,
             title: {
-                text: 'Stacked Line Chart',
-                y: 0.85
+                text: 'Stacked Line Chart'
             },
             margin: {
                 l: 30,
@@ -46,11 +26,19 @@ export default class StackedLineChart extends Widget {
                 t: 65
             }
         };
+        const { traces, layout } = grouping.getChart(
+            {
+                type: 'scatter',
+                stackgroup: 'one',
+                fill: 'tonexty'
+            },
+            plotLayout
+        );
         const plotConfig = {
             //staticPlot: true,
             modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
         };
-        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
+        return <Plot data={traces} layout={layout} config={plotConfig} />;
     }
     public delete(): void {
         //throw new Error('Method not implemented.');
