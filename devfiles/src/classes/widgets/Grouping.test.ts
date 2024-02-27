@@ -15,6 +15,7 @@ import {
     TimeGrouping,
     HourGrouping,
     DayGrouping,
+    ContinuousMonthGrouping,
     MonthGrouping,
     YearGrouping
 } from './Grouping';
@@ -101,6 +102,10 @@ describe('Grouping', async () => {
             {
                 grouping: DayGrouping,
                 allowed: ['08-05-2023', '21-06-2023', '17-05-2023', '01-06-2023', '18-05-2023']
+            },
+            {
+                grouping: ContinuousMonthGrouping,
+                allowed: ['May-2023', 'Jun-2023']
             }
         ].forEach(({ grouping, allowed }) => {
             it(`should select values using ${grouping}`, () => {
@@ -204,6 +209,10 @@ describe('Grouping', async () => {
             {
                 grouping: MonthGrouping,
                 attribute: 'month'
+            },
+            {
+                grouping: ContinuousMonthGrouping,
+                attribute: 'month/year'
             },
             {
                 grouping: DayGrouping,
