@@ -34,7 +34,22 @@ abstract class Grouping {
         return dataSubset.map((row) => [this.selectX(row), this.selectY(row)]);
     }
     // Aggregate the pairs of x-y values.
-    public aggregatePairs() {}
+    public aggregatePairs() {
+        const pairs = this.generatePairs();
+        // use y as the first key and x as the second
+        const aggregated = new Map<SetElement, Map<SetElement, number>>();
+        for (const [x, y] of pairs) {
+            if (!aggregated.has(y)) {
+                aggregated.set(y, new Map<SetElement, number>());
+            }
+            if (aggregated.get(y).has(x)) {
+                aggregated.get(y).set(x, aggregated.get(y).get(x).valueOf() + 1);
+            } else {
+                aggregated.get(y).set(x, 1);
+            }
+        }
+        return aggregated;
+    }
     // Generate a trace that includes the core data but excludes the additional config.
     public getPartialTraces() {}
     public getTraces(data: Data, additionalConfig: { [key: string]: any }) {}
