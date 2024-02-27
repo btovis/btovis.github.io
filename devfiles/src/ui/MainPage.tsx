@@ -1,3 +1,4 @@
+import Tooltip from '@mui/material/Tooltip';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import Panel from '../classes/Panel.js';
@@ -10,15 +11,25 @@ function MainPage(params: { pageManager: PageManager }) {
             return <PanelComp key={panel.uuid} panelIdx={idx} pageManager={params.pageManager} />;
         })
         .concat(
-            <button
+            <Tooltip
                 key={uuidv4()}
-                onClick={() => {
-                    params.pageManager.addPanel(new Panel(params.pageManager));
-                    params.pageManager.refreshEverything();
-                }}
+                title={params.pageManager.data.isEmpty() ? 'Add a file to start visualising!' : ''}
             >
-                Placeholder Add Panel Button
-            </button>
+                <span>
+                    <button
+                        className='add-panel-button'
+                        id='add-panel-button'
+                        key={uuidv4()}
+                        disabled={params.pageManager.data.isEmpty() ? true : false}
+                        onClick={() => {
+                            params.pageManager.addPanel(new Panel(params.pageManager));
+                            params.pageManager.refreshEverything();
+                        }}
+                    >
+                        Add New Panel...
+                    </button>
+                </span>
+            </Tooltip>
         );
 }
 

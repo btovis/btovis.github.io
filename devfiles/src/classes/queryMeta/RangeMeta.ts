@@ -1,7 +1,18 @@
 export default class RangeMeta {
-    // -Infinity, +Infinity, undefined when no data loaded or data doesn't have time
-    public value: [low: number | Date, up: number | Date, colI: number | undefined];
+    // if length 0, then invalid, ie, no such column
+    // if length 3, valid
+    private value: [] | [low: string, up: string, colI: number];
     public constructor(arr) {
         this.value = arr;
+    }
+
+    public colI(): number {
+        return this.value[2];
+    }
+    public low(): string {
+        return this.value[0];
+    }
+    public up(): string {
+        return this.value[1];
     }
 }

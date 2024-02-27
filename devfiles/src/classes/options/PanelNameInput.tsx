@@ -10,12 +10,11 @@ import InputOption from './InputOption';
 export default class PanelNameInput extends InputOption {
     private text: string;
 
-    public render(): JSX.Element[] {
-        console.log('Rendering PanelNameInput: ' + this.text);
-        return [
-            <div>
-                <span>Panel Name: </span>
+    public render(): JSX.Element {
+        return (
+            <div className='sidebarContainer'>
                 <input
+                    className='form-control form-control-lg'
                     defaultValue={this.text}
                     onBlur={(e) => this.callback(e.target.value)}
                     onKeyUp={(e) => {
@@ -25,9 +24,8 @@ export default class PanelNameInput extends InputOption {
                         }
                     }}
                 />
-                <hr></hr>
             </div>
-        ];
+        );
     }
 
     public constructor(panel: Panel, name: string, text) {
@@ -39,9 +37,9 @@ export default class PanelNameInput extends InputOption {
         this.text = newValue;
 
         //Refresh to show new panel name
-        this.panel.refresh();
+        this.panel.refreshComponent();
         //Refresh sidebar for new panel name too
-        this.panel.pageManager.refreshPanelOptions();
+        this.refreshComponent();
     }
     public query(): Query {
         throw new Error('Method not implemented.');

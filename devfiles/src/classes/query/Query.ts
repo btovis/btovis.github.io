@@ -8,7 +8,12 @@ export enum QueryType {
     SetAsArray = 3
 }
 
-export type RangeQuery = [colI: number, QueryType.Range, low: number, high: number];
+export type RangeQuery = [
+    colI: number,
+    QueryType.Range,
+    low: number | string,
+    high: number | string
+];
 export type SetElemQuery = [
     colI: number,
     QueryType.SetElem,

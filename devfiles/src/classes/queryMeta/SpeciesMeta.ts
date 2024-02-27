@@ -1,11 +1,51 @@
+import { EndangermentStatus } from '../../utils/speciesVulnerability';
 import SetElement from '../data/setutils/SetElement';
 
 export default class SpeciesMeta {
-    // Note: don't modify this, but use toSorted() (for example, alphabetical toSorted(x => x[0].value) or population toSorted(x => x[1])), etc. to make a new array
-    // Please don't assume any order on this
-    // Reread from value when got a signal that CSV added or CSV removed
-    public value: [species: SetElement, count: number][][]; // [[SetElement("Anglican skybird"), 100], [SetElement("Anglican skybird"), 150]]
-    public constructor(s) {
-        this.value = s;
+    //No writing to this
+    private readonly species: Map<
+        SetElement,
+        [
+            species: SetElement,
+            englishName: SetElement,
+            group: SetElement,
+            status: EndangermentStatus
+        ]
+    >;
+
+    //A map of group SetElements to a list of latinNames
+    public readonly groupByGroup: Map<SetElement, SetElement[]>;
+
+    public constructor(
+        species: Map<
+            SetElement,
+            [
+                species: SetElement,
+                englishName: SetElement,
+                group: SetElement,
+                status: EndangermentStatus
+            ]
+        >
+    ) {
+        this.species = species;
+        this.groupByGroup = new Map();
+        [...this.species.keys()].forEach((latinName) => {
+            const group = this.speciesGroup(latinName);
+            if (!this.groupByGroup.has(group)) this.groupByGroup.set(group, [latinName]);
+            else this.groupByGroup.get(group).push(latinName);
+        });
+    }
+
+    public englishName(latinName: SetElement): SetElement {
+        return this.species.get(latinName)[1];
+    }
+    public speciesName(latinName: SetElement): SetElement {
+        return this.species.get(latinName)[0];
+    }
+    public speciesGroup(latinName: SetElement): SetElement {
+        return this.species.get(latinName)[2];
+    }
+    public endStatus(latinName: SetElement): EndangermentStatus {
+        return this.species.get(latinName)[3];
     }
 }

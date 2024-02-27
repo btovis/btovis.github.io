@@ -1,6 +1,7 @@
 import { MutableRefObject, useRef } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
+import { v4 as uuidv4 } from 'uuid';
 
 function GlobalOptionsComp(params: {
     renderFileProcess: (FileList) => void;
@@ -48,17 +49,26 @@ function GlobalOptionsComp(params: {
 
     const fileNameList = [];
     params.pageManager.data.sets[0].raws.forEach((_value, key) => {
+        const checkboxId = uuidv4().toString();
         fileNameList.push(
-            <div key={key}>
-                <span>{key}</span>
+            <form className='form-inline' key={key}>
+                <label
+                    style={{ overflowWrap: 'break-word', width: '80%' }}
+                    className='form-check-label'
+                    htmlFor={checkboxId}
+                >
+                    {key}
+                </label>
                 <button
-                    className='btn-close'
+                    style={{ width: '10%' }}
+                    id={checkboxId}
+                    className='form-check-input btn-close'
                     onClick={() => {
                         params.pageManager.removeCSV(key);
                         params.pageManager.refreshEverything();
                     }}
                 />
-            </div>
+            </form>
         );
     });
 
