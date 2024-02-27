@@ -76,4 +76,24 @@ describe('Grouping', async () => {
             });
         });
     });
+    describe('selectY', () => {
+        it('should select species column', () => {
+            const grouping = new BatchNameGrouping(filter);
+            const [dataSubset, _] = filter.getData();
+            const values = dataSubset.map((row) => grouping.selectY(row));
+            for (const v1 of values) {
+                expect(v1).toBeInstanceOf(SetElement);
+                expect(filter.getDataStats().getSpeciesMeta().speciesList()).toEqual(
+                    expect.arrayContaining([v1])
+                );
+                for (const v2 of values) {
+                    if (v1.value == v2.value) {
+                        expect(v1).toEqual(v2);
+                    } else {
+                        expect(v1).not.toEqual(v2);
+                    }
+                }
+            }
+        });
+    });
 });
