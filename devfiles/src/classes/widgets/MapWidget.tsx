@@ -12,11 +12,12 @@ export default class MapWidget extends Widget {
     }
     public render(): JSX.Element {
         //fake data to implement map scaling
-        const data = this.panel.dataFilterer.getData()[0];
+        const [data, length] = this.panel.dataFilterer.getData();
+        const dataSubset = data.slice(0, length);
         const latitudeColumnIdx = this.panel.dataFilterer.getColumnIndex('LATITUDE');
         const longitudeColumnIdx = this.panel.dataFilterer.getColumnIndex('LONGITUDE');
-        const latitude = data.map((row) => Number(row[latitudeColumnIdx]));
-        const longitude = data.map((row) => Number(row[longitudeColumnIdx]));
+        const latitude = dataSubset.map((row) => Number(row[latitudeColumnIdx]));
+        const longitude = dataSubset.map((row) => Number(row[longitudeColumnIdx]));
 
         //map zoom settings
         const latMax = Math.max(...latitude);
