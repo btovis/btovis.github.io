@@ -21,6 +21,8 @@ export default class SpeciesSelector extends InputOption {
     public allowedEndangerment = new Set<EndangermentStatus>();
     public allowedGroups = new Set<SetElement>();
     private accordionOpen = true;
+    private choices: Set<SetElement>;
+    private possibleGroups: Set<SetElement>;
 
     private speciesMeta: SpeciesMeta;
 
@@ -43,22 +45,50 @@ export default class SpeciesSelector extends InputOption {
         super(panel, name);
         this.speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
 
+        //Copy values to enforce changes
+        //These must be saved to easily compare new rows
+        this.choices = new Set([
+            ...this.panel.pageManager.data.sets[
+                this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName)
+            ].refs
+        ]);
+        this.possibleGroups = new Set([
+            ...this.panel.pageManager.data.sets[
+                this.panel.dataFilterer.getColumnIndex(Attribute.speciesGroup)
+            ].refs
+        ]);
         //Default all selected:
 
         if (template === undefined) {
-            this.choices().forEach((elem) => this.selected.add(elem));
+            this.choices.forEach((elem) => this.selected.add(elem));
             this.allowedEndangerment = new Set(endangermentValues);
-            this.possibleGroups().forEach((group) => this.allowedGroups.add(group));
+            this.possibleGroups.forEach((group) => this.allowedGroups.add(group));
             this.accordionOpen = true;
         } else {
             //If a template Selector is available, copy its currently selected settings.
             //If the template has everything selected, just set everything to be selected.
             if (template.isEverythingSelected()) {
-                this.choices().forEach((elem) => this.selected.add(elem));
-                this.possibleGroups().forEach((group) => this.allowedGroups.add(group));
+                this.choices.forEach((elem) => this.selected.add(elem));
+                this.possibleGroups.forEach((group) => this.allowedGroups.add(group));
             } else {
-                this.selected = template.selected;
-                this.allowedGroups = template.allowedGroups;
+                //Filter for removed groups
+                [...template.selected]
+                    .filter((sel) => this.choices.has(sel))
+                    .forEach((e) => this.selected.add(e));
+                [...template.allowedGroups]
+                    .filter((group) => this.possibleGroups.has(group))
+                    .forEach((g) => this.allowedGroups.add(g));
+                //Not simple to invert this.selected into this.excluded as SpeciesSelector
+                // filters by scientific name, group and endangerment status
+                //Add the new items here.
+                [...this.choices].forEach((elem) => {
+                    if (!template.choices.has(elem)) {
+                        this.selected.add(elem);
+                    }
+                });
+                [...this.possibleGroups]
+                    .filter((group) => !template.possibleGroups.has(group))
+                    .forEach((elem) => this.allowedGroups.add(elem));
             }
 
             this.allowedEndangerment = template.allowedEndangerment;
@@ -67,7 +97,11 @@ export default class SpeciesSelector extends InputOption {
     }
 
     public isEverythingSelected(): boolean {
-        return this.selected.size == this.choices().size;
+        return (
+            this.selected.size == this.choices.size &&
+            this.allowedGroups.size == this.possibleGroups.size &&
+            this.allowedEndangerment.size == endangermentValues.length
+        );
     }
 
     /**
@@ -102,7 +136,7 @@ export default class SpeciesSelector extends InputOption {
                             onChange={(event) =>
                                 this.callback({
                                     checked: event.currentTarget.checked,
-                                    item: this.choices()
+                                    item: this.choices
                                 })
                             }
                             checked={this.isEverythingSelected()}
@@ -141,12 +175,12 @@ export default class SpeciesSelector extends InputOption {
                             key={uuidv4()}
                             onChange={(event) => {
                                 if (event.currentTarget.checked)
-                                    this.possibleGroups().forEach((s) => this.allowedGroups.add(s));
+                                    this.possibleGroups.forEach((s) => this.allowedGroups.add(s));
                                 else this.allowedGroups.clear();
                                 //Refresh state
                                 this.callback({ checked: false, item: new Set([]) });
                             }}
-                            checked={this.allowedGroups.size == this.possibleGroups().size}
+                            checked={this.allowedGroups.size == this.possibleGroups.size}
                             className='form-check-input'
                             type='checkbox'
                         />
@@ -165,7 +199,7 @@ export default class SpeciesSelector extends InputOption {
                                 }}
                             />
                             <datalist id={this.uuid.toString() + '-search'}>
-                                {[...this.choices()].map((latinName) => {
+                                {[...this.choices].map((latinName) => {
                                     return (
                                         <option
                                             key={uuidv4()}
@@ -237,7 +271,7 @@ export default class SpeciesSelector extends InputOption {
      * @returns the toggle button filters for species group at the top
      */
     private speciesGroupFilters(): JSX.Element[] {
-        return [...this.possibleGroups()].map((group) => {
+        return [...this.possibleGroups].map((group) => {
             return (
                 <ToggleButton
                     className='mb-2 speciesEndangermentFilterBtn'
@@ -370,18 +404,6 @@ export default class SpeciesSelector extends InputOption {
                 </OverlayTrigger>
             </div>
         );
-    }
-
-    private choices(): Set<SetElement> {
-        return this.panel.pageManager.data.sets[
-            this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName)
-        ].refs;
-    }
-
-    private possibleGroups(): Set<SetElement> {
-        return this.panel.pageManager.data.sets[
-            this.panel.dataFilterer.getColumnIndex(Attribute.speciesGroup)
-        ].refs;
     }
 
     /**
