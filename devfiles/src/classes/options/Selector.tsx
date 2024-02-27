@@ -1,7 +1,6 @@
 import { Accordion } from 'react-bootstrap';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
-import SetQueryArray from '../query/SetQueryArray';
 import InputOption from './InputOption';
 import { v4 as uuidv4 } from 'uuid';
 import SetQueryArrayReject from '../query/SetQueryArrayReject';

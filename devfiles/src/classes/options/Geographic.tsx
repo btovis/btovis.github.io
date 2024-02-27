@@ -6,13 +6,19 @@ import Plot from 'react-plotly.js';
 import MapWidget from '../widgets/MapWidget';
 import { Attribute } from '../data/Data';
 import PageManager from '../PageManager';
-import SetQueryArrayReject from '../query/SetQueryArrayReject';
 import RangeQuery from '../query/RangeQuery';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class Geographic extends InputOption {
     private accordionOpen = false;
 
-    private revision = 0;
+    private choices = new Set<string>();
+    private globalLatDiameter = 0;
+    private globalLonDiameter = 0;
+    private globalMin = [Infinity, Infinity];
+    private globalMax = [-Infinity, -Infinity];
+    private renderedMap = false;
+
     private minLat = -Infinity;
     private maxLat = Infinity;
     private minLon = -Infinity;
@@ -20,6 +26,22 @@ export default class Geographic extends InputOption {
 
     public constructor(panel: Panel, name: string, template: Geographic = undefined) {
         super(panel, name);
+
+        //Optimisation opportunity: Set query for lat/lon
+        const latCol = panel.dataFilterer.getColumnIndex(Attribute.latitude);
+        const lonCol = panel.dataFilterer.getColumnIndex(Attribute.longitude);
+        for (let i = 0; i < PageManager.get().data.readDatabase().length; i++) {
+            const row = PageManager.get().data.readDatabase()[i];
+            this.choices.add(row[latCol].toString() + '\0' + row[lonCol].toString());
+            this.globalMin[0] = Math.min(this.globalMin[0], row[latCol] as number);
+            this.globalMin[1] = Math.min(this.globalMin[1], row[lonCol] as number);
+            this.globalMax[0] = Math.max(this.globalMax[0], row[latCol] as number);
+            this.globalMax[1] = Math.max(this.globalMax[1], row[lonCol] as number);
+        }
+
+        //map zoom settings
+        this.globalLatDiameter = this.globalMax[0] - this.globalMin[0];
+        this.globalLonDiameter = this.globalMax[0] - this.globalMin[0];
 
         if (template !== undefined) {
             this.minLat = template.minLat;
@@ -31,18 +53,13 @@ export default class Geographic extends InputOption {
     }
 
     public render(): JSX.Element {
-        const { plotData, plotLayout, plotConfig } = Geographic.generatePlotlySettings(
-            this.panel,
-            this.minLat,
-            this.maxLat,
-            this.minLon,
-            this.maxLon
-        );
+        const { plotData, plotLayout, plotConfig } = this.generatePlotlySettings();
 
         return (
             <Accordion
                 onSelect={(eventKey) => {
                     this.accordionOpen = typeof eventKey === 'string';
+                    this.refreshComponent();
                 }}
                 defaultActiveKey={this.accordionOpen ? '0' : []}
             >
@@ -50,28 +67,53 @@ export default class Geographic extends InputOption {
                     <Accordion.Header>
                         <span>
                             <strong>{this.name}</strong>
+                            <input
+                                style={{ marginLeft: '10px' }}
+                                key={uuidv4()}
+                                onChange={(event) => {
+                                    this.callback(
+                                        event.currentTarget.checked
+                                            ? {
+                                                  pointCount: this.choices.size,
+                                                  bounds: [
+                                                      [0, 0],
+                                                      [0, 0]
+                                                  ]
+                                              }
+                                            : {
+                                                  pointCount: 0,
+                                                  bounds: [
+                                                      [-Infinity, -Infinity],
+                                                      [-Infinity, -Infinity]
+                                                  ]
+                                              }
+                                    );
+                                    this.refreshComponent();
+                                }}
+                                checked={this.maxLat === Infinity}
+                                className='form-check-input'
+                                type='checkbox'
+                            />
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
                         <div id='panel-map-filter' style={{}}>
-                            {/* A hack fixes a weird bug:
-                                https://github.com/plotly/plotly.js/issues/3642#issuecomment-476130399
-                                Without the hack, the map will not center properly initially.
-                                (document.querySelector('#panel-map-filter [data-title="Zoom out"]') as any))
-                                can be used to select the zoomout button and invoke a click.
-
-                                Probably not worth it.
-                            */}
-                            <Plot
-                                onSelected={(event) => {
-                                    this.revision++;
-                                    this.callback(event.range.mapbox);
-                                }}
-                                revision={this.revision}
-                                data={plotData}
-                                layout={plotLayout}
-                                config={plotConfig}
-                            />
+                            {/* If the accordion is closed, cheat and do not render */}
+                            {this.accordionOpen ? (
+                                <Plot
+                                    onSelected={(event) =>
+                                        this.callback({
+                                            pointCount: event.points.length,
+                                            bounds: event.range.mapbox
+                                        })
+                                    }
+                                    data={plotData}
+                                    layout={plotLayout}
+                                    config={plotConfig}
+                                />
+                            ) : (
+                                <></>
+                            )}
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
@@ -83,39 +125,18 @@ export default class Geographic extends InputOption {
      * Not the same as the MapWidget one, as it operates on global data,
      * NOT filtered data
      */
-    public static generatePlotlySettings(
-        panel: Panel,
-        minLat: number,
-        maxLat: number,
-        minLon: number,
-        maxLon: number
-    ) {
-        const coords: Set<string> = new Set();
-        const min = [+Infinity, +Infinity];
-        const max = [-Infinity, -Infinity];
-
-        const latCol = panel.dataFilterer.getColumnIndex(Attribute.latitude);
-        const lonCol = panel.dataFilterer.getColumnIndex(Attribute.longitude);
-        for (let i = 0; i < PageManager.get().data.readDatabase().length; i++) {
-            const row = PageManager.get().data.readDatabase()[i];
-            coords.add(row[latCol].toString() + '\0' + row[lonCol].toString());
-            min[0] = Math.min(min[0], row[latCol] as number);
-            min[1] = Math.min(min[1], row[lonCol] as number);
-            max[0] = Math.max(max[0], row[latCol] as number);
-            max[1] = Math.max(max[1], row[lonCol] as number);
-        }
-
-        //map zoom settings
-        const latBound = max[0] - min[0];
-        const lonBound = max[0] - min[0];
-        const maxBound = Math.max(latBound, lonBound) * 600;
+    public generatePlotlySettings() {
+        const maxBound = Math.max(this.globalLatDiameter, this.globalLonDiameter) * 600;
         const zoom = 11.5 - Math.log(maxBound);
 
-        const lat = [...coords].map((c) => parseFloat(c.split('\0')[0]));
-        const lon = [...coords].map((c) => parseFloat(c.split('\0')[1]));
+        const lat = [...this.choices].map((c) => parseFloat(c.split('\0')[0]));
+        const lon = [...this.choices].map((c) => parseFloat(c.split('\0')[1]));
         const col = lat.map((l, ind) => {
             const lo = lon[ind];
-            if (Geographic.isInBound(l, minLat, maxLat) && Geographic.isInBound(lo, minLon, maxLon))
+            if (
+                Geographic.isInBound(l, this.minLat, this.maxLat) &&
+                Geographic.isInBound(lo, this.minLon, this.maxLon)
+            )
                 return 'green';
             else return 'red';
         });
@@ -142,8 +163,8 @@ export default class Geographic extends InputOption {
             hovermode: 'closest',
             mapbox: {
                 center: {
-                    lat: min[0] + (max[0] - min[0]) / 2,
-                    lon: min[1] + (max[1] - min[1]) / 2
+                    lat: this.globalMin[0] + (this.globalMax[0] - this.globalMin[0]) / 2,
+                    lon: this.globalMin[1] + (this.globalMax[1] - this.globalMin[1]) / 2
                 },
                 zoom: zoom
             },
@@ -161,7 +182,7 @@ export default class Geographic extends InputOption {
             modeBarButtonsToRemove: ['toImage', 'lasso2d'] //Block lasso as I can't support points now
         };
 
-        return { plotData, plotLayout, plotConfig, coords };
+        return { plotData, plotLayout, plotConfig };
     }
 
     private static isInBound(val: number, low: number, high: number): boolean {
@@ -176,12 +197,19 @@ export default class Geographic extends InputOption {
      *
      * @param newValue In this case, this is the rectangle box drawn by the user
      */
-    public callback(newValue: [number, number][]): void {
+    public callback(newValue: { pointCount: number; bounds: [number, number][] }): void {
         //Iterate and collect the points
-        this.minLon = newValue[1][0];
-        this.maxLon = newValue[0][0];
-        this.minLat = newValue[1][1];
-        this.maxLat = newValue[0][1];
+        if (newValue.pointCount === this.choices.size) {
+            this.minLat = -Infinity;
+            this.maxLat = Infinity;
+            this.minLon = -Infinity;
+            this.maxLon = Infinity;
+        } else {
+            this.minLon = newValue.bounds[1][0];
+            this.maxLon = newValue.bounds[0][0];
+            this.minLat = newValue.bounds[1][1];
+            this.maxLat = newValue.bounds[0][1];
+        }
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);
