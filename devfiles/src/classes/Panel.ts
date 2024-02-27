@@ -18,7 +18,6 @@ import TimeOfDayRange from './options/TimeOfDayRange';
 export default class Panel {
     //TODO: Consider protecting with private
     //Mutator methods below do more than touch this list
-    //Someone's editing widgetcomp now
     public widgets: Widget[];
 
     public refreshComponent: () => void = () => {};
@@ -28,6 +27,7 @@ export default class Panel {
     private fileSelector: Selector;
     private dateRange: DateRange;
     private timeOfDay: TimeOfDayRange;
+    private minimumProbability: NumericInput;
     private speciesSelector: SpeciesSelector;
     private warningsSelector: Selector;
     private calltypeSelector: Selector;
@@ -71,6 +71,7 @@ export default class Panel {
         );
         this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
         this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
+        this.minimumProbability = new NumericInput(this, 'Minimum Probability', 0, 1, 0.01);
         this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
@@ -94,8 +95,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.projectName),
             true,
             [],
-            this.projectSelector,
-            false
+            this.projectSelector
         );
         this.classifierSelector = new Selector(
             this,
@@ -103,8 +103,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.classifierName),
             true,
             [],
-            this.classifierSelector,
-            false
+            this.classifierSelector
         );
         this.batchnameSelector = new Selector(
             this,
@@ -112,8 +111,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.batchName),
             true,
             [],
-            this.batchnameSelector,
-            false
+            this.batchnameSelector
         );
         this.useridSelector = new Selector(
             this,
@@ -121,8 +119,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.userID),
             true,
             [],
-            this.useridSelector,
-            false
+            this.useridSelector
         );
     }
 
@@ -177,8 +174,8 @@ export default class Panel {
             new Geographic(this, 'Region'), //Positional filter
             this.dateRange,
             this.timeOfDay,
+            this.minimumProbability,
             this.speciesSelector,
-            new NumericInput(this, 'Minimum Probability'),
             this.warningsSelector,
             this.calltypeSelector,
             this.projectSelector,

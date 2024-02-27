@@ -6,6 +6,7 @@ import ReferenceSet from './setutils/ReferenceSet';
 import { Attribute } from './Data';
 import { Query, QueryType } from '../query/Query';
 import RangeFilter from '../filters/RangeFilter';
+import SwappableRangeFilter from '../filters/SwappableRangeFilter';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
@@ -159,6 +160,9 @@ export default class DataFilterer {
             case QueryType.Range:
                 this.replaceFilter(q[0], new RangeFilter(q[2], q[3]));
                 break;
+            case QueryType.SwappableRange:
+                this.replaceFilter(q[0], new SwappableRangeFilter(q[2], q[3]));
+                break;
             case QueryType.SetElem:
                 this.updateSetFilter(q[0], q[2], !q[3]);
                 break;
@@ -199,6 +203,17 @@ export default class DataFilterer {
                     this.filtersClasses[q[0]] = new SetFilter(excludes, this.data.sets[q[0]]);
                     (this.filtersClasses[q[0]] as SetFilter).invertExcludesSet();
                     this.replaceFilter(q[0], this.filtersClasses[q[0]]);
+                }
+                return;
+            case QueryType.SetAsArrayForReject:
+                {
+                    const excludes = new ReferenceSet();
+                    for (const e of q[2]) {
+                        const ref = this.data.sets[q[0]].getRef(e);
+                        if (!ref) continue;
+                        excludes.addRef(ref);
+                    }
+                    this.replaceFilter(q[0], new SetFilter(excludes, this.data.sets[q[0]]));
                 }
                 return;
         }

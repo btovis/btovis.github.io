@@ -3,7 +3,7 @@
 
 import { Attribute } from '../Data';
 import ReferenceSet from '../setutils/ReferenceSet';
-import { processDates } from './date';
+import { processDates, processTimes } from './date';
 
 function matchColumnNames(upperCaseColumnName) {
     switch (upperCaseColumnName) {
@@ -137,8 +137,12 @@ function integrateNewCSV(
 
     const dateCol = titleToColumnIndex.get(Attribute.actualDate);
     if (dateCol) {
-        // TODO: perhaps move processing here?
         processDates(oldDatabase, oldDBLen, dateCol);
+    }
+
+    const timeCol = titleToColumnIndex.get(Attribute.time);
+    if (timeCol) {
+        processTimes(oldDatabase, oldDBLen, timeCol);
     }
 
     for (let i = oldDBLen; i < finalDBLen; i++) {

@@ -3,14 +3,22 @@ import SetElement from '../data/setutils/SetElement';
 // Query: [columnIndex, QueryTypes.xxx, ...]
 export enum QueryType {
     Range = 0,
+    SwappableRange = 5,
     SetElem = 1,
     Set = 2,
-    SetAsArray = 3
+    SetAsArray = 3,
+    SetAsArrayForReject = 4
 }
 
 export type RangeQuery = [
     colI: number,
     QueryType.Range,
+    low: number | string,
+    high: number | string
+];
+export type SwappableRangeQuery = [
+    colI: number,
+    QueryType.SwappableRange,
     low: number | string,
     high: number | string
 ];
@@ -27,5 +35,12 @@ export type SetQuery = [
 ];
 
 export type SetAsArray = [colI: number, QueryType.SetAsArray, array: string[]];
+export type SetAsArrayForReject = [colI: number, QueryType.SetAsArrayForReject, array: string[]];
 
-export type Query = RangeQuery | SetElemQuery | SetQuery | SetAsArray;
+export type Query =
+    | RangeQuery
+    | SwappableRangeQuery
+    | SetElemQuery
+    | SetQuery
+    | SetAsArray
+    | SetAsArrayForReject;
