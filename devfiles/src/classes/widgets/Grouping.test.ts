@@ -158,4 +158,20 @@ describe('Grouping', async () => {
             }
         });
     });
+    describe('aggregatePairs', () => {
+        it('should aggregate pairs', () => {
+            const grouping = new BatchNameGrouping(filter);
+            const aggregated = grouping.aggregatePairs();
+            for (const [y, xMap] of aggregated) {
+                expect(y).toBeInstanceOf(SetElement);
+                expect(xMap).toBeInstanceOf(Map);
+                expect(xMap.size).toBeGreaterThan(0);
+                for (const [x, count] of xMap) {
+                    expect(x).toBeInstanceOf(SetElement);
+                    expect(count).not.toBeNaN();
+                    expect(count).toBeGreaterThan(0);
+                }
+            }
+        });
+    });
 });
