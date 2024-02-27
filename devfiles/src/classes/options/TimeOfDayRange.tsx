@@ -9,7 +9,7 @@ import RangeQuery from '../query/RangeQuery';
 import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
-    private accordionOpen = true;
+    private accordionOpen = false;
     public fromTime: Dayjs;
     public toTime: Dayjs;
 
@@ -32,6 +32,7 @@ export default class TimeRange extends InputOption {
                 onSelect={(eventKey) => {
                     this.accordionOpen = typeof eventKey === 'string';
                 }}
+                defaultActiveKey={this.accordionOpen ? '0' : []}
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>

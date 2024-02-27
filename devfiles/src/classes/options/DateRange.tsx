@@ -13,7 +13,7 @@ export default class TimeRange extends InputOption {
     private maxDate: Dayjs;
     public fromDate: Dayjs;
     public toDate: Dayjs;
-    private accordionOpen = true;
+    private accordionOpen = false;
 
     public constructor(panel: Panel, name: string, template?: TimeRange) {
         super(panel, name);
@@ -39,6 +39,7 @@ export default class TimeRange extends InputOption {
                 onSelect={(eventKey) => {
                     this.accordionOpen = typeof eventKey === 'string';
                 }}
+                defaultActiveKey={this.accordionOpen ? '0' : []}
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>

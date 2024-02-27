@@ -93,8 +93,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.projectName),
             true,
             [],
-            this.projectSelector,
-            false
+            this.projectSelector
         );
         this.classifierSelector = new Selector(
             this,
@@ -102,8 +101,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.classifierName),
             true,
             [],
-            this.classifierSelector,
-            false
+            this.classifierSelector
         );
         this.batchnameSelector = new Selector(
             this,
@@ -111,8 +109,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.batchName),
             true,
             [],
-            this.batchnameSelector,
-            false
+            this.batchnameSelector
         );
         this.useridSelector = new Selector(
             this,
@@ -120,8 +117,7 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.userID),
             true,
             [],
-            this.useridSelector,
-            false
+            this.useridSelector
         );
     }
 

@@ -12,7 +12,7 @@ export default class Selector extends InputOption {
     protected searchState: string = '';
     public selected: Set<string> = new Set();
     public readonly columnIndex;
-    private accordionOpen = true;
+    private accordionOpen = false;
 
     /**
      * @param panel The associated panel
@@ -29,8 +29,7 @@ export default class Selector extends InputOption {
         choices: string[] | number,
         allSelected: boolean = true,
         defaults?: string[],
-        template: Selector = undefined,
-        defaultOpen: boolean = true
+        template: Selector = undefined
     ) {
         super(panel, name);
         //If a column index is provided, set choices to the unique column values
@@ -43,15 +42,11 @@ export default class Selector extends InputOption {
         if (template === undefined) {
             if (allSelected) this.selected = new Set(this.choices);
             else if (defaults) this.selected = new Set(defaults);
-
-            this.accordionOpen = defaultOpen;
         } else {
             //If a template Selector is available, copy its currently selected settings.
             //If the template has everything selected, just set everything to be selected.
             if (template.isEverythingSelected()) this.selected = new Set(this.choices);
             else this.selected = template.selected;
-
-            this.accordionOpen = template.accordionOpen;
         }
     }
 
@@ -101,7 +96,7 @@ export default class Selector extends InputOption {
                 onSelect={(eventKey) => {
                     this.accordionOpen = typeof eventKey === 'string';
                 }}
-                //defaultActiveKey={this.accordionOpen ? '0' : []}
+                defaultActiveKey={this.accordionOpen ? '0' : []}
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
