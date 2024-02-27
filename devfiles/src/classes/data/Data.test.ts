@@ -1,5 +1,5 @@
 import { it, expect, beforeEach, describe } from 'vitest';
-import { Attribute } from './Data';
+import { Attribute, Data } from './Data';
 import {
     testDataFilename as filename,
     testDataFilename2 as filename2,
@@ -8,7 +8,7 @@ import {
 } from '../../tests/utils.test';
 
 describe('Data', async () => {
-    let data;
+    let data: Data;
     beforeEach(async () => {
         data = await loadData(filename);
     });
