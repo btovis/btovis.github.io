@@ -69,8 +69,28 @@ abstract class Grouping {
         return xValueMap;
     }
     // Generate a trace that includes the core data but excludes the additional config.
-    public getPartialTraces() {}
-    public getTraces(data: Data, additionalConfig: { [key: string]: any }) {}
+    public getPartialTraces() {
+        const plottingData = this.aggregatePairs();
+        const xValueMap = this.xValueMap();
+        return Array.from(plottingData.entries()).map(([group, xMap]) => {
+            const xValues = Array.from(xMap.keys());
+            const yValues = Array.from(xMap.values());
+            const x = xValues.map((x) => xValueMap.get(x));
+            return {
+                x: x,
+                y: yValues,
+                name: group.value
+            };
+        });
+    }
+    public getTraces(additionalConfig: { [key: string]: any }) {
+        return this.getPartialTraces().map((trace) => {
+            return {
+                ...trace,
+                ...additionalConfig
+            };
+        });
+    }
 }
 
 class BatchNameGrouping extends Grouping {
