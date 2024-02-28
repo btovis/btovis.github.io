@@ -129,7 +129,8 @@ abstract class Grouping {
             return {
                 x: x,
                 y: y,
-                name: group.value
+                name: group.value,
+                showlegend: true
             };
         });
     }
@@ -158,6 +159,9 @@ abstract class Grouping {
                 },
                 yaxis: {
                     title: this.getYLabel()
+                },
+                legend: {
+                    visible: true
                 },
                 ...additionalLayoutConfig
             }
