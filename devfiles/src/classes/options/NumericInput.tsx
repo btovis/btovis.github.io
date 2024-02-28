@@ -12,6 +12,7 @@ export default class NumericInput extends InputOption {
     private max: number;
     private step: number;
     private accordionOpen = false;
+    private newValue: number;
 
     public constructor(
         panel: Panel,
@@ -30,6 +31,7 @@ export default class NumericInput extends InputOption {
             this.value = template.value;
             this.accordionOpen = template.accordionOpen;
         }
+        this.newValue = this.value;
     }
 
     public getValue(): number {
@@ -60,21 +62,40 @@ export default class NumericInput extends InputOption {
                                 step={this.step}
                                 onChange={(event) => {
                                     this.value = event.target.valueAsNumber;
+                                    this.newValue = this.value;
                                     this.refreshComponent();
                                 }}
                                 onMouseUp={(event) => {
                                     this.callback();
                                 }}
                             />
-                            <p>Selected Value: {this.value}</p>
+                            <p>
+                                Selected Value:
+                                <input
+                                    type='number'
+                                    min={this.min}
+                                    max={this.max}
+                                    step={this.step}
+                                    value={this.newValue}
+                                    onChange={(event) => {
+                                        this.newValue = event.target.valueAsNumber;
+                                        this.refreshComponent();
+                                    }}
+                                    onBlur={(event) => {
+                                        this.callback();
+                                    }}
+                                ></input>
+                            </p>
+                            <p>{this.newValue}</p>
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
         );
     }
+
     public callback(): void {
-        // this.value = newValue;
+        this.value = this.newValue;
         // this.panel.refreshComponent();
         this.panel.recalculateFilters(this);
         this.panel.refreshWidgets();
