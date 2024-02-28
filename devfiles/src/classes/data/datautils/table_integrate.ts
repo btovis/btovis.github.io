@@ -48,13 +48,116 @@ function integrateNewCSV(
     const earliestColumnWithNameInNew = new Map<string, number>();
 
     for (let i = 1; i < newColumnList.length; i++) {
-        newColumnList[i] = matchColumnNames(newColumnList[i].toUpperCase());
+        newColumnList[i] = newColumnList[i].toUpperCase();
+    }
+    console.log(newColumnList);
+    console.log(newDatabase[0]);
+    if (newColumnList.includes('COMMON_NAME')) {
+        // Bird CSV.
+        if (!newColumnList.includes('ENGLISH NAME')) {
+            // rename common name to english name
+            newColumnList[newColumnList.indexOf('COMMON_NAME')] = 'ENGLISH NAME';
+        }
+        if (!newColumnList.includes('SCIENTIFIC NAME')) {
+            // sp_code rename to SCIENTIFIC NAME, also SPECIES
+            newColumnList[newColumnList.indexOf('SP_CODE')] = 'SCIENTIFIC NAME';
+            // TODO: maybe copy to species
+        }
+        if (!newColumnList.includes('SPECIES')) {
+            newColumnList.push('SPECIES');
+            const colI = newColumnList.indexOf('SCIENTIFIC NAME');
+            for (const r of newDatabase) {
+                r.push(r[colI]);
+            }
+        }
+        if (!newColumnList.includes('SPECIES GROUP')) {
+            newColumnList.push('SPECIES GROUP');
+            for (const r of newDatabase) {
+                r.push('Bird classifier species');
+            }
+        }
+        if (!newColumnList.includes('WARNINGS')) {
+            newColumnList.push('WARNINGS');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier does not output warnings]');
+            }
+        }
+        if (!newColumnList.includes('CALL TYPE')) {
+            newColumnList.push('CALL TYPE');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier does not output call type]');
+            }
+        }
+        if (!newColumnList.includes('PROJECT NAME')) {
+            newColumnList.push('PROJECT NAME');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+        if (!newColumnList.includes('CLASSIFIER NAME')) {
+            newColumnList.push('CLASSIFIER NAME');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+        if (!newColumnList.includes('BATCH NAME')) {
+            newColumnList.push('BATCH NAME');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+        if (!newColumnList.includes('USER ID')) {
+            newColumnList.push('USER ID');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+    }
+    // add lat and loc if not existing
+    if (!newColumnList.includes('LATITUDE')) {
+        newColumnList.push('LATITUDE');
+        for (const r of newDatabase) r.push(0);
+    }
+
+    if (!newColumnList.includes('LONGITUDE')) {
+        newColumnList.push('LONGITUDE');
+        for (const r of newDatabase) r.push(0);
+    }
+    alert(newColumnList.length);
+    alert(newDatabase[0].length);
+
+    for (let i = 1; i < newColumnList.length; i++) {
+        newColumnList[i] = matchColumnNames(newColumnList[i]);
         if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
             earliestColumnWithNameInNew.set(newColumnList[i], i);
             permutes[i] = titleToColumnIndex.get(newColumnList[i]);
         }
         // a duplicate
         else permutes[i] = -2;
+    }
+
+    if (!newColumnList.includes('TIME')) {
+        throw 'No Time column found';
+    }
+
+    if (!newColumnList.includes('ACTUAL DATE')) {
+        throw 'No Date/Actual Date column found';
+    }
+
+    if (!newColumnList.includes('ENGLISH NAME')) {
+        throw 'No ENGLISH NAME column found';
+    }
+
+    if (!newColumnList.includes('SCIENTIFIC NAME')) {
+        throw 'No SCIENTIFIC NAME column found';
+    }
+
+    if (!newColumnList.includes('SPECIES')) {
+        throw 'No SPECIES column found';
+    }
+
+    if (!newColumnList.includes('SPECIES GROUP')) {
+        throw 'No SPECIES GROUP column found';
     }
 
     // Remove duplicate rows
@@ -138,6 +241,11 @@ function integrateNewCSV(
     const dateCol = titleToColumnIndex.get(Attribute.actualDate);
     if (dateCol) {
         processDates(oldDatabase, oldDBLen, dateCol);
+    }
+
+    const surveyDateCol = titleToColumnIndex.get(Attribute.surveyDate);
+    if (surveyDateCol) {
+        processDates(oldDatabase, oldDBLen, surveyDateCol);
     }
 
     const timeCol = titleToColumnIndex.get(Attribute.time);

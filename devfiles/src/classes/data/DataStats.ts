@@ -33,7 +33,8 @@ export default class DataStats {
     }
 
     public refresh() {
-        //Required Columns
+        if (this.data.isEmpty()) return;
+        //Required Columns, throw otherwise
         const dateCol = this.data.getIndexForColumn(Attribute.actualDate);
         const latCol = this.data.getIndexForColumn(Attribute.latitude);
         const lonCol = this.data.getIndexForColumn(Attribute.longitude);

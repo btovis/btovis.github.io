@@ -81,15 +81,20 @@ class Data {
             window.alert('Warning: the file ' + CSVName + ' contains no data');
         }
 
-        integrateNewCSV(
-            this.columnList,
-            this.titleToColumnIndex,
-            columnNames,
-            this.sortedDatabase,
-            content,
-            this.sets,
-            this.cellProcessors
-        );
+        try {
+            integrateNewCSV(
+                this.columnList,
+                this.titleToColumnIndex,
+                columnNames,
+                this.sortedDatabase,
+                content,
+                this.sets,
+                this.cellProcessors
+            );
+        } catch (e) {
+            this.sets[0].removeRef(CSVIdentifier);
+            throw e;
+        }
         if (!finaliseLater) this.dataStats.refresh();
     }
 
