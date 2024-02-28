@@ -169,6 +169,27 @@ describe('Grouping', async () => {
                 }
             }
         });
+        it('should select species by vulnerability', () => {
+            const grouping = new BatchNameGrouping(filter, YGrouping.VulnerabilityStatus);
+            const [dataSubset, _] = filter.getData();
+            const values = dataSubset.map((row) => grouping.selectY(row));
+            const speciesMeta = filter.getDataStats().getSpeciesMeta();
+            const allSpecies = speciesMeta.speciesList();
+            const vulnerabilityStatuses = Array.from(
+                new Set(allSpecies.map((s) => speciesMeta.endStatus(s)))
+            );
+            for (const v1 of values) {
+                expect(v1).toBeInstanceOf(SetElement);
+                expect(vulnerabilityStatuses).toEqual(expect.arrayContaining([v1.value]));
+                for (const v2 of values) {
+                    if (v1.value == v2.value) {
+                        expect(v1).toEqual(v2);
+                    } else {
+                        expect(v1).not.toEqual(v2);
+                    }
+                }
+            }
+        });
     });
     describe('generatePairs', () => {
         it('should generate name, species pairs', () => {
