@@ -64,8 +64,9 @@ abstract class Grouping {
     // Convert x values to integers to display on chart.
     // Must be called after all pairs have been generated.
     public xIndexMap() {
+        // If the array is very long it's faster to map to string then sort then map back
         const sortedXValues = Array.from(this.xValues).sort((a, b) =>
-            a.value.localeCompare(b.value)
+            a.value < b.value ? -1 : a.value == b.value ? 0 : 1
         );
         const xValueMap = new Map<SetElement, number>();
         for (let i = 0; i < sortedXValues.length; i++) {
