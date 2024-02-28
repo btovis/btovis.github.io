@@ -133,7 +133,7 @@ function parseCSV(
     //const expectNewlineWhenReadingCell = naturalColumnCount - 2;
 
     // Add a first element to each array
-    const artificialColumnCount = columnNames.length + 1;
+    const artificialColumnCount = naturalColumnCount + 1;
     const expectNewlineWhenReadingCell = naturalColumnCount - 1;
 
     const arr = [];
