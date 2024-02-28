@@ -5,16 +5,30 @@ import ReferenceSet from '../data/setutils/ReferenceSet';
 import { Filter } from '../filters/Filter';
 import DataFilterer from '../data/DataFilterer';
 
+enum YGrouping {
+    Species,
+    SpeciesGroup
+}
+
 abstract class Grouping {
     filter: DataFilterer;
     referenceSet: ReferenceSet;
     xValues: Set<SetElement>;
-    speciesColumnIdx: number;
-    constructor(filter: DataFilterer) {
+    yColumnIdx: number;
+    constructor(filter: DataFilterer, yGrouping: YGrouping) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();
-        this.speciesColumnIdx = filter.getColumnIndex(Attribute.speciesLatinName);
         this.xValues = new Set();
+        let attribute: Attribute;
+        switch (yGrouping) {
+            case YGrouping.Species:
+                attribute = Attribute.speciesLatinName;
+                break;
+            case YGrouping.SpeciesGroup:
+                attribute = Attribute.speciesGroup;
+                break;
+        }
+        this.yColumnIdx = filter.getColumnIndex(attribute);
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
@@ -27,7 +41,7 @@ abstract class Grouping {
     }
     // Select the value to be used for the y-axis.
     public selectY(row: Row): SetElement {
-        return this.selectByColumnIndex(row, this.speciesColumnIdx);
+        return this.selectByColumnIndex(row, this.yColumnIdx);
     }
     // Select pairs of x-y values that will be aggregated and plotted.
     public generatePairs(): [SetElement, SetElement][] {
@@ -119,8 +133,8 @@ abstract class Grouping {
 
 class BatchNameGrouping extends Grouping {
     columnIdx: number;
-    constructor(filter: DataFilterer) {
-        super(filter);
+    constructor(filter: DataFilterer, yGrouping: YGrouping) {
+        super(filter, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.batchName);
     }
     public selectX(row: Row): SetElement {
@@ -130,8 +144,8 @@ class BatchNameGrouping extends Grouping {
 
 class ProjectNameGrouping extends Grouping {
     columnIdx: number;
-    constructor(filter: DataFilterer) {
-        super(filter);
+    constructor(filter: DataFilterer, yGrouping: YGrouping) {
+        super(filter, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.projectName);
     }
     public selectX(row: Row): SetElement {
@@ -141,8 +155,8 @@ class ProjectNameGrouping extends Grouping {
 
 class FilenameGrouping extends Grouping {
     columnIdx: number;
-    constructor(filter: DataFilterer) {
-        super(filter);
+    constructor(filter: DataFilterer, yGrouping: YGrouping) {
+        super(filter, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.originalFileName);
     }
     public selectX(row: Row): SetElement {
@@ -153,8 +167,8 @@ class FilenameGrouping extends Grouping {
 abstract class TimeGrouping extends Grouping {
     timeColumnIdx: number;
     dateColumnIdx: number;
-    constructor(filter: DataFilterer) {
-        super(filter);
+    constructor(filter: DataFilterer, yGrouping: YGrouping) {
+        super(filter, yGrouping);
         this.timeColumnIdx = filter.getColumnIndex(Attribute.time);
         this.dateColumnIdx = filter.getColumnIndex(Attribute.actualDate);
     }
@@ -315,5 +329,6 @@ export {
     DayGrouping,
     ContinuousMonthGrouping,
     MonthGrouping,
-    YearGrouping
+    YearGrouping,
+    YGrouping
 };
