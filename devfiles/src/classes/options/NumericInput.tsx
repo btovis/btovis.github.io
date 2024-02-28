@@ -13,12 +13,23 @@ export default class NumericInput extends InputOption {
     private step: number;
     private accordionOpen = false;
 
-    public constructor(panel: Panel, name: string, min: number, max: number, step: number) {
+    public constructor(
+        panel: Panel,
+        name: string,
+        min: number,
+        max: number,
+        step: number,
+        template?: NumericInput
+    ) {
         super(panel, name);
         this.value = 0;
         this.min = min;
         this.max = max;
         this.step = step;
+        if (template !== undefined) {
+            this.value = template.value;
+            this.accordionOpen = template.accordionOpen;
+        }
     }
 
     public getValue(): number {

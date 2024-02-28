@@ -39,6 +39,7 @@ export default class TimeRange extends InputOption {
                 this.toDate = this.maxDate.isAfter(template.toDate)
                     ? template.toDate
                     : this.maxDate;
+            this.accordionOpen = template.accordionOpen;
         }
     }
 

@@ -1,49 +1,57 @@
 import Widget from './Widget.js';
-import WidgetConfig from './WidgetConfig.js';
-import { Data } from '../data/Data.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
-import React from 'react';
 import Plot from 'react-plotly.js';
+import { Attribute } from '../data/Data.js';
+import Panel from '../Panel.js';
 
 export default class MapWidget extends Widget {
-    public generateSidebar(): Sidebar {
-        return new Sidebar([]);
-    }
+    public static readonly mapToken =
+        'pk.eyJ1Ijoic2F0b3J1enp6IiwiYSI6ImNsc3VmdnltNzE4YzIybHFraWQ3N2k3aWIifQ.TxLQjJE3y5p9cZSzkyeWUQ';
+
     public render(): JSX.Element {
         //fake data to implement map scaling
-        const data = {
-            lat: ['48.89697', '48.95'],
-            lon: ['13.44842', '13.45']
-        };
+
+        const { plotData, plotLayout, plotConfig } = MapWidget.generatePlotlySettings(this.panel);
+        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
+    }
+
+    /**
+     * Static for use outside map widget. Also easier to test without the DOM
+     * @param panel
+     */
+    public static generatePlotlySettings(panel: Panel) {
+        const coords: Set<string> = new Set();
+        const min = [+Infinity, +Infinity];
+        const max = [-Infinity, -Infinity];
+
+        const latCol = panel.dataFilterer.getColumnIndex(Attribute.latitude);
+        const lonCol = panel.dataFilterer.getColumnIndex(Attribute.longitude);
+        for (let i = 0; i < panel.dataFilterer.getData()[1]; i++) {
+            const row = panel.dataFilterer.getData()[0][i];
+            coords.add(row[latCol].toString() + '\0' + row[lonCol].toString());
+            min[0] = Math.min(min[0], row[latCol]);
+            min[1] = Math.min(min[1], row[lonCol]);
+            max[0] = Math.max(max[0], row[latCol]);
+            max[1] = Math.max(max[1], row[lonCol]);
+        }
 
         //map zoom settings
-        const latBound = Math.max(...data.lat.map(Number)) - Math.min(...data.lat.map(Number));
-        const lonBound = Math.max(...data.lon.map(Number)) - Math.min(...data.lon.map(Number));
+        const latBound = max[0] - min[0];
+        const lonBound = max[0] - min[0];
         const maxBound = Math.max(latBound, lonBound) * 600;
         const zoom = 11.5 - Math.log(maxBound);
-
-        //map center settings
-        let avgLat = 0;
-        let avgLon = 0;
-        data.lat.map(Number).forEach((num) => {
-            avgLat += num;
-        });
-        data.lon.map(Number).forEach((num) => {
-            avgLon += num;
-        });
-        avgLat /= data.lat.length;
-        avgLon /= data.lon.length;
 
         //plot data for plotly
         const plotData = [
             {
                 type: 'scattermapbox',
-                lat: data.lat,
-                lon: data.lon,
+                lat: [...coords].map((c) => parseFloat(c.split('\0')[0])),
+                lon: [...coords].map((c) => parseFloat(c.split('\0')[1])),
                 mode: 'markers',
                 marker: {
-                    size: 14
+                    size: 7,
+                    color: 'red'
                 },
                 text: ['Germany', 'Germany']
             }
@@ -53,15 +61,13 @@ export default class MapWidget extends Widget {
         const plotLayout = {
             width: 290,
             height: 210,
-            autosize: true,
+            autosize: false,
             hovermode: 'closest',
             mapbox: {
-                bearing: 0,
                 center: {
-                    lat: avgLat,
-                    lon: avgLon
+                    lat: min[0] + (max[0] - min[0]) / 2,
+                    lon: min[1] + (max[1] - min[1]) / 2
                 },
-                pitch: 0,
                 zoom: zoom
             },
             margin: {
@@ -74,12 +80,45 @@ export default class MapWidget extends Widget {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            mapboxAccessToken:
-                'pk.eyJ1Ijoic2F0b3J1enp6IiwiYSI6ImNsc3VmdnltNzE4YzIybHFraWQ3N2k3aWIifQ.TxLQjJE3y5p9cZSzkyeWUQ',
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
+            mapboxAccessToken: MapWidget.mapToken,
+            modeBarButtonsToRemove: [
+                'zoom2d',
+                'pan2d',
+                'select2d',
+                'lasso2d',
+                'zoomIn2d',
+                'zoomOut2d',
+                'autoScale2d',
+                'resetScale2d',
+                'hoverClosestCartesian',
+                'hoverCompareCartesian',
+                'zoom3d',
+                'pan3d',
+                'resetCameraDefault3d',
+                'resetCameraLastSave3d',
+                'hoverClosest3d',
+                'orbitRotation',
+                'tableRotation',
+                'zoomInGeo',
+                'zoomOutGeo',
+                'resetGeo',
+                'hoverClosestGeo',
+                'toImage',
+                'sendDataToCloud',
+                'hoverClosestGl2d',
+                'hoverClosestPie',
+                'toggleHover',
+                'resetViews',
+                'toggleSpikelines',
+                'resetViewMapbox'
+            ]
         };
 
-        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
+        return { plotData, plotLayout, plotConfig, min, max };
+    }
+
+    public generateSidebar(): Sidebar {
+        return new Sidebar([]);
     }
     public delete(): void {
         //throw new Error('Method not implemented.');

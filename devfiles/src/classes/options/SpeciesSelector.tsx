@@ -91,6 +91,7 @@ export default class SpeciesSelector extends InputOption {
             }
 
             this.allowedEndangerment = template.allowedEndangerment;
+            this.accordionOpen = template.accordionOpen;
         }
     }
 

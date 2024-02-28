@@ -14,6 +14,7 @@ import InputOption from './options/InputOption';
 import { Attribute } from './data/Data';
 import SpeciesSelector from './options/SpeciesSelector';
 import TimeOfDayRange from './options/TimeOfDayRange';
+import { Query } from './query/Query';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -25,6 +26,7 @@ export default class Panel {
 
     private readonly nameInput: PanelNameInput;
     private fileSelector: Selector;
+    private geographic: Geographic;
     private dateRange: DateRange;
     private timeOfDay: TimeOfDayRange;
     private minimumProbability: NumericInput;
@@ -69,6 +71,7 @@ export default class Panel {
             [],
             this.fileSelector
         );
+        this.geographic = new Geographic(this, 'Location', this.geographic);
         this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
         this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
         this.minimumProbability = new NumericInput(this, 'Minimum Probability', 0, 1, 0.01);
@@ -135,7 +138,9 @@ export default class Panel {
         const query = changedOption.query();
 
         if (query === null) return;
-        this.dataFilterer.processQuery(query);
+        if ('compound' in query)
+            (query.queries as Query[]).forEach((q) => this.dataFilterer.processQuery(q));
+        else this.dataFilterer.processQuery(query as Query);
     }
 
     /**
@@ -171,7 +176,7 @@ export default class Panel {
         const baseSidebar = new Sidebar([
             this.nameInput, //Panel name. Identity filter
             this.fileSelector,
-            new Geographic(this, 'Region'), //Positional filter
+            this.geographic, //Positional filter
             this.dateRange,
             this.timeOfDay,
             this.minimumProbability,

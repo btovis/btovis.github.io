@@ -23,6 +23,7 @@ export default class TimeRange extends InputOption {
         } else {
             this.fromTime = template.fromTime;
             this.toTime = template.toTime;
+            this.accordionOpen = template.accordionOpen;
         }
     }
 
