@@ -95,6 +95,12 @@ class Data {
             this.sets[0].removeRef(CSVIdentifier);
             throw e;
         }
+        for (const set of this.sets) {
+            if (!set) continue;
+            // handle "", " " to "[empty]"
+            set.changeValue('', '[empty]');
+            set.changeValue(' ', '[whitespace]');
+        }
         if (!finaliseLater) this.dataStats.refresh();
     }
 

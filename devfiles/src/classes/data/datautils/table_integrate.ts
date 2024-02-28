@@ -58,15 +58,16 @@ function integrateNewCSV(
         }
         if (!newColumnList.includes('SCIENTIFIC NAME')) {
             // sp_code rename to SCIENTIFIC NAME, also SPECIES
-            newColumnList[newColumnList.indexOf('SP_CODE')] = 'SCIENTIFIC NAME';
+            newColumnList[newColumnList.indexOf('COMMON_NAME')] = 'SCIENTIFIC NAME';
             // TODO: maybe copy to species
         }
         if (!newColumnList.includes('SPECIES')) {
             newColumnList.push('SPECIES');
-            const colI = newColumnList.indexOf('SCIENTIFIC NAME');
-            for (const r of newDatabase) {
-                r.push(r[colI]);
-            }
+            const colI = newColumnList.indexOf('SP_CODE');
+            if (colI)
+                for (const r of newDatabase) {
+                    r.push(r[colI]);
+                }
         }
         if (!newColumnList.includes('SPECIES GROUP')) {
             newColumnList.push('SPECIES GROUP');

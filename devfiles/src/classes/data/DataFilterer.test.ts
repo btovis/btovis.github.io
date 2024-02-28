@@ -68,7 +68,10 @@ describe('DataFilterer', async () => {
                 columnIdx = filterer.getColumnIndex(Attribute.warnings);
             });
             it('it should select non-null warnings', () => {
-                const query = new SetQueryElement(columnIdx, data.sets[columnIdx].getRef(' '));
+                const query = new SetQueryElement(
+                    columnIdx,
+                    data.sets[columnIdx].getRef('[whitespace]')
+                );
                 filterer.processQuery(query.query(false));
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
@@ -79,12 +82,12 @@ describe('DataFilterer', async () => {
             });
             it('it should select empty warnings', () => {
                 const query = new SetQueryArray(columnIdx);
-                filterer.processQuery(query.query([' ']));
+                filterer.processQuery(query.query(['[whitespace]']));
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
                 for (const row of dataSubset.slice(0, length)) {
-                    expect(row[columnIdx].value).toBe(' ');
+                    expect(row[columnIdx].value).toBe('[whitespace]');
                 }
             });
             afterAll(() => {
