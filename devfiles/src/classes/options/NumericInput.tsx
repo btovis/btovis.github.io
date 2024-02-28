@@ -84,6 +84,9 @@ export default class NumericInput extends InputOption {
                                     onBlur={(event) => {
                                         this.callback();
                                     }}
+                                    onScroll={(event) => {
+                                        event.preventDefault();
+                                    }}
                                 ></input>
                             </p>
                             <p>{this.newValue}</p>
