@@ -4,10 +4,12 @@ import Row from '../data/Row';
 import ReferenceSet from '../data/setutils/ReferenceSet';
 import { Filter } from '../filters/Filter';
 import DataFilterer from '../data/DataFilterer';
+import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
 enum YGrouping {
     Species,
-    SpeciesGroup
+    SpeciesGroup,
+    VulnerabilityStatus
 }
 
 abstract class Grouping {
@@ -15,6 +17,8 @@ abstract class Grouping {
     referenceSet: ReferenceSet;
     xValues: Set<SetElement>;
     yColumnIdx: number;
+    yGrouping: YGrouping;
+    speciesMeta: SpeciesMeta;
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();
@@ -22,6 +26,7 @@ abstract class Grouping {
         let attribute: Attribute;
         switch (yGrouping) {
             case YGrouping.Species:
+            case YGrouping.VulnerabilityStatus:
                 attribute = Attribute.speciesLatinName;
                 break;
             case YGrouping.SpeciesGroup:
@@ -29,6 +34,8 @@ abstract class Grouping {
                 break;
         }
         this.yColumnIdx = filter.getColumnIndex(attribute);
+        this.yGrouping = yGrouping;
+        this.speciesMeta = filter.getDataStats().getSpeciesMeta();
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
@@ -41,7 +48,15 @@ abstract class Grouping {
     }
     // Select the value to be used for the y-axis.
     public selectY(row: Row): SetElement {
-        return this.selectByColumnIndex(row, this.yColumnIdx);
+        switch (this.yGrouping) {
+            case YGrouping.VulnerabilityStatus: {
+                const species = row[this.yColumnIdx];
+                const status = this.speciesMeta.endStatus(species);
+                return this.referenceSet.addRawOrGet(status);
+            }
+            default:
+                return this.selectByColumnIndex(row, this.yColumnIdx);
+        }
     }
     // Select pairs of x-y values that will be aggregated and plotted.
     public generatePairs(): [SetElement, SetElement][] {

@@ -12,7 +12,7 @@ export default class BarChart extends Widget {
         return new Sidebar([]);
     }
     public render(): JSX.Element {
-        const grouping = new MonthGrouping(this.panel.dataFilterer, YGrouping.Species);
+        const grouping = new MonthGrouping(this.panel.dataFilterer, YGrouping.VulnerabilityStatus);
         const plotLayout = {
             width: 400,
             height: 210,
