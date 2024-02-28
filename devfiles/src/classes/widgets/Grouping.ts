@@ -51,12 +51,13 @@ abstract class Grouping {
             if (map === undefined) {
                 aggregated.set(y, new Map<SetElement, number>([[x, 1]]));
                 continue;
-            }
-            const mapVal = map.get(x);
-            if (mapVal !== undefined) {
-                map.set(x, mapVal + 1);
             } else {
-                map.set(x, 1);
+                const mapVal = map.get(x);
+                if (mapVal !== undefined) {
+                    map.set(x, mapVal + 1);
+                } else {
+                    map.set(x, 1);
+                }
             }
         }
         return aggregated;
