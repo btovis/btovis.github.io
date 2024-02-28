@@ -59,7 +59,11 @@ export default class NumericInput extends InputOption {
                                 max={this.max}
                                 step={this.step}
                                 onChange={(event) => {
-                                    this.callback(event.target.valueAsNumber);
+                                    this.value = event.target.valueAsNumber;
+                                    this.refreshComponent();
+                                }}
+                                onMouseUp={(event) => {
+                                    this.callback();
                                 }}
                             />
                             <p>Selected Value: {this.value}</p>
@@ -69,10 +73,10 @@ export default class NumericInput extends InputOption {
             </Accordion>
         );
     }
-    public callback(newValue: number): void {
-        this.value = newValue;
+    public callback(): void {
+        // this.value = newValue;
+        // this.panel.refreshComponent();
         this.panel.recalculateFilters(this);
-        this.panel.refreshComponent();
         this.panel.refreshWidgets();
         //Refresh this inputoption
         this.refreshComponent();
