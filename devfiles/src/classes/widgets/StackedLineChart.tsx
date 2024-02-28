@@ -5,14 +5,14 @@ import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import React from 'react';
 import Plot from 'react-plotly.js';
-import { ContinuousMonthGrouping } from './Grouping.js';
+import { ContinuousMonthGrouping, YGrouping } from './Grouping.js';
 
 export default class StackedLineChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar([]);
     }
     public render(): JSX.Element {
-        const grouping = new ContinuousMonthGrouping(this.panel.dataFilterer);
+        const grouping = new ContinuousMonthGrouping(this.panel.dataFilterer, YGrouping.Species);
         const plotLayout = {
             width: 400,
             height: 210,
