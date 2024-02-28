@@ -41,6 +41,17 @@ abstract class Grouping {
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
+    public abstract getXLabel(): string;
+    public getYLabel(): string {
+        switch (this.yGrouping) {
+            case YGrouping.Species:
+                return 'Counts/Species';
+            case YGrouping.SpeciesGroup:
+                return 'Counts/Species Group';
+            case YGrouping.VulnerabilityStatus:
+                return 'Counts/Vulnerability Status';
+        }
+    }
     public selectByColumnIndex(row: Row, columnIdx: number): SetElement {
         if (row[columnIdx] instanceof SetElement) {
             return row[columnIdx];
@@ -140,13 +151,13 @@ abstract class Grouping {
             }),
             layout: {
                 xaxis: {
-                    title: 'xaxistitle',
+                    title: this.getXLabel(),
                     labelalias: labelAlias,
                     nticks: xIndexMap.size,
                     tickmode: 'auto'
                 },
                 yaxis: {
-                    title: 'yaxistitle'
+                    title: this.getYLabel()
                 },
                 ...additionalLayoutConfig
             }
@@ -163,6 +174,9 @@ class BatchNameGrouping extends Grouping {
     public selectX(row: Row): SetElement {
         return this.selectByColumnIndex(row, this.columnIdx);
     }
+    public getXLabel(): string {
+        return 'Batch Name';
+    }
 }
 
 class ProjectNameGrouping extends Grouping {
@@ -174,6 +188,9 @@ class ProjectNameGrouping extends Grouping {
     public selectX(row: Row): SetElement {
         return this.selectByColumnIndex(row, this.columnIdx);
     }
+    public getXLabel(): string {
+        return 'Project Name';
+    }
 }
 
 class FilenameGrouping extends Grouping {
@@ -184,6 +201,9 @@ class FilenameGrouping extends Grouping {
     }
     public selectX(row: Row): SetElement {
         return this.selectByColumnIndex(row, this.columnIdx);
+    }
+    public getXLabel(): string {
+        return 'Filename';
     }
 }
 
@@ -221,6 +241,9 @@ class HourGrouping extends TimeGrouping {
         }
         return valueMap;
     }
+    public getXLabel(): string {
+        return 'Hour';
+    }
 }
 
 class DayGrouping extends TimeGrouping {
@@ -253,6 +276,9 @@ class DayGrouping extends TimeGrouping {
             );
         }
         return valueMap;
+    }
+    public getXLabel(): string {
+        return 'Date';
     }
 }
 
@@ -292,6 +318,9 @@ class ContinuousMonthGrouping extends TimeGrouping {
         }
         return valueMap;
     }
+    public getXLabel(): string {
+        return 'Month';
+    }
 }
 
 class MonthGrouping extends TimeGrouping {
@@ -322,6 +351,9 @@ class MonthGrouping extends TimeGrouping {
         }
         return valueMap;
     }
+    public getXLabel(): string {
+        return 'Month';
+    }
 }
 
 class YearGrouping extends TimeGrouping {
@@ -337,6 +369,9 @@ class YearGrouping extends TimeGrouping {
             valueMap.set(this.referenceSet.addRawOrGet(i.toString()), i - minYear);
         }
         return valueMap;
+    }
+    public getXLabel(): string {
+        return 'Year';
     }
 }
 
