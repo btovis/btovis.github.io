@@ -25,6 +25,7 @@ export default class DataStats {
     > = new Map();
 
     private positionMeta: PositionMeta;
+    private speciesMeta: SpeciesMeta;
 
     public constructor(d: Data) {
         this.data = d;
@@ -99,11 +100,13 @@ export default class DataStats {
             }
             rowIndex++;
         }
+
+        this.speciesMeta = new SpeciesMeta(this.species);
     }
 
     // You shouldn't need to call this more than once but no harm otherwise
     public getSpeciesMeta() {
-        return new SpeciesMeta(this.species);
+        return this.speciesMeta;
     }
 
     public getFilesMeta() {

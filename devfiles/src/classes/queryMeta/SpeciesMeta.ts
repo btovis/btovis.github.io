@@ -1,4 +1,5 @@
 import { EndangermentStatus } from '../../utils/speciesVulnerability';
+import ReferenceSet from '../data/setutils/ReferenceSet';
 import SetElement from '../data/setutils/SetElement';
 
 export default class SpeciesMeta {
@@ -16,6 +17,8 @@ export default class SpeciesMeta {
     //A map of group SetElements to a list of latinNames
     public readonly groupByGroup: Map<SetElement, SetElement[]>;
 
+    private readonly latinNamesList: SetElement[];
+
     public constructor(
         species: Map<
             SetElement,
@@ -29,7 +32,8 @@ export default class SpeciesMeta {
     ) {
         this.species = species;
         this.groupByGroup = new Map();
-        [...this.species.keys()].forEach((latinName) => {
+        this.latinNamesList = [...this.species.keys()];
+        this.latinNamesList.forEach((latinName) => {
             const group = this.speciesGroup(latinName);
             if (!this.groupByGroup.has(group)) this.groupByGroup.set(group, [latinName]);
             else this.groupByGroup.get(group).push(latinName);
@@ -53,7 +57,8 @@ export default class SpeciesMeta {
         return this.species.get(latinName)[3];
     }
 
+    // Don't modify the resultant array
     public speciesList(): SetElement[] {
-        return [...this.species.keys()];
+        return this.latinNamesList;
     }
 }
