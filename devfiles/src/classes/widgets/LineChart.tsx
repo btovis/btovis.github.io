@@ -2,14 +2,14 @@ import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
-import { ContinuousMonthGrouping } from './Grouping.js';
+import { DayGrouping, YGrouping } from './Grouping.js';
 
 export default class LineChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar([]);
     }
     public render(): JSX.Element {
-        const grouping = new ContinuousMonthGrouping(this.panel.dataFilterer);
+        const grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.SpeciesGroup);
         const plotLayout = {
             width: 400,
             height: 210,

@@ -2,7 +2,7 @@ import Widget from './Widget.js';
 import WidgetConfig from './WidgetConfig.js';
 import { Data, Attribute } from '../data/Data.js';
 import Row from '../data/Row.js';
-import { MonthGrouping } from './Grouping.js';
+import { MonthGrouping, YGrouping } from './Grouping.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
@@ -12,7 +12,7 @@ export default class BarChart extends Widget {
         return new Sidebar([]);
     }
     public render(): JSX.Element {
-        const grouping = new MonthGrouping(this.panel.dataFilterer);
+        const grouping = new MonthGrouping(this.panel.dataFilterer, YGrouping.VulnerabilityStatus);
         const plotLayout = {
             width: 400,
             height: 210,
