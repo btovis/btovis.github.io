@@ -9,12 +9,14 @@ abstract class Grouping {
     filter: DataFilterer;
     referenceSet: ReferenceSet;
     xValues: Set<SetElement>;
+    xValuesArray: SetElement[];
     speciesColumnIdx: number;
     constructor(filter: DataFilterer) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();
         this.speciesColumnIdx = filter.getColumnIndex(Attribute.speciesLatinName);
         this.xValues = new Set();
+        this.xValuesArray = [];
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
@@ -39,6 +41,7 @@ abstract class Grouping {
             this.xValues.add(x);
             out[i] = [x, this.selectY(row)];
         }
+        this.xValuesArray = Array.from(this.xValues);
         return out;
     }
     // Aggregate the pairs of x-y values.
@@ -65,7 +68,7 @@ abstract class Grouping {
     // Must be called after all pairs have been generated.
     public xIndexMap() {
         // If the array is very long it's faster to map to string then sort then map back
-        const sortedXValues = Array.from(this.xValues).sort((a, b) =>
+        const sortedXValues = this.xValuesArray.sort((a, b) =>
             a.value < b.value ? -1 : a.value == b.value ? 0 : 1
         );
         const xValueMap = new Map<SetElement, number>();
@@ -182,7 +185,7 @@ class HourGrouping extends TimeGrouping {
     }
 
     public xIndexMap() {
-        const hours = Array.from(this.xValues).map((x) => parseInt(x.value.split(':')[0]));
+        const hours = this.xValuesArray.map((x) => parseInt(x.value.split(':')[0]));
         const minHour = Math.min(...hours);
         const maxHour = Math.max(...hours);
         const valueMap = new Map<SetElement, number>();
@@ -202,7 +205,7 @@ class DayGrouping extends TimeGrouping {
     }
 
     public xIndexMap() {
-        const dates = Array.from(this.xValues).map((x) => {
+        const dates = this.xValuesArray.map((x) => {
             const [day, month, year] = x.value.split('-').map((s) => parseInt(s));
             return new Date(year, month - 1, day);
         });
@@ -248,7 +251,7 @@ class ContinuousMonthGrouping extends TimeGrouping {
         return `${ContinuousMonthGrouping.months[month]}-${year}`;
     }
     public xIndexMap() {
-        const combinations = Array.from(this.xValues).map((x) => {
+        const combinations = this.xValuesArray.map((x) => {
             const [month, strYear] = x.value.split('-');
             return ContinuousMonthGrouping.months.indexOf(month) + parseInt(strYear) * 12;
         });
@@ -283,9 +286,7 @@ class MonthGrouping extends TimeGrouping {
         return MonthGrouping.months[datetime.getMonth()];
     }
     public xIndexMap() {
-        const monthIndices = Array.from(this.xValues).map((x) =>
-            MonthGrouping.months.indexOf(x.value)
-        );
+        const monthIndices = this.xValuesArray.map((x) => MonthGrouping.months.indexOf(x.value));
         const minMonth = Math.min(...monthIndices);
         const maxMonth = Math.max(...monthIndices);
         const valueMap = new Map<SetElement, number>();
@@ -301,7 +302,7 @@ class YearGrouping extends TimeGrouping {
         return datetime.getFullYear().toString();
     }
     public xIndexMap() {
-        const years = Array.from(this.xValues).map((x) => parseInt(x.value));
+        const years = this.xValuesArray.map((x) => parseInt(x.value));
         const minYear = Math.min(...years);
         const maxYear = Math.max(...years);
         const valueMap = new Map<SetElement, number>();
