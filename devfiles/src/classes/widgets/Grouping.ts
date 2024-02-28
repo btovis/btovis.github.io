@@ -47,9 +47,10 @@ abstract class Grouping {
         // use y as the first key and x as the second
         const aggregated = new Map<SetElement, Map<SetElement, number>>();
         for (const [x, y] of pairs) {
-            let map = aggregated.get(y);
+            const map = aggregated.get(y);
             if (map === undefined) {
-                aggregated.set(y, (map = new Map<SetElement, number>()));
+                aggregated.set(y, new Map<SetElement, number>([[x, 1]]));
+                continue;
             }
             const mapVal = map.get(x);
             if (mapVal !== undefined) {
