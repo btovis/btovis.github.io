@@ -2,16 +2,14 @@ import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
-<<<<<<< HEAD
 import { DayGrouping, YGrouping } from './Grouping.js';
 import InputOption from '../options/InputOption.tsx';
-=======
->>>>>>> 0b58cce (add dropdown menu for enums)
 import ColorOption from '../options/ColorOption.tsx';
 import Panel from '../Panel.ts';
 import NumericInput from '../options/NumericInput.tsx';
 import DropMenuSelector from '../options/DropMenuSelector.tsx';
 import { LineChartGrouping } from './XFieldGrouping.ts';
+import WidgetConfig from './WidgetConfig.ts';
 
 export default class LineChart extends Widget {
     // to be implemented in the following
@@ -75,14 +73,7 @@ export default class LineChart extends Widget {
             //staticPlot: true,
             modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
         };
-<<<<<<< HEAD
         return <Plot data={traces} layout={layout} config={plotConfig} />;
-=======
-
-        //debug statement, delete anytime
-        console.log(this.groupLevel.value());
-        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
->>>>>>> 0b58cce (add dropdown menu for enums)
     }
     public delete(): void {
         //throw new Error('Method not implemented.');
