@@ -50,7 +50,6 @@ abstract class Grouping {
             const map = aggregated.get(y);
             if (map === undefined) {
                 aggregated.set(y, new Map<SetElement, number>([[x, 1]]));
-                continue;
             } else {
                 const mapVal = map.get(x);
                 if (mapVal !== undefined) {
