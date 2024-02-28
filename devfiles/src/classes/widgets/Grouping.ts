@@ -122,8 +122,13 @@ abstract class Grouping {
             };
         });
     }
+    // Get number of traces
+    public numTraces() {
+        return this.aggregatePairs().size;
+    }
+    // Returns chart data and layout for plotly
     public getChart(
-        additionalTracesConfig: { [key: string]: any },
+        additionalTracesConfig: Array<{ [key: string]: any }>,
         additionalLayoutConfig: { [key: string]: any }
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
