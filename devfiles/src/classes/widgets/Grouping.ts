@@ -16,6 +16,7 @@ abstract class Grouping {
     filter: DataFilterer;
     referenceSet: ReferenceSet;
     xValues: Set<SetElement>;
+    xValuesArray: SetElement[];
     yColumnIdx: number;
     yGrouping: YGrouping;
     speciesMeta: SpeciesMeta;
@@ -36,6 +37,7 @@ abstract class Grouping {
         this.yColumnIdx = filter.getColumnIndex(attribute);
         this.yGrouping = yGrouping;
         this.speciesMeta = filter.getDataStats().getSpeciesMeta();
+        this.xValuesArray = [];
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
@@ -61,12 +63,15 @@ abstract class Grouping {
     // Select pairs of x-y values that will be aggregated and plotted.
     public generatePairs(): [SetElement, SetElement][] {
         const [data, length] = this.filter.getData();
-        const dataSubset = data.slice(0, length);
-        return dataSubset.map((row) => {
+        const out = new Array(length);
+        for (let i = 0; i < length; i++) {
+            const row = data[i];
             const x = this.selectX(row);
             this.xValues.add(x);
-            return [x, this.selectY(row)];
-        });
+            out[i] = [x, this.selectY(row)];
+        }
+        this.xValuesArray = Array.from(this.xValues);
+        return out;
     }
     // Aggregate the pairs of x-y values.
     public aggregatePairs() {
@@ -74,13 +79,16 @@ abstract class Grouping {
         // use y as the first key and x as the second
         const aggregated = new Map<SetElement, Map<SetElement, number>>();
         for (const [x, y] of pairs) {
-            if (!aggregated.has(y)) {
-                aggregated.set(y, new Map<SetElement, number>());
-            }
-            if (aggregated.get(y).has(x)) {
-                aggregated.get(y).set(x, aggregated.get(y).get(x).valueOf() + 1);
+            const map = aggregated.get(y);
+            if (map === undefined) {
+                aggregated.set(y, new Map<SetElement, number>([[x, 1]]));
             } else {
-                aggregated.get(y).set(x, 1);
+                const mapVal = map.get(x);
+                if (mapVal !== undefined) {
+                    map.set(x, mapVal + 1);
+                } else {
+                    map.set(x, 1);
+                }
             }
         }
         return aggregated;
@@ -88,9 +96,8 @@ abstract class Grouping {
     // Convert x values to integers to display on chart.
     // Must be called after all pairs have been generated.
     public xIndexMap() {
-        const sortedXValues = Array.from(this.xValues).sort((a, b) =>
-            a.value.localeCompare(b.value)
-        );
+        // If the array is very long it's faster to map to string then sort then map back
+        const sortedXValues = this.xValuesArray.sort((a, b) => a.value.localeCompare(b.value));
         const xValueMap = new Map<SetElement, number>();
         for (let i = 0; i < sortedXValues.length; i++) {
             xValueMap.set(sortedXValues[i], i);
@@ -102,7 +109,8 @@ abstract class Grouping {
         const plottingData = this.aggregatePairs();
         const xIndexMap = this.xIndexMap();
         return Array.from(plottingData.entries()).map(([group, xValueMap]) => {
-            const x = Array.from(Array(xIndexMap.size).keys());
+            const x = new Array(xIndexMap.size);
+            for (let i = 0; i < x.length; i++) x[i] = i;
             const y = new Array(xIndexMap.size).fill(0);
             for (const [xValue, yValue] of xValueMap.entries()) {
                 y[xIndexMap.get(xValue)] = yValue;
@@ -204,7 +212,7 @@ class HourGrouping extends TimeGrouping {
     }
 
     public xIndexMap() {
-        const hours = Array.from(this.xValues).map((x) => parseInt(x.value.split(':')[0]));
+        const hours = this.xValuesArray.map((x) => parseInt(x.value.split(':')[0]));
         const minHour = Math.min(...hours);
         const maxHour = Math.max(...hours);
         const valueMap = new Map<SetElement, number>();
@@ -224,7 +232,7 @@ class DayGrouping extends TimeGrouping {
     }
 
     public xIndexMap() {
-        const dates = Array.from(this.xValues).map((x) => {
+        const dates = this.xValuesArray.map((x) => {
             const [day, month, year] = x.value.split('-').map((s) => parseInt(s));
             return new Date(year, month - 1, day);
         });
@@ -270,7 +278,7 @@ class ContinuousMonthGrouping extends TimeGrouping {
         return `${ContinuousMonthGrouping.months[month]}-${year}`;
     }
     public xIndexMap() {
-        const combinations = Array.from(this.xValues).map((x) => {
+        const combinations = this.xValuesArray.map((x) => {
             const [month, strYear] = x.value.split('-');
             return ContinuousMonthGrouping.months.indexOf(month) + parseInt(strYear) * 12;
         });
@@ -305,9 +313,7 @@ class MonthGrouping extends TimeGrouping {
         return MonthGrouping.months[datetime.getMonth()];
     }
     public xIndexMap() {
-        const monthIndices = Array.from(this.xValues).map((x) =>
-            MonthGrouping.months.indexOf(x.value)
-        );
+        const monthIndices = this.xValuesArray.map((x) => MonthGrouping.months.indexOf(x.value));
         const minMonth = Math.min(...monthIndices);
         const maxMonth = Math.max(...monthIndices);
         const valueMap = new Map<SetElement, number>();
@@ -323,7 +329,7 @@ class YearGrouping extends TimeGrouping {
         return datetime.getFullYear().toString();
     }
     public xIndexMap() {
-        const years = Array.from(this.xValues).map((x) => parseInt(x.value));
+        const years = this.xValuesArray.map((x) => parseInt(x.value));
         const minYear = Math.min(...years);
         const maxYear = Math.max(...years);
         const valueMap = new Map<SetElement, number>();
