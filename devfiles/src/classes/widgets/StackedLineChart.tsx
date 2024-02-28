@@ -16,9 +16,6 @@ export default class StackedLineChart extends Widget {
         const plotLayout = {
             width: 400,
             height: 210,
-            title: {
-                text: 'Stacked Line Chart'
-            },
             margin: {
                 l: 30,
                 r: 30,

@@ -42,15 +42,21 @@ abstract class Grouping {
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
     public abstract getXLabel(): string;
-    public getYLabel(): string {
+    public getXRate(): string {
+        return `${this.getXLabel()}ly`;
+    }
+    public getYName(): string {
         switch (this.yGrouping) {
             case YGrouping.Species:
-                return 'Counts/Species';
+                return 'Species';
             case YGrouping.SpeciesGroup:
-                return 'Counts/Species Group';
+                return 'Species Group';
             case YGrouping.VulnerabilityStatus:
-                return 'Counts/Vulnerability Status';
+                return 'Vulnerability Status';
         }
+    }
+    public getYLabel(): string {
+        return `Counts/${this.getYName()}`;
     }
     public selectByColumnIndex(row: Row, columnIdx: number): SetElement {
         if (row[columnIdx] instanceof SetElement) {
@@ -163,6 +169,7 @@ abstract class Grouping {
                 legend: {
                     visible: true
                 },
+                title: `${this.getXRate()} ${this.getYName()} Counts`,
                 ...additionalLayoutConfig
             }
         };
@@ -181,6 +188,9 @@ class BatchNameGrouping extends Grouping {
     public getXLabel(): string {
         return 'Batch Name';
     }
+    public getXRate(): string {
+        return 'Batch';
+    }
 }
 
 class ProjectNameGrouping extends Grouping {
@@ -195,6 +205,9 @@ class ProjectNameGrouping extends Grouping {
     public getXLabel(): string {
         return 'Project Name';
     }
+    public getXRate(): string {
+        return 'Project';
+    }
 }
 
 class FilenameGrouping extends Grouping {
@@ -208,6 +221,9 @@ class FilenameGrouping extends Grouping {
     }
     public getXLabel(): string {
         return 'Filename';
+    }
+    public getXRate(): string {
+        return 'File';
     }
 }
 
@@ -283,6 +299,9 @@ class DayGrouping extends TimeGrouping {
     }
     public getXLabel(): string {
         return 'Date';
+    }
+    public getXRate(): string {
+        return 'Daily';
     }
 }
 
