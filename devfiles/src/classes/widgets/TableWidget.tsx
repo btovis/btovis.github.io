@@ -124,7 +124,7 @@ export default class TableWidget extends Widget {
         this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
 
         //If nothing is selected, render an empty table
-        if (this.selectorOption.excluded.size == 0) {
+        if (this.selectorOption.excluded.size === this.selectorOption.choices.size) {
             return (
                 <table className='table'>
                     <thead>
