@@ -79,7 +79,8 @@ abstract class Grouping {
         const plottingData = this.aggregatePairs();
         const xIndexMap = this.xIndexMap();
         return Array.from(plottingData.entries()).map(([group, xValueMap]) => {
-            const x = Array.from(Array(xIndexMap.size).keys());
+            const x = new Array(xIndexMap.size);
+            for (let i = 0; i < x.length; i++) x[i] = i;
             const y = new Array(xIndexMap.size).fill(0);
             for (const [xValue, yValue] of xValueMap.entries()) {
                 y[xIndexMap.get(xValue)] = yValue;
