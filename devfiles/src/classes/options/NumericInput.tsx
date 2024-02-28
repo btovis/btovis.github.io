@@ -89,7 +89,6 @@ export default class NumericInput extends InputOption {
                                     }}
                                 ></input>
                             </p>
-                            <p>{this.newValue}</p>
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
