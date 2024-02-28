@@ -3,6 +3,7 @@ import { Data, Attribute } from '../data/Data';
 import {
     testDataFilename as filename,
     testDataFilename2 as filename2,
+    testDataFilename3 as filename3,
     loadData,
     readBytes
 } from '../../tests/utils.test';
@@ -17,7 +18,8 @@ import {
     DayGrouping,
     ContinuousMonthGrouping,
     MonthGrouping,
-    YearGrouping
+    YearGrouping,
+    YGrouping
 } from './Grouping';
 import DataFilterer from '../data/DataFilterer';
 
@@ -29,7 +31,7 @@ describe('Grouping', async () => {
     });
     describe('selectByColumn', () => {
         it('should select values by column', () => {
-            const grouping = new BatchNameGrouping(filter);
+            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
             const columnIdx = filter.getColumnIndex(Attribute.originalFileName);
             const [dataSubset, _] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectByColumnIndex(row, columnIdx));
@@ -61,7 +63,7 @@ describe('Grouping', async () => {
             }
         ].forEach(({ grouping, attribute }) => {
             it(`should select values by ${attribute}`, () => {
-                const groupingInstance = new grouping(filter);
+                const groupingInstance = new grouping(filter, YGrouping.Species);
                 const [dataSubset, _] = filter.getData();
                 const values = dataSubset.map((row) => groupingInstance.selectX(row));
                 for (const v1 of values) {
@@ -109,7 +111,7 @@ describe('Grouping', async () => {
             }
         ].forEach(({ grouping, allowed }) => {
             it(`should select values using ${grouping}`, () => {
-                const groupingInstance = new grouping(filter);
+                const groupingInstance = new grouping(filter, YGrouping.Species);
                 const [dataSubset, _] = filter.getData();
                 const values = dataSubset.map((row) => groupingInstance.selectX(row));
                 const recordedValues = new Set();
@@ -130,7 +132,7 @@ describe('Grouping', async () => {
     });
     describe('selectY', () => {
         it('should select species column', () => {
-            const grouping = new BatchNameGrouping(filter);
+            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
             const [dataSubset, _] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectY(row));
             for (const v1 of values) {
@@ -147,10 +149,30 @@ describe('Grouping', async () => {
                 }
             }
         });
+        it('should select species group', async () => {
+            const additionalData = await readBytes(filename3);
+            data.addCSV(filename3, additionalData, false);
+            const grouping = new BatchNameGrouping(filter, YGrouping.SpeciesGroup);
+            const [dataSubset, _] = filter.getData();
+            const values = dataSubset.map((row) => grouping.selectY(row));
+            const speciesMeta = filter.getDataStats().getSpeciesMeta();
+            const speciesGroups = Array.from(new Set(speciesMeta.groupByGroup.keys()));
+            for (const v1 of values) {
+                expect(v1).toBeInstanceOf(SetElement);
+                expect(speciesGroups).toEqual(expect.arrayContaining([v1]));
+                for (const v2 of values) {
+                    if (v1.value == v2.value) {
+                        expect(v1).toEqual(v2);
+                    } else {
+                        expect(v1).not.toEqual(v2);
+                    }
+                }
+            }
+        });
     });
     describe('generatePairs', () => {
         it('should generate name, species pairs', () => {
-            const grouping = new BatchNameGrouping(filter);
+            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
             const pairs = grouping.generatePairs();
             for (const [x, y] of pairs) {
                 expect(x).toBeInstanceOf(SetElement);
@@ -170,7 +192,7 @@ describe('Grouping', async () => {
     });
     describe('aggregatePairs', () => {
         it('should aggregate pairs', () => {
-            const grouping = new BatchNameGrouping(filter);
+            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
             const aggregated = grouping.aggregatePairs();
             for (const [y, xMap] of aggregated) {
                 expect(y).toBeInstanceOf(SetElement);
@@ -220,7 +242,7 @@ describe('Grouping', async () => {
             }
         ].forEach(({ grouping, attribute }) => {
             it(`should map values for ${attribute} to unique integers`, () => {
-                const groupingInstance = new grouping(filter);
+                const groupingInstance = new grouping(filter, YGrouping.Species);
                 const pairs = groupingInstance.generatePairs();
                 const xValueMap = groupingInstance.xIndexMap();
                 const mappings = new Set();
@@ -243,7 +265,7 @@ describe('Grouping', async () => {
     });
     describe('getChart', () => {
         it('should get traces with selected properties', () => {
-            const grouping = new BatchNameGrouping(filter);
+            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
             const { traces, layout } = grouping.getChart(
                 {
                     type: 'bar'
