@@ -36,6 +36,8 @@ export default class TableWidget extends Widget {
             false,
             [Attribute.speciesEnglishName, Attribute.warnings]
         );
+        //This refreshes the widget everytime the selector is called.
+        this.selectorOption.extendedCallbacks.push(() => this.refresh());
         this.options = [this.selectorOption];
     }
 
