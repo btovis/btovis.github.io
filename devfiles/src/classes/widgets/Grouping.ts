@@ -136,7 +136,8 @@ abstract class Grouping {
                 x: x,
                 y: y,
                 name: group.value,
-                showlegend: true
+                showlegend: true,
+                hoverinfo: 'y+name'
             };
         });
     }
