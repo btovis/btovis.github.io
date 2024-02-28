@@ -50,8 +50,6 @@ function integrateNewCSV(
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = newColumnList[i].toUpperCase();
     }
-    console.log(newColumnList);
-    console.log(newDatabase[0]);
     if (newColumnList.includes('COMMON_NAME')) {
         // Bird CSV.
         if (!newColumnList.includes('ENGLISH NAME')) {
@@ -123,8 +121,6 @@ function integrateNewCSV(
         newColumnList.push('LONGITUDE');
         for (const r of newDatabase) r.push(0);
     }
-    alert(newColumnList.length);
-    alert(newDatabase[0].length);
 
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = matchColumnNames(newColumnList[i]);
