@@ -38,7 +38,7 @@ export default abstract class TimeChart extends Widget {
         const [groupingCls] = this.timeRangeGroupings().filter(
             (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
         );
-        const grouping = new groupingCls(this.panel.dataFilterer, YGrouping[yGrouping]);
+        const grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
         const plotLayout = {
             width: 400,
             height: 210,
