@@ -1,23 +1,10 @@
 /* Handles merging multiple files together */
 //import FileIdentifierManager from "../setutils/FileIdentifierManager";
 
+import { getSpeciesEndangerment } from '../../../utils/speciesVulnerability';
 import { Attribute } from '../Data';
 import ReferenceSet from '../setutils/ReferenceSet';
 import { processDates, processTimes } from './date';
-
-function matchColumnNames(upperCaseColumnName) {
-    switch (upperCaseColumnName) {
-        case 'SCORE':
-        case 'CONFIDENCE':
-            return 'PROBABILITY';
-        case 'COMMON_NAME': // Underscore, because from bird pipeline CSV
-            return 'ENGLISH NAME';
-        case 'DATE':
-            return 'ACTUAL DATE'; // map Date from bird pipeline to actual date
-        default:
-            return upperCaseColumnName;
-    }
-}
 
 // oldColumnList and newColumnList have 0th element "_FILE"
 // precondition and postcondition: see columnList in Data.ts
@@ -38,6 +25,141 @@ function integrateNewCSV(
     oldSets: ReferenceSet[],
     oldProcessors: any[]
 ) {
+    for (let i = 1; i < newColumnList.length; i++) {
+        newColumnList[i] = newColumnList[i].toUpperCase();
+    }
+    if (!newColumnList.includes('PROBABILITY') && newColumnList.includes('CONFIDENCE')) {
+        newColumnList[newColumnList.indexOf('CONFIDENCE')] = 'PROBABILITY';
+    }
+    if (!newColumnList.includes('PROBABILITY') && newColumnList.includes('SCORE')) {
+        newColumnList[newColumnList.indexOf('SCORE')] = 'PROBABILITY';
+    }
+    if (newColumnList.includes('COMMON_NAME')) {
+        // Bird CSV.
+        if (!newColumnList.includes('ACTUAL DATE') && newColumnList.includes('DATE')) {
+            newColumnList[newColumnList.indexOf('DATE')] = 'ACTUAL DATE';
+        }
+        if (newColumnList.includes('ACTUAL DATE') && !newColumnList.includes('SURVEY DATE')) {
+            // todo: copy from actual date?
+            newColumnList.push('SURVEY DATE');
+            for (const r of newDatabase) {
+                r.push('0000-00-00');
+            }
+        }
+
+        if (!newColumnList.includes('SPECIES')) {
+            newColumnList[newColumnList.indexOf('SP_CODE')] = 'SPECIES';
+        }
+        if (!newColumnList.includes('ENGLISH NAME')) {
+            // rename common name to english name
+            newColumnList[newColumnList.indexOf('COMMON_NAME')] = 'ENGLISH NAME';
+        }
+        if (!newColumnList.includes('SCIENTIFIC NAME')) {
+            // rename COMMON_NAME ('ENGLISH NAME')to scientific name
+            newColumnList.push('SCIENTIFIC NAME');
+            const colI = newColumnList.indexOf('ENGLISH NAME');
+            if (colI == -1) {
+                throw 'Unsupported csv';
+            }
+            if (colI)
+                for (const r of newDatabase) {
+                    r.push(r[colI]);
+                }
+        }
+        if (!newColumnList.includes('SPECIES GROUP')) {
+            newColumnList.push('SPECIES GROUP');
+            for (const r of newDatabase) {
+                r.push('Bird classifier species');
+            }
+        }
+        if (!newColumnList.includes('WARNINGS')) {
+            newColumnList.push('WARNINGS');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier does not output warnings]');
+            }
+        }
+        if (!newColumnList.includes('CALL TYPE')) {
+            newColumnList.push('CALL TYPE');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier does not output call type]');
+            }
+        }
+        if (!newColumnList.includes('PROJECT NAME')) {
+            newColumnList.push('PROJECT NAME');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+        if (!newColumnList.includes('CLASSIFIER NAME')) {
+            newColumnList.push('CLASSIFIER NAME');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+        if (!newColumnList.includes('BATCH NAME')) {
+            newColumnList.push('BATCH NAME');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+        if (!newColumnList.includes('USER ID')) {
+            newColumnList.push('USER ID');
+            for (const r of newDatabase) {
+                r.push('[Bird classifier]');
+            }
+        }
+    }
+
+    if (!newColumnList.includes('TIME')) {
+        throw 'No Time column found';
+    }
+
+    if (!newColumnList.includes('ACTUAL DATE')) {
+        throw 'No Date/Actual Date column found';
+    }
+
+    if (!newColumnList.includes('PROBABILITY')) {
+        throw 'No Probability/confidence/score column found';
+    }
+
+    if (!newColumnList.includes('ENGLISH NAME')) {
+        throw 'No ENGLISH NAME column found';
+    }
+
+    if (!newColumnList.includes('SCIENTIFIC NAME')) {
+        throw 'No SCIENTIFIC NAME column found';
+    }
+
+    if (!newColumnList.includes('SPECIES')) {
+        throw 'No SPECIES column found';
+    }
+
+    if (!newColumnList.includes('SPECIES GROUP')) {
+        throw 'No SPECIES GROUP column found';
+    }
+
+    if (!newColumnList.includes('VULNERABILITY')) {
+        newColumnList.push('VULNERABILITY');
+        const colI = newColumnList.indexOf('SCIENTIFIC NAME');
+        for (const r of newDatabase) r.push(getSpeciesEndangerment(r[colI]));
+    }
+
+    const rowLen = newColumnList.length;
+    for (const r of newDatabase) {
+        for (let i = 0; i < rowLen; i++) if (r[i].trim) r[i] = r[i].trim();
+    }
+
+    // add lat and loc if not existing
+    if (!newColumnList.includes('LATITUDE')) {
+        newColumnList.push('LATITUDE');
+        for (const r of newDatabase) r.push(0);
+    }
+
+    if (!newColumnList.includes('LONGITUDE')) {
+        newColumnList.push('LONGITUDE');
+        for (const r of newDatabase) r.push(0);
+    }
+
     const permutes: number[] = new Array(newColumnList.length);
     permutes[0] = 0;
     // [0,3,1,undefined] means bring 1st column of new to 3rd of old, second to first of old, make a new column for the third
@@ -48,13 +170,36 @@ function integrateNewCSV(
     const earliestColumnWithNameInNew = new Map<string, number>();
 
     for (let i = 1; i < newColumnList.length; i++) {
-        newColumnList[i] = matchColumnNames(newColumnList[i].toUpperCase());
         if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
             earliestColumnWithNameInNew.set(newColumnList[i], i);
             permutes[i] = titleToColumnIndex.get(newColumnList[i]);
         }
         // a duplicate
         else permutes[i] = -2;
+    }
+
+    if (!newColumnList.includes('TIME')) {
+        throw 'No Time column found';
+    }
+
+    if (!newColumnList.includes('ACTUAL DATE')) {
+        throw 'No Date/Actual Date column found';
+    }
+
+    if (!newColumnList.includes('ENGLISH NAME')) {
+        throw 'No ENGLISH NAME column found';
+    }
+
+    if (!newColumnList.includes('SCIENTIFIC NAME')) {
+        throw 'No SCIENTIFIC NAME column found';
+    }
+
+    if (!newColumnList.includes('SPECIES')) {
+        throw 'No SPECIES column found';
+    }
+
+    if (!newColumnList.includes('SPECIES GROUP')) {
+        throw 'No SPECIES GROUP column found';
     }
 
     // Remove duplicate rows
@@ -136,9 +281,10 @@ function integrateNewCSV(
     // make processor, replace previous with it
 
     const dateCol = titleToColumnIndex.get(Attribute.actualDate);
-    if (dateCol) {
-        processDates(oldDatabase, oldDBLen, dateCol);
-    }
+    processDates(oldDatabase, oldDBLen, dateCol);
+
+    const surveyDateCol = titleToColumnIndex.get(Attribute.surveyDate);
+    processDates(oldDatabase, oldDBLen, surveyDateCol);
 
     const timeCol = titleToColumnIndex.get(Attribute.time);
     if (timeCol) {
@@ -213,6 +359,9 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
         case 'PROJECT NAME':
             // Set
             return (a) => set.addRawOrGet(a);
+        case 'VULNERABILITY':
+            // Set
+            return (a) => set.addRawOrGet(a);
 
         // For now:
         // TODO: sets, infer american or british
@@ -251,6 +400,7 @@ function columnNeedsSet(columnName) {
         case 'UPLOAD KEY':
         case 'BATCH NAME':
         case 'PROJECT NAME':
+        case 'VULNERABILITY':
             return true;
 
         default:
