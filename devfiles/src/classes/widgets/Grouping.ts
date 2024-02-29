@@ -7,12 +7,13 @@ import DataFilterer from '../data/DataFilterer';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
 enum YGrouping {
-    Species,
-    SpeciesGroup,
-    VulnerabilityStatus
+    Species = 'Species',
+    SpeciesGroup = 'Species Group',
+    VulnerabilityStatus = 'Vulnerability Status'
 }
 
 abstract class Grouping {
+    static name: string;
     filter: DataFilterer;
     referenceSet: ReferenceSet;
     xValues: Set<SetElement>;
@@ -23,7 +24,10 @@ abstract class Grouping {
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();
+        // Unique x values.
         this.xValues = new Set();
+
+        // Use an attribute to select the y values.
         let attribute: Attribute;
         switch (yGrouping) {
             case YGrouping.Species:
@@ -34,26 +38,20 @@ abstract class Grouping {
                 attribute = Attribute.speciesGroup;
                 break;
         }
+        // Store the column used when grouping.
         this.yColumnIdx = filter.getColumnIndex(attribute);
         this.yGrouping = yGrouping;
         this.speciesMeta = filter.getDataStats().getSpeciesMeta();
         this.xValuesArray = [];
     }
-    // Select the value to be used for the x-axis.
+    // Namings for displaying data.
     public abstract selectX(row: Row): SetElement;
     public abstract getXLabel(): string;
     public getXRate(): string {
         return `${this.getXLabel()}ly`;
     }
     public getYName(): string {
-        switch (this.yGrouping) {
-            case YGrouping.Species:
-                return 'Species';
-            case YGrouping.SpeciesGroup:
-                return 'Species Group';
-            case YGrouping.VulnerabilityStatus:
-                return 'Vulnerability Status';
-        }
+        return this.yGrouping;
     }
     public getYLabel(): string {
         return `Counts/${this.getYName()}`;
@@ -93,7 +91,8 @@ abstract class Grouping {
     // Aggregate the pairs of x-y values.
     public aggregatePairs() {
         const pairs = this.generatePairs();
-        // use y as the first key and x as the second
+        // Use y as the first key and x as the second.
+        // Stores counts of x values for each y value.
         const aggregated = new Map<SetElement, Map<SetElement, number>>();
         for (const [x, y] of pairs) {
             const map = aggregated.get(y);
@@ -147,10 +146,12 @@ abstract class Grouping {
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
         const xIndexMap = this.xIndexMap();
+        // Map from index to label.
         const labelAlias = Object.fromEntries(
             Array.from(xIndexMap.entries()).map(([x, i]) => [i, x.value])
         );
         return {
+            // Generate traces with additional config.
             traces: partialTraces.map((trace) => {
                 return {
                     ...trace,
@@ -179,6 +180,7 @@ abstract class Grouping {
 
 class BatchNameGrouping extends Grouping {
     columnIdx: number;
+    static name = 'Batch Name';
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         super(filter, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.batchName);
@@ -187,7 +189,7 @@ class BatchNameGrouping extends Grouping {
         return this.selectByColumnIndex(row, this.columnIdx);
     }
     public getXLabel(): string {
-        return 'Batch Name';
+        return BatchNameGrouping.name;
     }
     public getXRate(): string {
         return 'Batch';
@@ -196,6 +198,7 @@ class BatchNameGrouping extends Grouping {
 
 class ProjectNameGrouping extends Grouping {
     columnIdx: number;
+    static name = 'Project Name';
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         super(filter, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.projectName);
@@ -204,7 +207,7 @@ class ProjectNameGrouping extends Grouping {
         return this.selectByColumnIndex(row, this.columnIdx);
     }
     public getXLabel(): string {
-        return 'Project Name';
+        return ProjectNameGrouping.name;
     }
     public getXRate(): string {
         return 'Project';
@@ -212,6 +215,7 @@ class ProjectNameGrouping extends Grouping {
 }
 
 class FilenameGrouping extends Grouping {
+    static name = 'Filename';
     columnIdx: number;
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         super(filter, yGrouping);
@@ -221,7 +225,7 @@ class FilenameGrouping extends Grouping {
         return this.selectByColumnIndex(row, this.columnIdx);
     }
     public getXLabel(): string {
-        return 'Filename';
+        return FilenameGrouping.name;
     }
     public getXRate(): string {
         return 'File';
@@ -245,6 +249,7 @@ abstract class TimeGrouping extends Grouping {
 }
 
 class HourGrouping extends TimeGrouping {
+    static name = 'Hour';
     public timeToValue(datetime: Date): string {
         return this.formatHour(datetime.getHours());
     }
@@ -263,11 +268,12 @@ class HourGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return 'Hour';
+        return HourGrouping.name;
     }
 }
 
 class DayGrouping extends TimeGrouping {
+    static name = 'Date';
     public timeToValue(datetime: Date): string {
         return this.formatDate(datetime.getDate(), datetime.getMonth() + 1, datetime.getFullYear());
     }
@@ -299,7 +305,7 @@ class DayGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return 'Date';
+        return DayGrouping.name;
     }
     public getXRate(): string {
         return 'Daily';
@@ -307,6 +313,7 @@ class DayGrouping extends TimeGrouping {
 }
 
 class ContinuousMonthGrouping extends TimeGrouping {
+    static name = 'Month';
     static months = [
         'Jan',
         'Feb',
@@ -343,11 +350,12 @@ class ContinuousMonthGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return 'Month';
+        return ContinuousMonthGrouping.name;
     }
 }
 
 class MonthGrouping extends TimeGrouping {
+    static name = 'Month';
     static months = [
         'January',
         'February',
@@ -376,11 +384,12 @@ class MonthGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return 'Month';
+        return MonthGrouping.name;
     }
 }
 
 class YearGrouping extends TimeGrouping {
+    static name = 'Year';
     public timeToValue(datetime: Date): string {
         return datetime.getFullYear().toString();
     }
@@ -395,7 +404,7 @@ class YearGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return 'Year';
+        return YearGrouping.name;
     }
 }
 
