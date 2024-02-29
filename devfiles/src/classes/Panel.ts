@@ -40,6 +40,7 @@ export default class Panel {
 
     public dataFilterer: DataFilterer;
     public readonly uuid: number;
+    public minHeight: number;
 
     public constructor(pageManager: PageManager) {
         this.uuid = uuidv4();
@@ -56,6 +57,7 @@ export default class Panel {
 
         const testConfig = new WidgetConfig();
         this.widgets = [new BarChart(this, testConfig)];
+        this.minHeight = 350; // panel body minimum height
     }
 
     public getName(): string {
