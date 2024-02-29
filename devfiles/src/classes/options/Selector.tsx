@@ -108,7 +108,7 @@ export default class Selector extends InputOption {
                         }
                         onClick={(event) => event.stopPropagation()}
                         checked={this.isEverythingSelected()}
-                        className='form-check-input select-all-box'
+                        className='form-check-input'
                         type='checkbox'
                         id={this.uuid.toString() + 'all'}
                     />
@@ -203,6 +203,7 @@ export default class Selector extends InputOption {
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)
         if (this.columnIndex !== undefined) this.panel.recalculateFilters(this);
+
         //Refresh to update the associated widget/panel (Selectors are used for Tables
         // as well as filters)
         //Potential to optimise here
