@@ -20,11 +20,17 @@ export default abstract class TimeChart extends Widget {
             `Time Grouping for ${this.chartType()} Widget`,
             this.timeRangeGroupings().map((grouping: typeof Grouping) => grouping.name)
         );
+        this.xAxisSelector.extendedCallbacks.push(() => {
+            this.refresh();
+        });
         this.yAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
             `Count Grouping for ${this.chartType()} Widget`,
             Object.values(YGrouping)
         );
+        this.yAxisSelector.extendedCallbacks.push(() => {
+            this.refresh();
+        });
         this.options = [this.xAxisSelector, this.yAxisSelector];
     }
     public generateSidebar(): Sidebar {
