@@ -309,7 +309,7 @@ export default class TableWidget extends Widget {
      * array entry is the row index in panel.dataFilterer.getData, and the
      * second index is the frequency that the row appears in
      */
-    protected static processAsArray(
+    public static processAsArray(
         data: (string | number | SetElement)[][],
         dataLength: number,
         indices: number[],

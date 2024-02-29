@@ -37,6 +37,10 @@ describe('DataUtils', () => {
     });
 
     it('rowComparator can properly sort rows', () => {
+        const row01 = [12312, 'haha'];
+        const row02 = [12313, 'haha'];
+        expect(rowComparator([row01, row02], [0, 1], 0, 1), 'Number Comparison').toStrictEqual(-1);
+
         //Assert: row1 > row2 > row3 > row4 == row5
         const row1 = [refSet.addRawOrGet('zdajkf'), 12312, 'haha'];
         const row2 = [refSet.addRawOrGet('sdajkf'), 12312, 'haha'];
