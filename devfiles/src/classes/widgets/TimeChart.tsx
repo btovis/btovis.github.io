@@ -17,13 +17,13 @@ export default abstract class TimeChart extends Widget {
     public generateOptions(): void {
         this.xAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
-            `X Axis for ${this.chartType()} Widget`,
+            `Time Grouping for ${this.chartType()} Widget`,
             this.timeRangeGroupings().map((grouping: typeof Grouping) => grouping.name)
         );
         this.yAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
-            `Y Axis for ${this.chartType()} Widget`,
-            Object.keys(YGrouping)
+            `Count Grouping for ${this.chartType()} Widget`,
+            Object.values(YGrouping)
         );
         this.options = [this.xAxisSelector, this.yAxisSelector];
     }
