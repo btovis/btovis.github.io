@@ -13,6 +13,7 @@ export default class Selector extends InputOption {
     public excluded: Set<string> = new Set();
     public readonly columnIndex;
     private accordionOpen = false;
+    public useSearchBar: boolean = true;
 
     /**
      * @param panel The associated panel
@@ -77,7 +78,7 @@ export default class Selector extends InputOption {
         //If there are more than 5 selections, enable advanced options
         // like search
         let searchBar = <></>;
-        if (this.choices.size > 5) {
+        if (this.choices.size > 5 && this.useSearchBar) {
             searchBar = (
                 <div style={{ paddingBottom: '5px' }}>
                     <input

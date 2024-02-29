@@ -35,6 +35,8 @@ export default abstract class TimeChart extends Widget {
             Object.values(YGrouping)
         );
 
+        this.xAxisSelector.useSearchBar = false;
+        this.yAxisSelector.useSearchBar = false;
         // Refresh widgets when options are change.
         this.xAxisSelector.extendedCallbacks.push(() => {
             this.refresh();
