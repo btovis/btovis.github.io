@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
+import { Container, Button, Link } from 'react-floating-action-button';
 import '../App.css';
+import React from 'react';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
 import WidgetConfig from '../classes/widgets/WidgetConfig.js';
@@ -11,6 +13,8 @@ import StackedLineChart from '../classes/widgets/StackedLineChart.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
 import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
@@ -76,7 +80,60 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         >
                             <span>
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
-                                    <div className='widget-row'>{widgets}</div>
+                                    <div className='widget-row'>
+                                        {widgets}
+                                        <div className='mb-2'>
+                                            <Dropdown drop='end'>
+                                                <Dropdown.Toggle
+                                                    variant='success'
+                                                    id='dropdown-basic'
+                                                >
+                                                    Add
+                                                </Dropdown.Toggle>
+
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item href='#/action-1'>
+                                                        Barchart
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item href='#/action-2'>
+                                                        Table
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item href='#/action-1'>
+                                                        Line Graph
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item href='#/action-2'>
+                                                        Stacked Line Graph
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item href='#/action-1'>
+                                                        Map
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item href='#/action-2'>
+                                                        Debug Widget
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </div>
+
+                                        <Container>
+                                            <Link
+                                                href='#'
+                                                tooltip='Create note link'
+                                                icon='far fa-sticky-note'
+                                            />
+                                            <Link
+                                                href='#'
+                                                tooltip='Add user link'
+                                                icon='fas fa-user-plus'
+                                            />
+                                            className="fab-item btn btn-link btn-lg text-white"
+                                            <Button
+                                                tooltip='The big plus button!'
+                                                icon='fas fa-plus'
+                                                rotate={true}
+                                                onClick={() => alert('FAB Rocks!')}
+                                            />
+                                        </Container>
+                                    </div>
                                     <div className='add-widget-btns'>
                                         <button
                                             className='widget-btn'
