@@ -10,12 +10,17 @@ import MapWidget from '../classes/widgets/MapWidget.js';
 import StackedLineChart from '../classes/widgets/StackedLineChart.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
 import DebugWidget from '../classes/widgets/DebugWidget.js';
+import { Resizable } from 'react-resizable';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [snapRight, setSnapRight] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
     const refreshComponent = () => setSnapRight(Math.abs(snapRight) + 1);
+    const [panelHeight, setPanelHeight] = useState(500);
+    const onResize = (event, { node, size, handle }) => {
+        setPanelHeight(size.height);
+    };
 
     const panel = params.pageManager.panels[params.panelIdx];
     panel.refreshComponent = refreshComponent;
@@ -61,9 +66,16 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                     </Accordion.Header>
 
                     <Accordion.Body className='body'>
-                        <div ref={widgetRowRef} className='widget-row'>
-                            {widgets}
-                        </div>
+                        <Resizable
+                            ref={widgetRowRef}
+                            height={panelHeight}
+                            onResize={onResize}
+                            style={{ height: panelHeight + 'px' }}
+                        >
+                            <span>
+                                <div className='widget-row'>{widgets}</div>
+                            </span>
+                        </Resizable>
                         <div className='add-widget-btns'>
                             <button
                                 className='widget-btn'
