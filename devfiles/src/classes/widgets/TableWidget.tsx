@@ -36,11 +36,85 @@ export default class TableWidget extends Widget {
             false,
             [Attribute.speciesEnglishName, Attribute.warnings]
         );
+        //This refreshes the widget everytime the selector is called.
+        this.selectorOption.extendedCallbacks.push(() => this.onSelectorChange());
         this.options = [this.selectorOption];
+        this.onSelectorChange();
+    }
+
+    onSelectorChange(): void {
+        //Re-calculate table entries when this is called based on the options
+        //Contains a numerical index of selected columns
+        this.columns = [];
+        [...this.selectorOption.choices]
+            .filter((choice) => !this.selectorOption.excluded.has(choice))
+            .forEach((colName) => {
+                try {
+                    this.columns.push([colName, this.panel.dataFilterer.getColumnIndex(colName)]);
+                } catch (e) {
+                    /* Data doesn't have that - skip */
+                }
+            });
+
+        this.columns.sort((a, b) => a[1] - b[1]);
+
+        this.refresh(); //calls render
     }
 
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
+    }
+
+    public render(): JSX.Element {
+        const data = this.panel.dataFilterer.getData()[0];
+        const dataLength = this.panel.dataFilterer.getData()[1];
+        const indices = this.columns.map((c) => c[1]);
+        //Collect and group the relevant rows.
+        this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
+
+        //If nothing is selected, render an empty table
+        if (this.selectorOption.excluded.size === this.selectorOption.choices.size) {
+            return (
+                <table className='table'>
+                    <thead>
+                        <tr>
+                            <td>No Columns Selected</td>
+                        </tr>
+                    </thead>
+                </table>
+            );
+        }
+
+        //Build the DOM objects from the sorted list
+        const tableRows = [];
+        for (let i = 0; i < Math.min(this.tableEntries.length, 100); i++) {
+            const key = this.tableEntries[i][0];
+            const freq = this.tableEntries[i][1];
+            const row = (
+                <tr key={uuidv4()}>
+                    {key.split('\0').map((colVal) => (
+                        <td key={uuidv4()}>{colVal}</td>
+                    ))}
+                    <td>{freq}</td>
+                </tr>
+            );
+            tableRows.push(row);
+        }
+
+        //Return the actual sorted table
+        return (
+            <table className='table'>
+                <thead>
+                    <tr>
+                        {this.columns.map((col) => (
+                            <td key={uuidv4()}>{col[0]}</td>
+                        ))}
+                        <td>#</td>
+                    </tr>
+                </thead>
+                <tbody>{tableRows}</tbody>
+            </table>
+        );
     }
 
     protected static processAsArray(
@@ -101,72 +175,6 @@ export default class TableWidget extends Widget {
         return newArr;
     }
 
-    public render(): JSX.Element {
-        //Re-calculate table entries when this is called based on the options
-        //Contains a numerical index of selected columns
-        this.columns = [];
-        [...this.selectorOption.choices]
-            .filter((choice) => !this.selectorOption.excluded.has(choice))
-            .forEach((colName) => {
-                try {
-                    this.columns.push([colName, this.panel.dataFilterer.getColumnIndex(colName)]);
-                } catch (e) {
-                    /* Data doesn't have that - skip */
-                }
-            });
-
-        this.columns.sort((a, b) => a[1] - b[1]);
-
-        const data = this.panel.dataFilterer.getData()[0];
-        const dataLength = this.panel.dataFilterer.getData()[1];
-        const indices = this.columns.map((c) => c[1]);
-        //Collect and group the relevant rows.
-        this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
-
-        //If nothing is selected, render an empty table
-        if (this.selectorOption.excluded.size == 0) {
-            return (
-                <table className='table'>
-                    <thead>
-                        <tr>
-                            <td>No Columns Selected</td>
-                        </tr>
-                    </thead>
-                </table>
-            );
-        }
-
-        //Build the DOM objects from the sorted list
-        const tableRows = [];
-        for (let i = 0; i < Math.min(this.tableEntries.length, 100); i++) {
-            const key = this.tableEntries[i][0];
-            const freq = this.tableEntries[i][1];
-            const row = (
-                <tr key={uuidv4()}>
-                    {key.split('\0').map((colVal) => (
-                        <td key={uuidv4()}>{colVal}</td>
-                    ))}
-                    <td>{freq}</td>
-                </tr>
-            );
-            tableRows.push(row);
-        }
-
-        //Return the actual sorted table
-        return (
-            <table className='table'>
-                <thead>
-                    <tr>
-                        {this.columns.map((col) => (
-                            <td key={uuidv4()}>{col[0]}</td>
-                        ))}
-                        <td>#</td>
-                    </tr>
-                </thead>
-                <tbody>{tableRows}</tbody>
-            </table>
-        );
-    }
     public delete(): void {
         //Nothing to do?
     }

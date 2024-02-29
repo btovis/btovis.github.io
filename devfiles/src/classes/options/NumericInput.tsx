@@ -120,7 +120,7 @@ export default class NumericInput extends InputOption {
 
     public query(): Query {
         return new RangeQuery(this.panel.dataFilterer.getColumnIndex(Attribute.probability)).query(
-            this.value,
+            this.value == 0 ? -Infinity : this.value,
             Infinity
         );
     }
