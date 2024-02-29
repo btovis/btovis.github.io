@@ -116,6 +116,7 @@ export default class Selector extends InputOption {
                             onChange={(event) =>
                                 this.callback(event.currentTarget.checked ? [] : this.choices)
                             }
+                            onClick={(event) => event.stopPropagation()}
                             checked={this.isEverythingSelected()}
                             className='form-check-input'
                             type='checkbox'
@@ -183,12 +184,12 @@ export default class Selector extends InputOption {
         //Ask the panel to re-calculate its filters ONLY if the
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)
-        if (this.columnIndex !== undefined) this.panel.recalculateFilters(this);
-        //Refresh to update the associated widget/panel (Selectors are used for Tables
-        // as well as filters)
-        //Potential to optimise here
-        this.panel.refreshComponent();
-        this.panel.refreshWidgets();
+        if (this.columnIndex !== undefined) {
+            //Refreshes the whole panel, along with all its widgets.
+            this.panel.recalculateFilters(this);
+            this.panel.refreshComponent();
+            this.panel.refreshWidgets();
+        } else this.extendedCallbacks.forEach((f) => f(newValue));
         //Refresh this inputoption
         this.refreshComponent();
     }

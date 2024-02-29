@@ -103,7 +103,7 @@ describe('Grouping', async () => {
             },
             {
                 grouping: DayGrouping,
-                allowed: ['08-05-2023', '21-06-2023', '17-05-2023', '01-06-2023', '18-05-2023']
+                allowed: ['08-05-23', '21-06-23', '17-05-23', '01-06-23', '18-05-23']
             },
             {
                 grouping: ContinuousMonthGrouping,
