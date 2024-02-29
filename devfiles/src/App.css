@@ -344,3 +344,10 @@ input[type=number] {
 .text-warning {
   color: red;
 }
+
+/**
+* Table Widget styles
+*/
+.lr-button {
+  margin: 5px;
+}
