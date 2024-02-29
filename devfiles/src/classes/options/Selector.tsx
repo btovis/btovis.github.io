@@ -119,7 +119,6 @@ export default class Selector extends InputOption {
                         Select All
                     </label>
                 </p>
-
             </div>
         );
         return (
@@ -139,7 +138,6 @@ export default class Selector extends InputOption {
                         {searchBar}
                         {this.inputType() == 'checkbox' ? selectAll : ''}
                         <div className='form-check'>
-                            {this.inputType() == 'checkbox' ? selectAll : ''}
                             {[...this.choices].map((item, itemIdx) => {
                                 return (
                                     <div
@@ -204,7 +202,7 @@ export default class Selector extends InputOption {
         //Ask the panel to re-calculate its filters ONLY if the
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)
-        
+
         //If filter is active then indicate with title colour
         document.getElementById(this.uuid.toString() + 'title').style.color =
             this.isEverythingSelected() ? '' : 'chocolate';
