@@ -9,6 +9,7 @@ import { Accordion } from 'react-bootstrap';
 export default class NumericInput extends InputOption {
     private value: number;
     private bouncyValue: number;
+    private timer: NodeJS.Timeout;
     private min: number;
     private max: number;
     private step: number;
@@ -52,23 +53,26 @@ export default class NumericInput extends InputOption {
                     <Accordion.Body>
                         <div className='sidebar-padding'>
                             <Form.Range
+                                id={this.uuid + '-rangesel'}
                                 defaultValue={this.value}
                                 min={this.min}
                                 max={this.max}
                                 step={this.step}
                                 onChange={(event) => {
-                                    this.bouncyValue = event.target.valueAsNumber;
-                                    const oldVal = this.bouncyValue;
-                                    setTimeout(() => {
-                                        if (this.bouncyValue === oldVal)
-                                            this.callback(this.bouncyValue);
-                                    }, 300);
+                                    //Sync display with other input
+                                    (
+                                        document.getElementById(
+                                            this.uuid + '-textsel'
+                                        ) as HTMLInputElement
+                                    ).value = event.currentTarget.value;
+                                    this.debounce(event.target.valueAsNumber);
                                     this.refreshComponent();
                                 }}
                             />
                             <div style={{ display: 'inline' }}>
                                 <span>Selected Value:</span>
                                 <input
+                                    id={this.uuid + '-textsel'}
                                     style={{ width: '30%', marginLeft: '5px', display: 'inline' }}
                                     className='form-control'
                                     type='number'
@@ -77,13 +81,13 @@ export default class NumericInput extends InputOption {
                                     step={this.step}
                                     defaultValue={this.value}
                                     onChange={(event) => {
-                                        this.bouncyValue = event.target.valueAsNumber;
-                                        const oldVal = this.bouncyValue;
-                                        this.refreshComponent();
-                                        setTimeout(() => {
-                                            if (this.bouncyValue === oldVal)
-                                                this.callback(this.bouncyValue);
-                                        }, 300);
+                                        //Sync display with other input
+                                        (
+                                            document.getElementById(
+                                                this.uuid + '-rangesel'
+                                            ) as HTMLInputElement
+                                        ).value = event.currentTarget.value;
+                                        this.debounce(event.target.valueAsNumber);
                                     }}
                                     onScroll={(event) => {
                                         event.preventDefault();
@@ -97,7 +101,17 @@ export default class NumericInput extends InputOption {
         );
     }
 
+    private debounce(newValue: number) {
+        this.bouncyValue = newValue;
+        this.refreshComponent();
+        if (this.timer !== undefined) clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            if (this.bouncyValue === newValue) this.callback(this.bouncyValue);
+        }, 300);
+    }
+
     public callback(newValue: number): void {
+        console.log(newValue);
         this.value = newValue;
         //If filter is active then indicate with title colour
         document.getElementById(this.uuid.toString() + 'title').style.color =

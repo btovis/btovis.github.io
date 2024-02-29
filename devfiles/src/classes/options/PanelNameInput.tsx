@@ -25,7 +25,10 @@ export default class PanelNameInput extends InputOption {
                         }
                     }}
                 />
-                <p className='text-muted'>{this.panel.dataFilterer.getData()[1]} rows active</p>
+                <span className='text-muted'>
+                    {this.panel.dataFilterer.getData()[1]} rows active
+                </span>
+                <br />
                 <span className='text-muted'>
                     (
                     {this.panel.dataFilterer.getData()[0].length -
