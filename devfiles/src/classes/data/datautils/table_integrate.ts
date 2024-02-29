@@ -152,12 +152,12 @@ function integrateNewCSV(
     // add lat and loc if not existing
     if (!newColumnList.includes('LATITUDE')) {
         newColumnList.push('LATITUDE');
-        for (const r of newDatabase) r.push(0);
+        for (const r of newDatabase) r.push(Infinity);
     }
 
     if (!newColumnList.includes('LONGITUDE')) {
         newColumnList.push('LONGITUDE');
-        for (const r of newDatabase) r.push(0);
+        for (const r of newDatabase) r.push(Infinity);
     }
 
     const permutes: number[] = new Array(newColumnList.length);
