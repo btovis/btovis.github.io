@@ -372,3 +372,10 @@ span {
   cursor: s-resize;
   transform: rotate(45deg);
 }
+
+/**
+* Table Widget styles
+*/
+.lr-button {
+  margin: 5px;
+}
