@@ -356,6 +356,9 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
         case 'PROJECT NAME':
             // Set
             return (a) => set.addRawOrGet(a);
+        case 'VULNERABILITY':
+            // Set
+            return (a) => set.addRawOrGet(a);
 
         // For now:
         // TODO: sets, infer american or british
@@ -394,6 +397,7 @@ function columnNeedsSet(columnName) {
         case 'UPLOAD KEY':
         case 'BATCH NAME':
         case 'PROJECT NAME':
+        case 'VULNERABILITY':
             return true;
 
         default:
