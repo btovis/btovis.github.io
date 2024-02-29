@@ -8,6 +8,7 @@ import {
     DayGrouping,
     FilenameGrouping,
     Grouping,
+    HourGrouping,
     MonthGrouping,
     ProjectNameGrouping,
     YGrouping,
@@ -26,6 +27,7 @@ export default class BarChart extends TimeChart {
     }
     public timeRangeGroupings(): (typeof Grouping)[] {
         return [
+            HourGrouping,
             DayGrouping,
             MonthGrouping,
             YearGrouping,
