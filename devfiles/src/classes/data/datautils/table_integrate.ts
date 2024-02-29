@@ -288,7 +288,6 @@ function integrateNewCSV(
             r[z] = oldProcessors[z](r[z]);
         }
     }
-    console.log(oldDatabase[0]);
 }
 
 function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string) => any*/ {
