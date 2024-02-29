@@ -7,9 +7,9 @@ import DataFilterer from '../data/DataFilterer';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
 enum YGrouping {
-    Species,
-    SpeciesGroup,
-    VulnerabilityStatus
+    Species = 'Species',
+    SpeciesGroup = 'Species Group',
+    VulnerabilityStatus = 'Vulnerability Status'
 }
 
 abstract class Grouping {

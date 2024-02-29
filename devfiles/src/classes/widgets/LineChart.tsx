@@ -11,4 +11,7 @@ export default class LineChart extends TimeChart {
             type: 'scatter'
         };
     }
+    public chartType(): string {
+        return 'Line Chart';
+    }
 }

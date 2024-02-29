@@ -16,4 +16,7 @@ export default class StackedLineChart extends TimeChart {
             fill: 'tonexty'
         };
     }
+    public chartType(): string {
+        return 'Stacked Line Chart';
+    }
 }

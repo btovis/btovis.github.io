@@ -15,4 +15,7 @@ export default class BarChart extends TimeChart {
             type: 'bar'
         };
     }
+    public chartType(): string {
+        return 'Bar Chart';
+    }
 }

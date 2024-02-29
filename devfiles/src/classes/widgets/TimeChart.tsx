@@ -8,25 +8,27 @@ import Widget from './Widget';
 import WidgetConfig from './WidgetConfig';
 
 export default abstract class TimeChart extends Widget {
+    yAxisSelector: MutuallyExclusiveSelector;
     public constructor(panel: Panel, config: WidgetConfig) {
         super(panel, config);
         this.generateOptions();
     }
     public generateOptions(): void {
-        const yAxisSelector = new MutuallyExclusiveSelector(
+        this.yAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
-            'Y Axis',
-            ['Vulnerability Status', 'Species Group', 'Species'],
-            'Species'
+            `Y Axis for ${this.chartType()} Widget`,
+            Object.keys(YGrouping)
         );
-        this.options = [yAxisSelector];
+        this.options = [this.yAxisSelector];
     }
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
     public abstract chartSpecificLayout(): object;
+    public abstract chartType(): string;
     public render(): JSX.Element {
-        const grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.Species);
+        const yGrouping = this.yAxisSelector.selected;
+        const grouping = new DayGrouping(this.panel.dataFilterer, YGrouping[yGrouping]);
         const plotLayout = {
             width: 400,
             height: 210,
