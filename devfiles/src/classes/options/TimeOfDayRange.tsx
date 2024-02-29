@@ -10,11 +10,16 @@ import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
     private accordionOpen = false;
+    public defaultFromTime: Dayjs;
+    public defaultToTime: Dayjs;
     public fromTime: Dayjs;
     public toTime: Dayjs;
 
     public constructor(panel: Panel, name: string, template?: TimeRange) {
         super(panel, name);
+
+        this.defaultFromTime = dayjs('00:00', 'HH:mm');
+        this.defaultToTime = dayjs('23:59', 'HH:mm');
 
         //Copy the current state from the old template
         if (template === undefined) {
@@ -38,7 +43,7 @@ export default class TimeRange extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong>{this.name}</strong>
+                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
@@ -79,12 +84,26 @@ export default class TimeRange extends InputOption {
             </Accordion>
         );
     }
+
+    private isDefaultRange() {
+        return (
+            Math.abs(this.fromTime.diff(this.defaultFromTime)) +
+                Math.abs(this.toTime.diff(this.defaultToTime)) ==
+            0
+        );
+    }
+
     public callback(newValue: { which: number; time: Dayjs }): void {
         if (newValue.which === 0) {
             this.fromTime = newValue.time;
         } else {
             this.toTime = newValue.time;
         }
+
+        //If filter is active then indicate with title colour
+        document.getElementById(this.uuid.toString() + 'title').style.color = this.isDefaultRange()
+            ? ''
+            : 'chocolate';
 
         this.panel.recalculateFilters(this);
         //Refresh to update the associated panel and its widgets

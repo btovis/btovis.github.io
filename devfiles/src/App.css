@@ -81,6 +81,9 @@ input[type=number] {
 .sidebar strong {
   color: #052c65;
 }
+.sidebar strong query-active {
+  color: orange;
+}
 
 .sidebarContainer {
   padding: 20px;
