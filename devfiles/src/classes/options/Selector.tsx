@@ -100,23 +100,25 @@ export default class Selector extends InputOption {
         }
         const selectAll = (
             <div key={uuidv4()}>
-                <input
-                    key={uuidv4()}
-                    onChange={(event) =>
-                        this.callback(event.currentTarget.checked ? [] : this.choices)
-                    }
-                    onClick={(event) => event.stopPropagation()}
-                    checked={this.isEverythingSelected()}
-                    className='form-check-input'
-                    type='checkbox'
-                    id={this.uuid.toString() + 'all'}
-                />
-                <label
-                    className='form-check-label selectorLabel fw-bold'
-                    htmlFor={this.uuid.toString() + 'all'}
-                >
-                    Select All
-                </label>
+                <p>
+                    <input
+                        key={uuidv4()}
+                        onChange={(event) =>
+                            this.callback(event.currentTarget.checked ? [] : this.choices)
+                        }
+                        onClick={(event) => event.stopPropagation()}
+                        checked={this.isEverythingSelected()}
+                        className='form-check-input'
+                        type='checkbox'
+                        id={this.uuid.toString() + 'all'}
+                    />
+                    <label
+                        className='form-check-label selectorLabel select-all-label fw-bold'
+                        htmlFor={this.uuid.toString() + 'all'}
+                    >
+                        Select All
+                    </label>
+                </p>
             </div>
         );
         return (
@@ -129,13 +131,13 @@ export default class Selector extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong>{this.name}</strong>
+                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
                         {searchBar}
+                        {this.inputType() == 'checkbox' ? selectAll : <></>}
                         <div className='form-check'>
-                            {this.inputType() == 'checkbox' ? selectAll : <></>}
                             {[...this.choices].map((item, itemIdx) => {
                                 return (
                                     <div
@@ -200,12 +202,18 @@ export default class Selector extends InputOption {
         //Ask the panel to re-calculate its filters ONLY if the
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)
+
+        //If filter is active then indicate with title colour
+        document.getElementById(this.uuid.toString() + 'title').style.color =
+            this.isEverythingSelected() ? '' : 'chocolate';
+
         if (this.columnIndex !== undefined) {
             //Refreshes the whole panel, along with all its widgets.
             this.panel.recalculateFilters(this);
             this.panel.refreshComponent();
             this.panel.refreshWidgets();
         } else this.extendedCallbacks.forEach((f) => f(newValue));
+
         //Refresh this inputoption
         this.refreshComponent();
     }

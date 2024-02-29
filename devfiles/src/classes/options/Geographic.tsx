@@ -56,7 +56,7 @@ export default class Geographic extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong>{this.name}</strong>
+                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
                             <input
                                 style={{ marginLeft: '10px' }}
                                 key={uuidv4()}
@@ -207,6 +207,10 @@ export default class Geographic extends InputOption {
             this.minLat = newValue.bounds[1][1];
             this.maxLat = newValue.bounds[0][1];
         }
+
+        //If filter is active then indicate with title colour
+        document.getElementById(this.uuid.toString() + 'title').style.color =
+            newValue.pointCount === this.posMeta().uniquePositions.size ? '' : 'chocolate';
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);

@@ -81,6 +81,9 @@ input[type=number] {
 .sidebar strong {
   color: #052c65;
 }
+.sidebar strong query-active {
+  color: orange;
+}
 
 .sidebarContainer {
   padding: 20px;
@@ -99,14 +102,18 @@ input[type=number] {
   --bs-accordion-inner-border-radius: 0;
   --bs-accordion-padding-x: 5;
 }
+
 .selectorLabel {
-  width: 100%;
+  width: 90%;
   background-color: var(--element-bg);
   overflow-wrap: break-word;
 }
 .selectorLabel:hover {
-  width: 100%;
   background-color: var(--element-hover);
+}
+.select-all-label {
+  margin-left: 8px;
+  width: 85%
 }
 
 /**

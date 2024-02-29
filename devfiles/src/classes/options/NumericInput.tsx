@@ -46,7 +46,7 @@ export default class NumericInput extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong>{this.name}</strong>
+                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
@@ -99,6 +99,10 @@ export default class NumericInput extends InputOption {
 
     public callback(newValue: number): void {
         this.value = newValue;
+        //If filter is active then indicate with title colour
+        document.getElementById(this.uuid.toString() + 'title').style.color =
+            this.value == 0 ? '' : 'chocolate';
+
         // this.panel.refreshComponent();
         this.panel.recalculateFilters(this);
         this.panel.refreshWidgets();
