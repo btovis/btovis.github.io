@@ -289,6 +289,8 @@ span {
   overflow-y: scroll;
   width: fit-content;
   margin: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
   /* position: relative; */
   /* float: left; */
   border: solid;
@@ -304,7 +306,6 @@ span {
   height: 90%;
   width: 100%;
   overflow-y: scroll;
-  column-gap: 50px;
 }
 
 .add-widget-btns {

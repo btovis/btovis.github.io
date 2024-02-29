@@ -17,12 +17,12 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const [snapRight, setSnapRight] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
     const refreshComponent = () => setSnapRight(Math.abs(snapRight) + 1);
-    const [panelHeight, setPanelHeight] = useState(500);
     const onResize = (event, { node, size, handle }) => {
-        setPanelHeight(size.height);
+        setPanelHeight(Math.max(panel.minHeight, size.height));
     };
 
     const panel = params.pageManager.panels[params.panelIdx];
+    const [panelHeight, setPanelHeight] = useState(panel.minHeight);
     panel.refreshComponent = refreshComponent;
     const widgets = panel.getWidgets().map((w, idx) => {
         return (
