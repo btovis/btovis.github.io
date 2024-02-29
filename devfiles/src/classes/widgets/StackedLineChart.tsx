@@ -6,44 +6,14 @@ import ExportFileType from './ExportFileType.js';
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { ContinuousMonthGrouping, YGrouping } from './Grouping.js';
+import TimeChart from './TimeChart.js';
 
-export default class StackedLineChart extends Widget {
-    public generateSidebar(): Sidebar {
-        return new Sidebar([]);
-    }
-    public render(): JSX.Element {
-        const grouping = new ContinuousMonthGrouping(this.panel.dataFilterer, YGrouping.Species);
-        const plotLayout = {
-            width: 400,
-            height: 210,
-            margin: {
-                l: 30,
-                r: 30,
-                b: 50,
-                t: 65
-            }
+export default class StackedLineChart extends TimeChart {
+    public chartSpecificLayout(): object {
+        return {
+            type: 'scatter',
+            stackgroup: 'one',
+            fill: 'tonexty'
         };
-        const { traces, layout } = grouping.getChart(
-            {
-                type: 'scatter',
-                stackgroup: 'one',
-                fill: 'tonexty'
-            },
-            plotLayout
-        );
-        const plotConfig = {
-            //staticPlot: true,
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
-        };
-        return <Plot data={traces} layout={layout} config={plotConfig} />;
-    }
-    public delete(): void {
-        //throw new Error('Method not implemented.');
-    }
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
     }
 }
