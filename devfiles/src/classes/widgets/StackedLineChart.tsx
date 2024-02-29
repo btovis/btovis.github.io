@@ -1,31 +1,14 @@
-import Widget from './Widget.js';
-import WidgetConfig from './WidgetConfig.js';
-import { Data } from '../data/Data.js';
-import Sidebar from '../Sidebar.js';
-import ExportFileType from './ExportFileType.js';
-import React from 'react';
-import Plot from 'react-plotly.js';
-import {
-    ContinuousMonthGrouping,
-    DayGrouping,
-    Grouping,
-    YGrouping,
-    YearGrouping
-} from './Grouping.js';
-import TimeChart from './TimeChart.js';
+import LineChart from './LineChart.js';
 
-export default class StackedLineChart extends TimeChart {
+export default class StackedLineChart extends LineChart {
     public chartSpecificLayout(): object {
         return {
-            type: 'scatter',
+            ...super.chartSpecificLayout(),
             stackgroup: 'one',
             fill: 'tonexty'
         };
     }
     public chartType(): string {
         return 'Stacked Line Chart';
-    }
-    public timeRangeGroupings(): (typeof Grouping)[] {
-        return [DayGrouping, ContinuousMonthGrouping, YearGrouping];
     }
 }

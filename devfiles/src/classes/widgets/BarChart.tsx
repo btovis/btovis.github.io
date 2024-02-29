@@ -13,10 +13,6 @@ import {
     YGrouping,
     YearGrouping
 } from './Grouping.js';
-import Sidebar from '../Sidebar.js';
-import ExportFileType from './ExportFileType.js';
-import Selector from '../options/Selector.js';
-import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 import TimeChart from './TimeChart.js';
 
 export default class BarChart extends TimeChart {
