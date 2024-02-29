@@ -6,20 +6,6 @@ import { Attribute } from '../Data';
 import ReferenceSet from '../setutils/ReferenceSet';
 import { processDates, processTimes } from './date';
 
-function matchColumnNames(upperCaseColumnName) {
-    switch (upperCaseColumnName) {
-        case 'SCORE':
-        case 'CONFIDENCE':
-            return 'PROBABILITY';
-        case 'COMMON_NAME': // Underscore, because from bird pipeline CSV
-            return 'ENGLISH NAME';
-        case 'DATE':
-            return 'ACTUAL DATE'; // map Date from bird pipeline to actual date
-        default:
-            return upperCaseColumnName;
-    }
-}
-
 // oldColumnList and newColumnList have 0th element "_FILE"
 // precondition and postcondition: see columnList in Data.ts
 
@@ -42,20 +28,32 @@ function integrateNewCSV(
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = newColumnList[i].toUpperCase();
     }
+    if (!newColumnList.includes('PROBABILITY') && newColumnList.includes('CONFIDENCE')) {
+        newColumnList[newColumnList.indexOf('CONFIDENCE')] = 'PROBABILITY';
+    }
+    if (!newColumnList.includes('PROBABILITY') && newColumnList.includes('SCORE')) {
+        newColumnList[newColumnList.indexOf('SCORE')] = 'PROBABILITY';
+    }
     if (newColumnList.includes('COMMON_NAME')) {
         // Bird CSV.
+        if (!newColumnList.includes('ACTUAL DATE') && newColumnList.includes('DATE')) {
+            newColumnList[newColumnList.indexOf('DATE')] = 'ACTUAL DATE';
+        }
+
         if (!newColumnList.includes('SPECIES')) {
             newColumnList[newColumnList.indexOf('SP_CODE')] = 'SPECIES';
         }
-        if (!newColumnList.includes('SCIENTIFIC NAME')) {
-            // sp_code rename to SCIENTIFIC NAME, also SPECIES
-            newColumnList[newColumnList.indexOf('COMMON_NAME')] = 'SCIENTIFIC NAME';
-            // TODO: maybe copy to species
-        }
         if (!newColumnList.includes('ENGLISH NAME')) {
             // rename common name to english name
-            newColumnList.push('ENGLISH NAME');
-            const colI = newColumnList.indexOf('SCIENTIFIC NAME');
+            newColumnList[newColumnList.indexOf('COMMON_NAME')] = 'ENGLISH NAME';
+        }
+        if (!newColumnList.includes('SCIENTIFIC NAME')) {
+            // rename COMMON_NAME ('ENGLISH NAME')to scientific name
+            newColumnList.push('SCIENTIFIC NAME');
+            const colI = newColumnList.indexOf('ENGLISH NAME');
+            if (colI == -1) {
+                throw 'Unsupported csv';
+            }
             if (colI)
                 for (const r of newDatabase) {
                     r.push(r[colI]);
@@ -113,6 +111,10 @@ function integrateNewCSV(
         throw 'No Date/Actual Date column found';
     }
 
+    if (!newColumnList.includes('PROBABILITY')) {
+        throw 'No Probability/confidence/score column found';
+    }
+
     if (!newColumnList.includes('ENGLISH NAME')) {
         throw 'No ENGLISH NAME column found';
     }
@@ -161,7 +163,6 @@ function integrateNewCSV(
     const earliestColumnWithNameInNew = new Map<string, number>();
 
     for (let i = 1; i < newColumnList.length; i++) {
-        newColumnList[i] = matchColumnNames(newColumnList[i]);
         if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
             earliestColumnWithNameInNew.set(newColumnList[i], i);
             permutes[i] = titleToColumnIndex.get(newColumnList[i]);
