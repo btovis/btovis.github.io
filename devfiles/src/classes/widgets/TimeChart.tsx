@@ -32,10 +32,13 @@ export default abstract class TimeChart extends Widget {
     }
     public abstract chartSpecificLayout(): object;
     public abstract chartType(): string;
-    public abstract timeRangeGroupings(): (typeof Grouping)[];
+    public abstract timeRangeGroupings();
     public render(): JSX.Element {
         const yGrouping = this.yAxisSelector.selected;
-        const grouping = new DayGrouping(this.panel.dataFilterer, YGrouping[yGrouping]);
+        const [groupingCls] = this.timeRangeGroupings().filter(
+            (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
+        );
+        const grouping = new groupingCls(this.panel.dataFilterer, YGrouping[yGrouping]);
         const plotLayout = {
             width: 400,
             height: 210,
