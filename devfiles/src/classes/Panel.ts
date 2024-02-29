@@ -143,6 +143,9 @@ export default class Panel {
         if ('compound' in query)
             (query.queries as Query[]).forEach((q) => this.dataFilterer.processQuery(q));
         else this.dataFilterer.processQuery(query as Query);
+
+        //For the row/filtered count
+        this.nameInput.refreshComponent();
     }
 
     /**

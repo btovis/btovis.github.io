@@ -10,6 +10,7 @@ import InputOption from './InputOption';
 export default class PanelNameInput extends InputOption {
     private text: string;
 
+    //Row counts are here because this is easily available for refreshing in isolation
     public render(): JSX.Element {
         return (
             <div className='sidebarContainer'>
@@ -24,6 +25,13 @@ export default class PanelNameInput extends InputOption {
                         }
                     }}
                 />
+                <p className='text-muted'>{this.panel.dataFilterer.getData()[1]} rows active</p>
+                <span className='text-muted'>
+                    (
+                    {this.panel.dataFilterer.getData()[0].length -
+                        this.panel.dataFilterer.getData()[1]}{' '}
+                    filtered)
+                </span>
             </div>
         );
     }
