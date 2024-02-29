@@ -98,6 +98,27 @@ export default class Selector extends InputOption {
                 </div>
             );
         }
+        const selectAll = (
+            <div key={uuidv4()}>
+                <input
+                    key={uuidv4()}
+                    onChange={(event) =>
+                        this.callback(event.currentTarget.checked ? [] : this.choices)
+                    }
+                    onClick={(event) => event.stopPropagation()}
+                    checked={this.isEverythingSelected()}
+                    className='form-check-input'
+                    type='checkbox'
+                    id={this.uuid.toString() + 'all'}
+                />
+                <label
+                    className='form-check-label selectorLabel fw-bold'
+                    htmlFor={this.uuid.toString() + 'all'}
+                >
+                    Select All
+                </label>
+            </div>
+        );
         return (
             <Accordion
                 onSelect={(eventKey) => {
@@ -110,21 +131,11 @@ export default class Selector extends InputOption {
                         <span>
                             <strong>{this.name}</strong>
                         </span>
-                        <input
-                            style={{ marginLeft: '10px' }}
-                            key={uuidv4()}
-                            onChange={(event) =>
-                                this.callback(event.currentTarget.checked ? [] : this.choices)
-                            }
-                            onClick={(event) => event.stopPropagation()}
-                            checked={this.isEverythingSelected()}
-                            className='form-check-input'
-                            type='checkbox'
-                        />
                     </Accordion.Header>
                     <Accordion.Body>
                         {searchBar}
                         <div className='form-check'>
+                            {this.inputType() == 'checkbox' ? selectAll : ''}
                             {[...this.choices].map((item, itemIdx) => {
                                 return (
                                     <div
@@ -147,7 +158,8 @@ export default class Selector extends InputOption {
                                             id={this.uuid.toString() + item}
                                             checked={!this.excluded.has(item)}
                                             className='form-check-input'
-                                            type='checkbox'
+                                            type={this.inputType()}
+                                            name={this.uuid.toString() + 'selector'}
                                         />
                                         <label
                                             className='form-check-label selectorLabel'
@@ -163,6 +175,10 @@ export default class Selector extends InputOption {
                 </Accordion.Item>
             </Accordion>
         );
+    }
+
+    protected inputType() {
+        return 'checkbox';
     }
 
     /**
