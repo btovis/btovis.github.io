@@ -6,16 +6,22 @@ import ExportFileType from './ExportFileType';
 import { ContinuousMonthGrouping, DayGrouping, Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
 import WidgetConfig from './WidgetConfig';
+import InputOption from '../options/InputOption';
+import ColorOption from '../options/ColorOption.js';
+import { getTouchRippleUtilityClass } from '@mui/material';
 
 // Covers bar chart, line chart, stacked line chart.
 export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
+    // This is declared here only because it isn't working when it's declared only in LineChart class
+    public colorOptions: Array<ColorOption>;
 
     // Subclasses implement these methods for specific chart types.
-    public abstract chartSpecificLayout(): object;
+    public abstract chartSpecificLayout(numTraces: number): object;
     public abstract chartType(): string;
     public abstract timeRangeGroupings();
+    public abstract generateChartSpecificOptions(numTraces: number): Array<InputOption>;
 
     // private grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.SpeciesGroup);
 
@@ -117,7 +123,20 @@ export default abstract class TimeChart extends Widget {
             this.refresh();
         });
 
-        this.options = [this.xAxisSelector, this.yAxisSelector];
+        // Use the grouping to find number of traces
+        const [groupingCls] = this.timeRangeGroupings().filter(
+            (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
+        );
+        const grouping = new groupingCls(this.panel.dataFilterer, this.yAxisSelector.selected);
+        console.log(grouping.numTraces());
+        // Calculate number of traces and call child method to generate, then bind to options in-line
+        this.options = [
+            this.xAxisSelector,
+            this.yAxisSelector,
+            ...this.generateChartSpecificOptions(grouping.numTraces())
+        ];
+        //this.options = [this.xAxisSelector, this.yAxisSelector];
+        this.refresh();
     }
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
@@ -141,7 +160,10 @@ export default abstract class TimeChart extends Widget {
             }
         };
         // Add specific layout to each chart.
-        const { traces, layout } = grouping.getChart(this.chartSpecificLayout(), plotLayout);
+        const { traces, layout } = grouping.getChart(
+            this.chartSpecificLayout(grouping.numTraces()),
+            plotLayout
+        );
         const plotConfig = {
             modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
         };

@@ -1,7 +1,5 @@
-import Widget from './Widget.js';
-import WidgetConfig from './WidgetConfig.js';
-import { Data, Attribute } from '../data/Data.js';
-import Row from '../data/Row.js';
+import InputOption from '../options/InputOption.js';
+import ColorOption from '../options/ColorOption.js';
 import {
     BatchNameGrouping,
     ContinuousMonthGrouping,
@@ -16,10 +14,17 @@ import {
 import TimeChart from './TimeChart.js';
 
 export default class BarChart extends TimeChart {
-    public chartSpecificLayout(): object {
-        return {
-            type: 'bar'
-        };
+    public chartSpecificLayout(numTraces: number): object {
+        const traceConfigs: Array<{ [key: string]: any }> = [];
+        for (let i = 0; i < numTraces; i++) {
+            const singleTraceConfig: { [key: string]: any } = {};
+            singleTraceConfig.type = 'bar';
+            const markerConfig: { [key: string]: any } = {};
+            markerConfig.color = this.colorOptions[i].value();
+            singleTraceConfig.marker = markerConfig;
+            traceConfigs.push(singleTraceConfig);
+        }
+        return traceConfigs;
     }
     public chartType(): string {
         return 'Bar Chart';
@@ -33,5 +38,18 @@ export default class BarChart extends TimeChart {
             BatchNameGrouping,
             FilenameGrouping
         ];
+    }
+    public generateChartSpecificOptions(numTraces: number): Array<InputOption> {
+        this.colorOptions = [];
+        // Add ColorOptions
+        for (let i = 0; i < numTraces; i++) {
+            const colorOption = new ColorOption(
+                this.panel,
+                'color of trace ' + i.toString(),
+                '#00FFFF'
+            );
+            this.colorOptions.push(colorOption);
+        }
+        return this.colorOptions;
     }
 }

@@ -56,7 +56,7 @@ export default class Panel {
         this.updateInputOptions();
 
         const testConfig = new WidgetConfig();
-        this.widgets = [new LineChart(this, testConfig)];
+        this.widgets = [new BarChart(this, testConfig)];
     }
 
     public getName(): string {
