@@ -92,12 +92,14 @@ export default class Geographic extends InputOption {
                             {/* If the accordion is closed, cheat and do not render */}
                             {this.accordionOpen ? (
                                 <Plot
-                                    onSelected={(event) =>
+                                    onSelected={(event) => {
+                                        //#168, this variable is just undefined if you click
+                                        if (event === undefined) return;
                                         this.callback({
                                             pointCount: event.points.length,
                                             bounds: event.range.mapbox
-                                        })
-                                    }
+                                        });
+                                    }}
                                     data={plotData}
                                     layout={plotLayout}
                                     config={plotConfig}

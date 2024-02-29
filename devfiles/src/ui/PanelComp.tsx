@@ -66,7 +66,12 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                     </Accordion.Header>
 
                     <Accordion.Body>
-                        <Resizable ref={widgetRowRef} onResize={onResize} height={panelHeight}>
+                        <Resizable
+                            ref={widgetRowRef}
+                            onResize={onResize}
+                            width={0}
+                            height={panelHeight}
+                        >
                             <span>
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
                                     <div className='widget-row'>{widgets}</div>
