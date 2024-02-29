@@ -1,6 +1,7 @@
 /* Handles merging multiple files together */
 //import FileIdentifierManager from "../setutils/FileIdentifierManager";
 
+import { getSpeciesEndangerment } from '../../../utils/speciesVulnerability';
 import { Attribute } from '../Data';
 import ReferenceSet from '../setutils/ReferenceSet';
 import { processDates, processTimes } from './date';
@@ -121,6 +122,36 @@ function integrateNewCSV(
     if (!newColumnList.includes('LONGITUDE')) {
         newColumnList.push('LONGITUDE');
         for (const r of newDatabase) r.push(0);
+    }
+
+    if (!newColumnList.includes('TIME')) {
+        throw 'No Time column found';
+    }
+
+    if (!newColumnList.includes('ACTUAL DATE')) {
+        throw 'No Date/Actual Date column found';
+    }
+
+    if (!newColumnList.includes('ENGLISH NAME')) {
+        throw 'No ENGLISH NAME column found';
+    }
+
+    if (!newColumnList.includes('SCIENTIFIC NAME')) {
+        throw 'No SCIENTIFIC NAME column found';
+    }
+
+    if (!newColumnList.includes('SPECIES')) {
+        throw 'No SPECIES column found';
+    }
+
+    if (!newColumnList.includes('SPECIES GROUP')) {
+        throw 'No SPECIES GROUP column found';
+    }
+
+    if (!newColumnList.includes('VULN.')) {
+        newColumnList.push('VULN.');
+        const colI = newColumnList.indexOf('SCIENTIFIC NAME');
+        for (const r of newDatabase) r.push(getSpeciesEndangerment(r[colI]));
     }
 
     for (let i = 1; i < newColumnList.length; i++) {
