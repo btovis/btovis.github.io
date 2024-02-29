@@ -5,6 +5,7 @@ import SidebarComp from './ui/SidebarComp.tsx';
 import MainPage from './ui/MainPage.tsx';
 import PageManager from './classes/PageManager.ts';
 import { Fade, Spinner } from 'react-bootstrap';
+import Panel from './classes/Panel.ts';
 
 // https://caniuse.com/?search=es2020 "Feature support list"
 // We target ES2020, 95% of browsers
@@ -67,6 +68,12 @@ function App() {
                 );
             else setOverlayMessage('Loaded file(s).');
             setOverlayVisible(true);
+
+            //If there's no panel after a successful upload, make one
+            if (pageManager.data.sets[0].size() > 0 && pageManager.panels.length === 0) {
+                pageManager.addPanel(new Panel(pageManager));
+                pageManager.refreshEverything();
+            }
         });
     };
 

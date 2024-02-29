@@ -38,35 +38,42 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
 
     const widgetRowRef = useRef(null);
 
+    function selectThisPanel() {
+        //If there is a previous selected panel, render unselection
+        if (params.pageManager.unselectPanel) params.pageManager.unselectPanel();
+
+        //Update class state
+        params.pageManager.selectedPanel = params.panelIdx;
+        params.pageManager.unselectPanel = () => setHighlighted(false);
+        setHighlighted(true);
+
+        //Force sidebar to refresh by setting the tab
+        params.pageManager.setSidebarTab('panelTab');
+        params.pageManager.refreshPanelOptions();
+    }
+
     useEffect(() => {
+        //This was the first panel
+        if (params.pageManager.selectedPanel === -1) selectThisPanel();
+
         if (snapRight <= 0 && widgetRowRef.current)
             widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
     });
     return (
         <div className={highlighted ? 'panel panelactive' : 'panel'}>
             <Accordion defaultActiveKey='0'>
-                <Accordion.Item
-                    eventKey='0'
-                    onClick={() => {
-                        //If there is a previous selected panel, render unselection
-                        if (params.pageManager.unselectPanel) params.pageManager.unselectPanel();
-
-                        //Update class state
-                        params.pageManager.selectedPanel = params.panelIdx;
-                        params.pageManager.unselectPanel = () => setHighlighted(false);
-                        setHighlighted(true);
-
-                        //Force sidebar to refresh by setting the tab
-                        params.pageManager.setSidebarTab('panelTab');
-                        params.pageManager.refreshPanelOptions();
-                    }}
-                >
+                <Accordion.Item eventKey='0' onClick={() => selectThisPanel()}>
                     <Accordion.Header className=''>
                         <div className='title'>{panel.getName()}</div>
                     </Accordion.Header>
 
                     <Accordion.Body>
-                        <Resizable ref={widgetRowRef} onResize={onResize} height={panelHeight}>
+                        <Resizable
+                            ref={widgetRowRef}
+                            onResize={onResize}
+                            width={0}
+                            height={panelHeight}
+                        >
                             <span>
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
                                     <div className='widget-row'>{widgets}</div>

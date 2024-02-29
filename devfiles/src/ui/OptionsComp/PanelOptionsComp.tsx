@@ -53,7 +53,9 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     return (
         <div key={uuidv4()}>
             {renderedOptions}
+            <br />
             {deleteButton}
+            <br />
         </div>
     );
 }

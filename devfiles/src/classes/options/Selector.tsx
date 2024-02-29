@@ -51,7 +51,7 @@ export default class Selector extends InputOption {
             //If a template Selector is available, copy its currently excluded settings.
             //If the template has everything selected, template.excluded will be empty
             [...template.excluded]
-                .filter((elem) => elem in this.choices)
+                .filter((elem) => this.choices.has(elem))
                 .forEach((elem) => this.excluded.add(elem));
             this.accordionOpen = template.accordionOpen;
         }
