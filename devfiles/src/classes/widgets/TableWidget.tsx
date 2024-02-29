@@ -277,17 +277,17 @@ export default class TableWidget extends Widget {
 
         // variable "row" reused inside loop
         const row = new Array(indicesLength);
-        for (let i = 0; i < dataLength; i++) {
+        nextRow: for (let i = 0; i < dataLength; i++) {
             const dataRow = data[i];
-            let invalidRow = false;
             for (let x = 0; x < indicesLength; x++) {
                 const val = dataRow[indices[x]];
                 if (val instanceof SetElement) row[x] = val.value;
                 else row[x] = val;
                 // issue #91: skip or not (Do not skip)
-                if (row[x] === '[none]') invalidRow = true;
+                if (cullEmpty)
+                    if (row[x] === '[none]')
+                        continue nextRow;
             }
-            if (cullEmpty && invalidRow) continue;
             arr.push(row.join('\0'));
         }
 
