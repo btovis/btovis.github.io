@@ -12,44 +12,60 @@ import { LineChartGrouping } from './XFieldGrouping.ts';
 import WidgetConfig from './WidgetConfig.ts';
 
 export default class LineChart extends Widget {
-    // to be implemented in the following
-    //const data = this.panel.dataFilterer.getData();
-    //data process to a list of traces
+    private grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.SpeciesGroup);
 
-    // a few fields that affects rendering of the widgets, widget options & config
-    private numTraces = 2; // to be implemented to fit number of traces in data
-    private colorsOptions: Array<ColorOption> = [];
-    private yTick: NumericInput; // Numeric Input is not yet implemented
-    private groupLevel: DropMenuSelector;
+    private buildOptions(): void {
+        //generate x-axis group level
+        const enumStrings = Object.keys(LineChartGrouping).filter((v) => isNaN(Number(v)));
 
-    private generateOptions(): void {
+        // a few fields that affects rendering config
+        const numTraces = this.grouping.numTraces();
+        const colorsOptions: Array<ColorOption> = [];
+        const yTick: NumericInput = new NumericInput(this.panel, 'ytick', 0, 10, 1); // Numeric Input is not yet implemented
+        const groupLevel: DropMenuSelector = new DropMenuSelector(
+            this.panel,
+            'group lebel',
+            enumStrings
+        );
+
         //generate color options
-        for (let i = 0; i < this.numTraces; i++) {
-            this.colorsOptions.push(
+        for (let i = 0; i < numTraces; i++) {
+            colorsOptions.push(
                 new ColorOption(this.panel, 'color of trace ' + i.toString(), '#00FFFF')
                 //new PanelNameInput(this.panel, "Panel Color", "00FFFF")
             );
         }
-        //generate x-axis group level
-        const enumStrings = Object.keys(LineChartGrouping).filter((v) => isNaN(Number(v)));
-        this.groupLevel = new DropMenuSelector(this.panel, 'group lebel', enumStrings);
 
         //add everything to options
-        this.options = this.colorsOptions;
-        this.options.push(this.groupLevel);
+        this.options = colorsOptions;
+        this.options.push(groupLevel);
     }
 
     // constructor
     public constructor(panel: Panel, config: WidgetConfig) {
         super(panel, config);
-        this.generateOptions();
+        this.buildOptions();
     }
 
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
+
+    private generateTraceConfig(): Array<{ [key: string]: any }> {
+        const traceConfigs: Array<{ [key: string]: any }> = [];
+        for (let i = 0; i < this.grouping.numTraces(); i++) {
+            const singleTraceConfig: { [key: string]: any } = {};
+            singleTraceConfig.type = 'scatter';
+
+            const lineConfig: { [key: string]: any } = {};
+            lineConfig.color = this.options[i].value();
+            singleTraceConfig.line = lineConfig;
+            traceConfigs.push(singleTraceConfig);
+        }
+        return traceConfigs;
+    }
+
     public render(): JSX.Element {
-        const grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.SpeciesGroup);
         const plotLayout = {
             width: 400,
             height: 210,
@@ -63,12 +79,7 @@ export default class LineChart extends Widget {
                 t: 65
             }
         };
-        const { traces, layout } = grouping.getChart(
-            {
-                type: 'scatter'
-            },
-            plotLayout
-        );
+        const { traces, layout } = this.grouping.getChart(this.generateTraceConfig(), plotLayout);
         const plotConfig = {
             //staticPlot: true,
             modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']

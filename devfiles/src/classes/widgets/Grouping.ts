@@ -137,10 +137,10 @@ abstract class Grouping {
             Array.from(xIndexMap.entries()).map(([x, i]) => [i, x.value])
         );
         return {
-            traces: partialTraces.map((trace) => {
+            traces: partialTraces.map((trace, index) => {
                 return {
                     ...trace,
-                    ...additionalTracesConfig
+                    ...additionalTracesConfig[index]
                 };
             }),
             layout: {
