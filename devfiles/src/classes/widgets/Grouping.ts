@@ -41,6 +41,23 @@ abstract class Grouping {
     }
     // Select the value to be used for the x-axis.
     public abstract selectX(row: Row): SetElement;
+    public abstract getXLabel(): string;
+    public getXRate(): string {
+        return `${this.getXLabel()}ly`;
+    }
+    public getYName(): string {
+        switch (this.yGrouping) {
+            case YGrouping.Species:
+                return 'Species';
+            case YGrouping.SpeciesGroup:
+                return 'Species Group';
+            case YGrouping.VulnerabilityStatus:
+                return 'Vulnerability Status';
+        }
+    }
+    public getYLabel(): string {
+        return `Counts/${this.getYName()}`;
+    }
     public selectByColumnIndex(row: Row, columnIdx: number): SetElement {
         if (row[columnIdx] instanceof SetElement) {
             return row[columnIdx];
@@ -118,7 +135,9 @@ abstract class Grouping {
             return {
                 x: x,
                 y: y,
-                name: group.value
+                name: group.value,
+                showlegend: true,
+                hoverinfo: 'y+name'
             };
         });
     }
@@ -140,14 +159,18 @@ abstract class Grouping {
             }),
             layout: {
                 xaxis: {
-                    title: 'xaxistitle',
+                    title: this.getXLabel(),
                     labelalias: labelAlias,
                     nticks: xIndexMap.size,
                     tickmode: 'auto'
                 },
                 yaxis: {
-                    title: 'yaxistitle'
+                    title: this.getYLabel()
                 },
+                legend: {
+                    visible: true
+                },
+                title: `${this.getXRate()} ${this.getYName()} Counts`,
                 ...additionalLayoutConfig
             }
         };
@@ -163,6 +186,12 @@ class BatchNameGrouping extends Grouping {
     public selectX(row: Row): SetElement {
         return this.selectByColumnIndex(row, this.columnIdx);
     }
+    public getXLabel(): string {
+        return 'Batch Name';
+    }
+    public getXRate(): string {
+        return 'Batch';
+    }
 }
 
 class ProjectNameGrouping extends Grouping {
@@ -174,6 +203,12 @@ class ProjectNameGrouping extends Grouping {
     public selectX(row: Row): SetElement {
         return this.selectByColumnIndex(row, this.columnIdx);
     }
+    public getXLabel(): string {
+        return 'Project Name';
+    }
+    public getXRate(): string {
+        return 'Project';
+    }
 }
 
 class FilenameGrouping extends Grouping {
@@ -184,6 +219,12 @@ class FilenameGrouping extends Grouping {
     }
     public selectX(row: Row): SetElement {
         return this.selectByColumnIndex(row, this.columnIdx);
+    }
+    public getXLabel(): string {
+        return 'Filename';
+    }
+    public getXRate(): string {
+        return 'File';
     }
 }
 
@@ -221,6 +262,9 @@ class HourGrouping extends TimeGrouping {
         }
         return valueMap;
     }
+    public getXLabel(): string {
+        return 'Hour';
+    }
 }
 
 class DayGrouping extends TimeGrouping {
@@ -253,6 +297,12 @@ class DayGrouping extends TimeGrouping {
             );
         }
         return valueMap;
+    }
+    public getXLabel(): string {
+        return 'Date';
+    }
+    public getXRate(): string {
+        return 'Daily';
     }
 }
 
@@ -292,6 +342,9 @@ class ContinuousMonthGrouping extends TimeGrouping {
         }
         return valueMap;
     }
+    public getXLabel(): string {
+        return 'Month';
+    }
 }
 
 class MonthGrouping extends TimeGrouping {
@@ -322,6 +375,9 @@ class MonthGrouping extends TimeGrouping {
         }
         return valueMap;
     }
+    public getXLabel(): string {
+        return 'Month';
+    }
 }
 
 class YearGrouping extends TimeGrouping {
@@ -337,6 +393,9 @@ class YearGrouping extends TimeGrouping {
             valueMap.set(this.referenceSet.addRawOrGet(i.toString()), i - minYear);
         }
         return valueMap;
+    }
+    public getXLabel(): string {
+        return 'Year';
     }
 }
 

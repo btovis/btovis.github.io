@@ -16,10 +16,6 @@ export default class BarChart extends Widget {
         const plotLayout = {
             width: 400,
             height: 210,
-            title: {
-                text: 'Bar Chart',
-                y: 0.85
-            },
             margin: {
                 l: 30,
                 r: 30,

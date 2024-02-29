@@ -116,6 +116,7 @@ export default class Selector extends InputOption {
                             onChange={(event) =>
                                 this.callback(event.currentTarget.checked ? [] : this.choices)
                             }
+                            onClick={(event) => event.stopPropagation()}
                             checked={this.isEverythingSelected()}
                             className='form-check-input'
                             type='checkbox'

@@ -80,6 +80,7 @@ export default class Geographic extends InputOption {
                                     );
                                     this.refreshComponent();
                                 }}
+                                onClick={(event) => event.stopPropagation()}
                                 checked={this.maxLat === Infinity}
                                 className='form-check-input'
                                 type='checkbox'
