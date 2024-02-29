@@ -18,10 +18,13 @@ export default abstract class TimeChart extends Widget {
     public colorOptions: Array<ColorOption>;
 
     // Subclasses implement these methods for specific chart types.
-    public abstract chartSpecificLayout(numTraces: number): object;
+    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }>;
     public abstract chartType(): string;
     public abstract timeRangeGroupings();
     public abstract generateChartSpecificOptions(numTraces: number): Array<InputOption>;
+
+    // Initialize grouping
+    public grouping: Grouping;
 
     //public abstract updateTraceOptions(): void;
     // private grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.SpeciesGroup);
@@ -101,6 +104,13 @@ export default abstract class TimeChart extends Widget {
     public constructor(panel: Panel, config: WidgetConfig) {
         super(panel, config);
         this.generateOptions();
+        // Get the selected groupings for x and y.
+        const yGrouping = this.yAxisSelector.selected;
+        const [groupingCls] = this.timeRangeGroupings().filter(
+            (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
+        );
+        // Use the grouping to render the chart data.
+        this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
     }
     public generateOptions(): void {
         // Mutex selector for time (or property) grouping along the x axis.
@@ -123,7 +133,6 @@ export default abstract class TimeChart extends Widget {
         this.yAxisSelector.extendedCallbacks.push(() => {
             this.refresh();
         });
-
         // Use the grouping to find number of traces
         const [groupingCls] = this.timeRangeGroupings().filter(
             (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
@@ -136,19 +145,11 @@ export default abstract class TimeChart extends Widget {
             ...this.generateChartSpecificOptions(grouping.numTraces())
         ];
         //this.options = [this.xAxisSelector, this.yAxisSelector];
-        this.refresh();
     }
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
     public render(): JSX.Element {
-        // Get the selected groupings for x and y.
-        const yGrouping = this.yAxisSelector.selected;
-        const [groupingCls] = this.timeRangeGroupings().filter(
-            (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
-        );
-        // Use the grouping to render the chart data.
-        const grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
         const plotLayout = {
             width: 400,
             height: 210,
@@ -160,8 +161,8 @@ export default abstract class TimeChart extends Widget {
             }
         };
         // Add specific layout to each chart.
-        const { traces, layout } = grouping.getChart(
-            this.chartSpecificLayout(grouping.numTraces()),
+        const { traces, layout } = this.grouping.getChart(
+            this.chartSpecificLayout(this.grouping.numTraces()),
             plotLayout
         );
         const plotConfig = {
