@@ -126,7 +126,7 @@ export default class SpeciesSelector extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong>{this.name}</strong>
+                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
                         </span>
                         {/* For checking everything */}
                         <input
@@ -421,6 +421,10 @@ export default class SpeciesSelector extends InputOption {
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);
+
+        //If filter is active then indicate with title colour
+        document.getElementById(this.uuid.toString() + 'title').style.color =
+            this.isEverythingSelected() ? '' : 'chocolate';
 
         //Refresh to update the associated widget/panel (Selectors are used for Tables
         // as well as filters)
