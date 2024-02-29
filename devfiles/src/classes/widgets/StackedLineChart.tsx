@@ -5,7 +5,13 @@ import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import React from 'react';
 import Plot from 'react-plotly.js';
-import { ContinuousMonthGrouping, YGrouping } from './Grouping.js';
+import {
+    ContinuousMonthGrouping,
+    DayGrouping,
+    Grouping,
+    YGrouping,
+    YearGrouping
+} from './Grouping.js';
 import TimeChart from './TimeChart.js';
 
 export default class StackedLineChart extends TimeChart {
@@ -18,5 +24,8 @@ export default class StackedLineChart extends TimeChart {
     }
     public chartType(): string {
         return 'Stacked Line Chart';
+    }
+    public timeRangeGroupings(): (typeof Grouping)[] {
+        return [DayGrouping, ContinuousMonthGrouping, YearGrouping];
     }
 }
