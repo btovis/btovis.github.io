@@ -23,6 +23,7 @@ export default abstract class TimeChart extends Widget {
     public abstract timeRangeGroupings();
     public abstract generateChartSpecificOptions(numTraces: number): Array<InputOption>;
 
+    //public abstract updateTraceOptions(): void;
     // private grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.SpeciesGroup);
 
     // private buildOptions(): void {
@@ -128,7 +129,6 @@ export default abstract class TimeChart extends Widget {
             (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
         );
         const grouping = new groupingCls(this.panel.dataFilterer, this.yAxisSelector.selected);
-        console.log(grouping.numTraces());
         // Calculate number of traces and call child method to generate, then bind to options in-line
         this.options = [
             this.xAxisSelector,

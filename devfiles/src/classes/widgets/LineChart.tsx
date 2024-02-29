@@ -24,10 +24,24 @@ export default class LineChart extends TimeChart {
             traceConfigs.push(singleTraceConfig);
         }
         return traceConfigs;
-        return {
-            type: 'scatter'
-        };
     }
+    public updateTraceOptions(): void {
+        console.log('reached');
+        // Use the grouping to find number of traces
+        const [groupingCls] = this.timeRangeGroupings().filter(
+            (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
+        );
+        const grouping = new groupingCls(this.panel.dataFilterer, this.yAxisSelector.selected);
+        // Calculate number of traces and call child method to generate, then bind to options in-line
+        this.options = [
+            this.xAxisSelector,
+            this.yAxisSelector,
+            ...this.generateChartSpecificOptions(grouping.numTraces())
+        ];
+        console.log(this.options);
+        this.refresh();
+    }
+
     public chartType(): string {
         return 'Line Chart';
     }

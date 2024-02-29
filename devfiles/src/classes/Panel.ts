@@ -151,16 +151,17 @@ export default class Panel {
     public refresh(): void {
         //Update dataFilterers
         this.dataFilterer.dataUpdated();
+        this.refreshWidgets();
 
         //Update options to reflect new filters
         this.updateInputOptions();
 
         //Refresh after internal class state is updated
         this.refreshComponent();
-        this.refreshWidgets();
     }
 
     public refreshWidgets(): void {
+        this.widgets.forEach((w) => w.updateTraceOptions());
         this.widgets.forEach((w) => w.refresh());
     }
 

@@ -10,6 +10,7 @@ export default abstract class Widget {
     protected options: InputOption[];
     protected config: WidgetConfig;
     public refresh: () => void = () => {};
+    public abstract updateTraceOptions(): void;
 
     public constructor(panel: Panel, config: WidgetConfig) {
         this.panel = panel;
