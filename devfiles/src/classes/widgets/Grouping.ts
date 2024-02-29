@@ -24,7 +24,10 @@ abstract class Grouping {
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();
+        // Unique x values.
         this.xValues = new Set();
+
+        // Use an attribute to select the y values.
         let attribute: Attribute;
         switch (yGrouping) {
             case YGrouping.Species:
@@ -35,12 +38,13 @@ abstract class Grouping {
                 attribute = Attribute.speciesGroup;
                 break;
         }
+        // Store the column used when grouping.
         this.yColumnIdx = filter.getColumnIndex(attribute);
         this.yGrouping = yGrouping;
         this.speciesMeta = filter.getDataStats().getSpeciesMeta();
         this.xValuesArray = [];
     }
-    // Select the value to be used for the x-axis.
+    // Namings for displaying data.
     public abstract selectX(row: Row): SetElement;
     public abstract getXLabel(): string;
     public getXRate(): string {
@@ -87,7 +91,8 @@ abstract class Grouping {
     // Aggregate the pairs of x-y values.
     public aggregatePairs() {
         const pairs = this.generatePairs();
-        // use y as the first key and x as the second
+        // Use y as the first key and x as the second.
+        // Stores counts of x values for each y value.
         const aggregated = new Map<SetElement, Map<SetElement, number>>();
         for (const [x, y] of pairs) {
             const map = aggregated.get(y);
@@ -141,10 +146,12 @@ abstract class Grouping {
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
         const xIndexMap = this.xIndexMap();
+        // Map from index to label.
         const labelAlias = Object.fromEntries(
             Array.from(xIndexMap.entries()).map(([x, i]) => [i, x.value])
         );
         return {
+            // Generate traces with additional config.
             traces: partialTraces.map((trace) => {
                 return {
                     ...trace,
