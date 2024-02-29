@@ -10,16 +10,11 @@ import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
     private accordionOpen = false;
-    public defaultFromTime: Dayjs;
-    public defaultToTime: Dayjs;
     public fromTime: Dayjs;
     public toTime: Dayjs;
 
     public constructor(panel: Panel, name: string, template?: TimeRange) {
         super(panel, name);
-
-        this.defaultFromTime = dayjs('00:00', 'HH:mm');
-        this.defaultToTime = dayjs('23:59', 'HH:mm');
 
         //Copy the current state from the old template
         if (template === undefined) {
@@ -86,11 +81,7 @@ export default class TimeRange extends InputOption {
     }
 
     private isDefaultRange() {
-        return (
-            Math.abs(this.fromTime.diff(this.defaultFromTime)) +
-                Math.abs(this.toTime.diff(this.defaultToTime)) ==
-            0
-        );
+        return this.fromTime.diff(this.toTime, 'm') == 1;
     }
 
     public callback(newValue: { which: number; time: Dayjs }): void {
