@@ -103,6 +103,9 @@ export default class TableWidget extends Widget {
             this.seenDataState !== this.panel.dataFilterer.getDataState() ||
             this.seenFilterState !== this.panel.dataFilterer.getFilterState()
         ) {
+            this.pageState = 0;
+            this.seenDataState = this.panel.dataFilterer.getDataState();
+            this.seenFilterState = this.panel.dataFilterer.getFilterState();
             const data = this.panel.dataFilterer.getData()[0];
             const dataLength = this.panel.dataFilterer.getData()[1];
             const indices = this.columns.map((c) => c[1]);
@@ -129,12 +132,12 @@ export default class TableWidget extends Widget {
         return (
             <div>
                 {/* Control div */}
-                <div style={{ margin: '5px', display: 'inline' }}>
+                <div style={{ width: '100%', float: 'left', margin: '5px', display: 'inline' }}>
                     <br />
                     {/* PgLeft Button */}
                     <button
                         className='btn btn-primary lr-button'
-                        disabled={this.pageState <= 0}
+                        disabled={this.searchState.trim() !== '' || this.pageState <= 0}
                         onClick={() => {
                             if (this.pageState === 0) return;
                             this.pageState -= 1;
@@ -145,12 +148,20 @@ export default class TableWidget extends Widget {
                     </button>
                     {/* Current page */}
                     <span>
-                        {this.pageState + 1}/{Math.floor(this.tableRows.length / this.pageSize) + 1}
+                        {this.searchState.trim() === ''
+                            ? this.pageState +
+                              1 +
+                              '/' +
+                              (Math.floor(this.tableRows.length / this.pageSize) + 1)
+                            : '-/-'}
                     </span>
                     {/* PgRight Button */}
                     <button
                         className='btn btn-primary lr-button'
-                        disabled={(this.pageState + 1) * this.pageSize >= this.tableRows.length}
+                        disabled={
+                            this.searchState.trim() !== '' ||
+                            (this.pageState + 1) * this.pageSize >= this.tableRows.length
+                        }
                         onClick={() => {
                             if ((this.pageState + 1) * this.pageSize >= this.tableRows.length)
                                 return;
@@ -198,6 +209,7 @@ export default class TableWidget extends Widget {
                         })}
                     </datalist>
                 </div>
+                {/* Actual table */}
                 <table className='table'>
                     <thead>
                         <tr>
@@ -206,18 +218,19 @@ export default class TableWidget extends Widget {
                                     <strong>{col[0]}</strong>
                                 </td>
                             ))}
-                            <td>#</td>
+                            <td>
+                                <strong>#</strong>
+                            </td>
                         </tr>
                     </thead>
                     <tbody>
                         {/* If search state is empty, show the paged table.
                             If not, extend the table and just show everything */}
-                        {(this.searchState.trim() === ''
-                            ? this.tableRows
-                            : this.tableRows.filter((row) => row.key.startsWith(this.searchState))
-                        ).filter((_row, idx) => {
-                            return Math.floor(idx / this.pageSize) === this.pageState;
-                        })}
+                        {this.searchState.trim() === ''
+                            ? this.tableRows.filter((_row, idx) => {
+                                  return Math.floor(idx / this.pageSize) === this.pageState;
+                              })
+                            : this.tableRows.filter((row) => row.key.includes(this.searchState))}
                     </tbody>
                 </table>
             </div>
