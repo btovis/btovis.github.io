@@ -39,6 +39,13 @@ function integrateNewCSV(
         if (!newColumnList.includes('ACTUAL DATE') && newColumnList.includes('DATE')) {
             newColumnList[newColumnList.indexOf('DATE')] = 'ACTUAL DATE';
         }
+        if (newColumnList.includes('ACTUAL DATE') && !newColumnList.includes('SURVEY DATE')) {
+            // todo: copy from actual date?
+            newColumnList.push('SURVEY DATE');
+            for (const r of newDatabase) {
+                r.push('0000-00-00');
+            }
+        }
 
         if (!newColumnList.includes('SPECIES')) {
             newColumnList[newColumnList.indexOf('SP_CODE')] = 'SPECIES';
@@ -274,14 +281,10 @@ function integrateNewCSV(
     // make processor, replace previous with it
 
     const dateCol = titleToColumnIndex.get(Attribute.actualDate);
-    if (dateCol) {
-        processDates(oldDatabase, oldDBLen, dateCol);
-    }
+    processDates(oldDatabase, oldDBLen, dateCol);
 
     const surveyDateCol = titleToColumnIndex.get(Attribute.surveyDate);
-    if (surveyDateCol) {
-        processDates(oldDatabase, oldDBLen, surveyDateCol);
-    }
+    processDates(oldDatabase, oldDBLen, surveyDateCol);
 
     const timeCol = titleToColumnIndex.get(Attribute.time);
     if (timeCol) {
