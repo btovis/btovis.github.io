@@ -23,6 +23,7 @@ export default class MutuallyExclusiveSelector extends Selector {
     }
     public callback(newValue: any): void {
         this.selected = newValue.item;
+        this.excluded = new Set([...this.choices].filter((c) => c !== this.selected));
         super.callback(newValue);
     }
 }

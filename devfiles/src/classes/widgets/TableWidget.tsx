@@ -7,6 +7,7 @@ import Panel from '../Panel.js';
 import { Attribute, Data } from '../data/Data.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { v4 as uuidv4 } from 'uuid';
+import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 
 /**
  * This will take in a set of input columns, then
@@ -28,7 +29,9 @@ export default class TableWidget extends Widget {
     private seenDataState: number;
     private seenFilterState: number;
 
+    //Options
     private selectorOption: Selector;
+    private cullEmpty: MutuallyExclusiveSelector;
 
     /**
      * Initiatise all options here in private variables. These options will persist
@@ -38,6 +41,9 @@ export default class TableWidget extends Widget {
      */
     public constructor(panel: Panel, config: WidgetConfig) {
         super(panel, config);
+        this.seenDataState = panel.dataFilterer.getDataState();
+        this.seenFilterState = panel.dataFilterer.getFilterState();
+
         this.selectorOption = new Selector(
             panel,
             'Table Columns',
@@ -45,12 +51,21 @@ export default class TableWidget extends Widget {
             false,
             [Attribute.speciesEnglishName, Attribute.warnings]
         );
-        this.seenDataState = panel.dataFilterer.getDataState();
-        this.seenFilterState = panel.dataFilterer.getFilterState();
-
         //This refreshes the widget everytime the selector is called.
         this.selectorOption.extendedCallbacks.push(() => this.onSelectorChange());
-        this.options = [this.selectorOption];
+
+        this.cullEmpty = new MutuallyExclusiveSelector(
+            panel,
+            'Cull Empty Cells',
+            ['True', 'False'],
+            'False'
+        );
+        this.cullEmpty.extendedCallbacks.push(() => {
+            this.seenFilterState = 0; //Invalidate this, as a "filter" changed
+            this.refresh();
+        });
+
+        this.options = [this.cullEmpty, this.selectorOption];
         this.onSelectorChange();
     }
 
@@ -109,7 +124,12 @@ export default class TableWidget extends Widget {
             const data = this.panel.dataFilterer.getData()[0];
             const dataLength = this.panel.dataFilterer.getData()[1];
             const indices = this.columns.map((c) => c[1]);
-            this.tableEntries = TableWidget.processAsArray(data, dataLength, indices);
+            this.tableEntries = TableWidget.processAsArray(
+                data,
+                dataLength,
+                indices,
+                this.cullEmpty.selected === 'True'
+            );
 
             //Build the DOM objects from the sorted list
             this.tableRows = [];
@@ -230,7 +250,9 @@ export default class TableWidget extends Widget {
                             ? this.tableRows.filter((_row, idx) => {
                                   return Math.floor(idx / this.pageSize) === this.pageState;
                               })
-                            : this.tableRows.filter((row) => row.key.includes(this.searchState))}
+                            : this.tableRows.filter((row) =>
+                                  row.key.toLowerCase().includes(this.searchState.toLowerCase())
+                              )}
                     </tbody>
                 </table>
             </div>
@@ -240,7 +262,8 @@ export default class TableWidget extends Widget {
     protected static processAsArray(
         data: (string | number | SetElement)[][],
         dataLength: number,
-        indices: number[]
+        indices: number[],
+        cullEmpty: boolean
     ): [string, number][] {
         // Write rows as strings
         // Order the strings
@@ -256,13 +279,15 @@ export default class TableWidget extends Widget {
         const row = new Array(indicesLength);
         for (let i = 0; i < dataLength; i++) {
             const dataRow = data[i];
+            let invalidRow = false;
             for (let x = 0; x < indicesLength; x++) {
                 const val = dataRow[indices[x]];
                 if (val instanceof SetElement) row[x] = val.value;
                 else row[x] = val;
                 // issue #91: skip or not (Do not skip)
-                //if (!row[x]) continue loop;
+                if (row[x] === '[none]') invalidRow = true;
             }
+            if (cullEmpty && invalidRow) continue;
             arr.push(row.join('\0'));
         }
 
