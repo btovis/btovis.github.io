@@ -8,11 +8,11 @@ import { Accordion } from 'react-bootstrap';
 
 export default class NumericInput extends InputOption {
     private value: number;
+    private bouncyValue: number;
     private min: number;
     private max: number;
     private step: number;
     private accordionOpen = false;
-    private newValue: number;
 
     public constructor(
         panel: Panel,
@@ -23,7 +23,7 @@ export default class NumericInput extends InputOption {
         template?: NumericInput
     ) {
         super(panel, name);
-        this.value = 0;
+        this.value = 0; //default
         this.min = min;
         this.max = max;
         this.step = step;
@@ -31,11 +31,7 @@ export default class NumericInput extends InputOption {
             this.value = template.value;
             this.accordionOpen = template.accordionOpen;
         }
-        this.newValue = this.value;
-    }
-
-    public getValue(): number {
-        return this.value;
+        this.bouncyValue = this.value;
     }
 
     public render(): JSX.Element {
@@ -56,17 +52,18 @@ export default class NumericInput extends InputOption {
                     <Accordion.Body>
                         <div className='sidebar-padding'>
                             <Form.Range
-                                value={this.value}
+                                defaultValue={this.value}
                                 min={this.min}
                                 max={this.max}
                                 step={this.step}
                                 onChange={(event) => {
-                                    this.value = event.target.valueAsNumber;
-                                    this.newValue = this.value;
+                                    this.bouncyValue = event.target.valueAsNumber;
+                                    const oldVal = this.bouncyValue;
+                                    setTimeout(() => {
+                                        if (this.bouncyValue === oldVal)
+                                            this.callback(this.bouncyValue);
+                                    }, 300);
                                     this.refreshComponent();
-                                }}
-                                onMouseUp={(event) => {
-                                    this.callback();
                                 }}
                             />
                             <div style={{ display: 'inline' }}>
@@ -78,22 +75,18 @@ export default class NumericInput extends InputOption {
                                     min={this.min}
                                     max={this.max}
                                     step={this.step}
-                                    value={this.newValue}
+                                    defaultValue={this.value}
                                     onChange={(event) => {
-                                        this.newValue = event.target.valueAsNumber;
+                                        this.bouncyValue = event.target.valueAsNumber;
+                                        const oldVal = this.bouncyValue;
                                         this.refreshComponent();
-                                    }}
-                                    onBlur={(event) => {
-                                        this.callback();
+                                        setTimeout(() => {
+                                            if (this.bouncyValue === oldVal)
+                                                this.callback(this.bouncyValue);
+                                        }, 300);
                                     }}
                                     onScroll={(event) => {
                                         event.preventDefault();
-                                    }}
-                                    onKeyUp={(e) => {
-                                        if (e.key == 'Enter') {
-                                            this.callback();
-                                            e.currentTarget.blur();
-                                        }
                                     }}
                                 />
                             </div>
@@ -104,8 +97,8 @@ export default class NumericInput extends InputOption {
         );
     }
 
-    public callback(): void {
-        this.value = this.newValue;
+    public callback(newValue: number): void {
+        this.value = newValue;
         // this.panel.refreshComponent();
         this.panel.recalculateFilters(this);
         this.panel.refreshWidgets();
