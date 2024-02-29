@@ -3,6 +3,8 @@ import { Query } from '../query/Query';
 import { v4 as uuidv4 } from 'uuid';
 
 export default abstract class InputOption {
+    //Needs to be individually defined in each option's callback function.
+    public extendedCallbacks: ((any) => void)[] = [];
     public readonly uuid: number;
     public readonly name: string;
     protected readonly panel: Panel;
