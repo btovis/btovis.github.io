@@ -39,15 +39,6 @@ function integrateNewCSV(
     oldSets: ReferenceSet[],
     oldProcessors: any[]
 ) {
-    const permutes: number[] = new Array(newColumnList.length);
-    permutes[0] = 0;
-    // [0,3,1,undefined] means bring 1st column of new to 3rd of old, second to first of old, make a new column for the third
-    // undefined means "new column"
-    // -2 means "duplicate column, drop it"
-
-    // used for duplicate column detection in the newColumnList
-    const earliestColumnWithNameInNew = new Map<string, number>();
-
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = newColumnList[i].toUpperCase();
     }
@@ -148,11 +139,20 @@ function integrateNewCSV(
         throw 'No SPECIES GROUP column found';
     }
 
-    if (!newColumnList.includes('VULN.')) {
-        newColumnList.push('VULN.');
+    if (!newColumnList.includes('VULNERABILITY')) {
+        newColumnList.push('VULNERABILITY');
         const colI = newColumnList.indexOf('SCIENTIFIC NAME');
         for (const r of newDatabase) r.push(getSpeciesEndangerment(r[colI]));
     }
+
+    const permutes: number[] = new Array(newColumnList.length);
+    permutes[0] = 0;
+    // [0,3,1,undefined] means bring 1st column of new to 3rd of old, second to first of old, make a new column for the third
+    // undefined means "new column"
+    // -2 means "duplicate column, drop it"
+
+    // used for duplicate column detection in the newColumnList
+    const earliestColumnWithNameInNew = new Map<string, number>();
 
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = matchColumnNames(newColumnList[i]);
@@ -288,6 +288,7 @@ function integrateNewCSV(
             r[z] = oldProcessors[z](r[z]);
         }
     }
+    console.log(oldDatabase[0]);
 }
 
 function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string) => any*/ {
