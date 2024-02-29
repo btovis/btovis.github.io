@@ -13,9 +13,6 @@ export default class LineChart extends Widget {
         const plotLayout = {
             width: 400,
             height: 210,
-            title: {
-                text: 'Line Chart'
-            },
             margin: {
                 l: 30,
                 r: 30,
