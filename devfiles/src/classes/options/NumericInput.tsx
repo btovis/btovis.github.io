@@ -69,9 +69,11 @@ export default class NumericInput extends InputOption {
                                     this.callback();
                                 }}
                             />
-                            <p>
-                                Selected Value:
+                            <div style={{ display: 'inline' }}>
+                                <span>Selected Value:</span>
                                 <input
+                                    style={{ width: '30%', marginLeft: '5px', display: 'inline' }}
+                                    className='form-control'
                                     type='number'
                                     min={this.min}
                                     max={this.max}
@@ -87,8 +89,14 @@ export default class NumericInput extends InputOption {
                                     onScroll={(event) => {
                                         event.preventDefault();
                                     }}
-                                ></input>
-                            </p>
+                                    onKeyUp={(e) => {
+                                        if (e.key == 'Enter') {
+                                            this.callback();
+                                            e.currentTarget.blur();
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
