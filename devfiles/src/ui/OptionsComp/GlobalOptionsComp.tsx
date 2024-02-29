@@ -30,6 +30,7 @@ function GlobalOptionsComp(params: {
                     </tbody>
                 </table>
                 <input
+                    onClick={(event) => (event.currentTarget.value = null)}
                     onChange={(event) => {
                         params.renderFileProcess(event.target.files);
                     }}

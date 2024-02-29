@@ -135,7 +135,7 @@ export default class Selector extends InputOption {
                     <Accordion.Body>
                         {searchBar}
                         <div className='form-check'>
-                            {this.inputType() == 'checkbox' ? selectAll : ''}
+                            {this.inputType() == 'checkbox' ? selectAll : <></>}
                             {[...this.choices].map((item, itemIdx) => {
                                 return (
                                     <div

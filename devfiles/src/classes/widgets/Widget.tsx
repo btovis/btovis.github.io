@@ -4,11 +4,13 @@ import Panel from '../Panel.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import WidgetConfig from './WidgetConfig.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export default abstract class Widget {
     protected panel: Panel;
     protected options: InputOption[];
     protected config: WidgetConfig;
+    public uuid = uuidv4();
     public refresh: () => void = () => {};
 
     public constructor(panel: Panel, config: WidgetConfig) {
