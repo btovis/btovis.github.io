@@ -76,7 +76,14 @@ export default class Panel {
         this.geographic = new Geographic(this, 'Location', this.geographic);
         this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
         this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
-        this.minimumProbability = new NumericInput(this, 'Minimum Probability', 0, 1, 0.01);
+        this.minimumProbability = new NumericInput(
+            this,
+            'Minimum Probability',
+            0,
+            1,
+            0.01,
+            this.minimumProbability
+        );
         this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
@@ -158,6 +165,7 @@ export default class Panel {
 
         //Update options to reflect new filters
         this.updateInputOptions();
+        this.pageManager.refreshPanelOptions();
 
         //Refresh after internal class state is updated
         this.refreshComponent();
