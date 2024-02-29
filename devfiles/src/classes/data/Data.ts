@@ -99,9 +99,7 @@ class Data {
         }
         for (const set of this.sets) {
             if (!set) continue;
-            // handle "", " " to "[empty]"
-            set.changeValue('', '[empty]');
-            set.changeValue(' ', '[whitespace]');
+            set.changeValue('', '[none]');
         }
         if (!finaliseLater) this.dataStats.refresh();
     }

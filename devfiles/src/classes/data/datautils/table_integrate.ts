@@ -104,16 +104,6 @@ function integrateNewCSV(
             }
         }
     }
-    // add lat and loc if not existing
-    if (!newColumnList.includes('LATITUDE')) {
-        newColumnList.push('LATITUDE');
-        for (const r of newDatabase) r.push(0);
-    }
-
-    if (!newColumnList.includes('LONGITUDE')) {
-        newColumnList.push('LONGITUDE');
-        for (const r of newDatabase) r.push(0);
-    }
 
     if (!newColumnList.includes('TIME')) {
         throw 'No Time column found';
@@ -143,6 +133,22 @@ function integrateNewCSV(
         newColumnList.push('VULNERABILITY');
         const colI = newColumnList.indexOf('SCIENTIFIC NAME');
         for (const r of newDatabase) r.push(getSpeciesEndangerment(r[colI]));
+    }
+
+    const rowLen = newColumnList.length;
+    for (const r of newDatabase) {
+        for (let i = 0; i < rowLen; i++) if (r[i].trim) r[i] = r[i].trim();
+    }
+
+    // add lat and loc if not existing
+    if (!newColumnList.includes('LATITUDE')) {
+        newColumnList.push('LATITUDE');
+        for (const r of newDatabase) r.push(0);
+    }
+
+    if (!newColumnList.includes('LONGITUDE')) {
+        newColumnList.push('LONGITUDE');
+        for (const r of newDatabase) r.push(0);
     }
 
     const permutes: number[] = new Array(newColumnList.length);
