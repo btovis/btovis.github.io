@@ -255,7 +255,7 @@ input[type=number] {
   z-index:1000000;
 }
 
-.panel .body {
+.panel-body {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
@@ -291,11 +291,18 @@ input[type=number] {
   background-color: #aaa;
 }
 
+span {
+  width: 100%;
+}
+
 .widget {
-  min-height: 100%;
+  overflow-y: scroll;
   width: fit-content;
-  position: relative;
-  float: left;
+  margin: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  /* position: relative; */
+  /* float: left; */
   border: solid;
   border-color: rgba(0, 0, 0, 0);
   border-radius: 10px;
@@ -306,13 +313,9 @@ input[type=number] {
 }
 
 .widget-row {
-  height: 250px;
-  width: 80%;
-  display: inline-grid;
-  grid-auto-flow: column;
-  overflow-x: scroll;
-  overflow-y: visible;
-  column-gap: 50px;
+  height: 90%;
+  width: 100%;
+  overflow-y: scroll;
 }
 
 .add-widget-btns {
@@ -343,6 +346,24 @@ input[type=number] {
 
 .text-warning {
   color: red;
+}
+
+.react-resizable {
+  position: relative;
+  display: block;
+}
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4=');
+  background-position: bottom;
+  padding: 0 3px 3px 0;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  cursor: s-resize;
+  transform: rotate(45deg);
 }
 
 /**
