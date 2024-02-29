@@ -47,14 +47,7 @@ abstract class Grouping {
         return `${this.getXLabel()}ly`;
     }
     public getYName(): string {
-        switch (this.yGrouping) {
-            case YGrouping.Species:
-                return 'Species';
-            case YGrouping.SpeciesGroup:
-                return 'Species Group';
-            case YGrouping.VulnerabilityStatus:
-                return 'Vulnerability Status';
-        }
+        return this.yGrouping;
     }
     public getYLabel(): string {
         return `Counts/${this.getYName()}`;
