@@ -161,7 +161,7 @@ abstract class Grouping {
                 xaxis: {
                     title: this.getXLabel(),
                     labelalias: labelAlias,
-                    nticks: xIndexMap.size,
+                    nticks: Math.min(xIndexMap.size, 10),
                     tickmode: 'auto'
                 },
                 yaxis: {
@@ -272,7 +272,7 @@ class DayGrouping extends TimeGrouping {
         return this.formatDate(datetime.getDate(), datetime.getMonth() + 1, datetime.getFullYear());
     }
     private formatDate(day: number, month: number, year: number): string {
-        return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+        return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year.toString().slice(-2)}`;
     }
 
     public xIndexMap() {
