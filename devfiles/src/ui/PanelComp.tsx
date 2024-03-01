@@ -77,7 +77,10 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
 
     function selectThisPanel() {
         //If there is a previous selected panel, render unselection
-        if (params.pageManager.unselectPanel) {
+        if (
+            params.pageManager.unselectPanel &&
+            params.pageManager.selectedPanel !== params.panelIdx
+        ) {
             //Ensure previous widget is unselected
             params.pageManager.selectedWidget = -1;
             if (params.pageManager.unselectWidget) params.pageManager.unselectWidget();

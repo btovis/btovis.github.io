@@ -17,8 +17,6 @@ function WidgetComp(params: {
     const widget = panel.getWidget(params.widgetIdx);
     widget.refresh = () => dud(r + 1);
 
-    console.log('Rendering widget', widget.uuid, 'under panel', panel.uuid);
-
     return params.widgetClass.render();
 }
 
