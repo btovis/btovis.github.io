@@ -35,10 +35,8 @@ export default class ColorOption extends InputOption {
         this.selectedColor = newValue;
 
         //Refresh to show new panel name
-        this.panel.refreshComponent();
-        this.panel.refreshWidgets();
-        //Refresh sidebar for new panel name too
         this.refreshComponent();
+        this.panel.refreshWidgetsRender();
     }
     public query(): Query {
         throw new Error('Method not implemented.');

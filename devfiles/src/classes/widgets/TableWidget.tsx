@@ -2,7 +2,6 @@ import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Selector from '../options/Selector.js';
-import WidgetConfig from './WidgetConfig.js';
 import Panel from '../Panel.js';
 import { Attribute, Data } from '../data/Data.js';
 import SetElement from '../data/setutils/SetElement.js';
@@ -25,10 +24,9 @@ export default class TableWidget extends Widget {
      * Initiatise all options here in private variables. These options will persist
      * state for the widget.
      * @param panel
-     * @param config
      */
-    public constructor(panel: Panel, config: WidgetConfig) {
-        super(panel, config);
+    public constructor(panel: Panel) {
+        super(panel);
         this.selectorOption = new Selector(
             panel,
             'Table Columns',
@@ -184,4 +182,5 @@ export default class TableWidget extends Widget {
     public export(fileType: ExportFileType): void {
         throw new Error('Method not implemented.');
     }
+    public updateTraceOptions(): void {}
 }

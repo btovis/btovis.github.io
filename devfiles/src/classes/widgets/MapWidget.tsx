@@ -6,6 +6,9 @@ import { Attribute } from '../data/Data.js';
 import Panel from '../Panel.js';
 
 export default class MapWidget extends Widget {
+    // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
+    public updateTraceOptions(): void {}
+
     public static readonly mapToken =
         'pk.eyJ1Ijoic2F0b3J1enp6IiwiYSI6ImNsc3VmdnltNzE4YzIybHFraWQ3N2k3aWIifQ.TxLQjJE3y5p9cZSzkyeWUQ';
 

@@ -7,7 +7,6 @@ import PanelNameInput from './options/PanelNameInput';
 import DateRange from './options/DateRange';
 import BarChart from './widgets/BarChart';
 import Widget from './widgets/Widget';
-import WidgetConfig from './widgets/WidgetConfig';
 import DataFilterer from './data/DataFilterer';
 import { v4 as uuidv4 } from 'uuid';
 import InputOption from './options/InputOption';
@@ -16,6 +15,7 @@ import SpeciesSelector from './options/SpeciesSelector';
 import TimeOfDayRange from './options/TimeOfDayRange';
 import { Query } from './query/Query';
 import LineChart from './widgets/LineChart.tsx';
+import TimeChart from './widgets/TimeChart.tsx';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -55,8 +55,7 @@ export default class Panel {
         );
         this.updateInputOptions();
 
-        const testConfig = new WidgetConfig();
-        this.widgets = [new BarChart(this, testConfig)];
+        this.widgets = [new BarChart(this)];
     }
 
     public getName(): string {
@@ -161,7 +160,13 @@ export default class Panel {
     }
 
     public refreshWidgets(): void {
+        this.widgets.forEach((w) => {
+            if (w instanceof TimeChart) w.updateGrouping();
+        });
         this.widgets.forEach((w) => w.updateTraceOptions());
+        this.widgets.forEach((w) => w.refresh());
+    }
+    public refreshWidgetsRender(): void {
         this.widgets.forEach((w) => w.refresh());
     }
 

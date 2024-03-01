@@ -3,7 +3,6 @@ import Accordion from 'react-bootstrap/Accordion';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
-import WidgetConfig from '../classes/widgets/WidgetConfig.js';
 import WidgetComp from './WidgetComp.js';
 import BarChart from '../classes/widgets/BarChart.js';
 import MapWidget from '../classes/widgets/MapWidget.js';
@@ -69,10 +68,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 className='widget-btn'
                                 onClick={() => {
                                     panel.addWidget(
-                                        new BarChart(
-                                            params.pageManager.panels[params.panelIdx],
-                                            new WidgetConfig()
-                                        )
+                                        new BarChart(params.pageManager.panels[params.panelIdx])
                                     );
                                     //If negative, scroll rightwards
                                     setSnapRight(-Math.abs(snapRight) - 1);
@@ -84,10 +80,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 className='widget-btn'
                                 onClick={() => {
                                     panel.addWidget(
-                                        new TableWidget(
-                                            params.pageManager.panels[params.panelIdx],
-                                            new WidgetConfig()
-                                        )
+                                        new TableWidget(params.pageManager.panels[params.panelIdx])
                                     );
                                     //If negative, scroll rightwards
                                     setSnapRight(-Math.abs(snapRight) - 1);
@@ -99,10 +92,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 className='widget-btn'
                                 onClick={() => {
                                     panel.addWidget(
-                                        new MapWidget(
-                                            params.pageManager.panels[params.panelIdx],
-                                            new WidgetConfig()
-                                        )
+                                        new MapWidget(params.pageManager.panels[params.panelIdx])
                                     );
                                     //If negative, scroll rightwards
                                     setSnapRight(-Math.abs(snapRight) - 1);
@@ -114,10 +104,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 className='widget-btn'
                                 onClick={() => {
                                     panel.addWidget(
-                                        new LineChart(
-                                            params.pageManager.panels[params.panelIdx],
-                                            new WidgetConfig()
-                                        )
+                                        new LineChart(params.pageManager.panels[params.panelIdx])
                                     );
                                     //If negative, scroll rightwards
                                     setSnapRight(-Math.abs(snapRight) - 1);
@@ -130,8 +117,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 onClick={() => {
                                     panel.addWidget(
                                         new StackedLineChart(
-                                            params.pageManager.panels[params.panelIdx],
-                                            new WidgetConfig()
+                                            params.pageManager.panels[params.panelIdx]
                                         )
                                     );
                                     //If negative, scroll rightwards
@@ -144,10 +130,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 className='widget-btn'
                                 onClick={() => {
                                     panel.addWidget(
-                                        new DebugWidget(
-                                            params.pageManager.panels[params.panelIdx],
-                                            new WidgetConfig()
-                                        )
+                                        new DebugWidget(params.pageManager.panels[params.panelIdx])
                                     );
                                     //If negative, scroll rightwards
                                     setSnapRight(-Math.abs(snapRight) - 1);

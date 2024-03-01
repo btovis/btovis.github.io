@@ -5,7 +5,6 @@ import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
 import ExportFileType from './ExportFileType';
 import { ContinuousMonthGrouping, DayGrouping, Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
-import WidgetConfig from './WidgetConfig';
 import InputOption from '../options/InputOption';
 import ColorOption from '../options/ColorOption.js';
 import { getTouchRippleUtilityClass } from '@mui/material';
@@ -15,104 +14,35 @@ export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
     // This is declared here only because it isn't working when it's declared only in LineChart class
-    public colorOptions: Array<ColorOption>;
+    public colorOptions: Array<ColorOption> = [];
 
     // Subclasses implement these methods for specific chart types.
     public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }>;
     public abstract chartType(): string;
     public abstract timeRangeGroupings();
-    public abstract generateChartSpecificOptions(numTraces: number): Array<InputOption>;
+    public abstract generateChartSpecificOptions(numTraces: number): void;
+    public abstract bindOptions(): void;
 
     // Initialize grouping
     public grouping: Grouping;
 
-    //public abstract updateTraceOptions(): void;
-    // private grouping = new DayGrouping(this.panel.dataFilterer, YGrouping.SpeciesGroup);
+    public constructor(panel: Panel) {
+        super(panel);
+        this.initOptions();
+    }
 
-    // private buildOptions(): void {
-    //     //generate x-axis group level
-    //     const enumStrings = Object.keys(LineChartGrouping).filter((v) => isNaN(Number(v)));
-
-    //     // a few fields that affects rendering config
-    //     const numTraces = this.grouping.numTraces();
-    //     const colorsOptions: Array<ColorOption> = [];
-    //     const yTick: NumericInput = new NumericInput(this.panel, 'ytick', 0, 10, 1); // Numeric Input is not yet implemented
-    //     const groupLevel: DropMenuSelector = new DropMenuSelector(
-    //         this.panel,
-    //         'group lebel',
-    //         enumStrings
-    //     );
-
-    //     //generate color options
-    //     for (let i = 0; i < numTraces; i++) {
-    //         colorsOptions.push(
-    //             new ColorOption(this.panel, 'color of trace ' + i.toString(), '#00FFFF')
-    //             //new PanelNameInput(this.panel, "Panel Color", "00FFFF")
-    //         );
-    //     }
-
-    //     //add everything to options
-    //     this.options = colorsOptions;
-    //     this.options.push(groupLevel);
-    // }
-
-    // // constructor
-    // public constructor(panel: Panel, config: WidgetConfig) {
-    //     super(panel, config);
-    //     this.buildOptions();
-    // }
-
-    // public generateSidebar(): Sidebar {
-    //     return new Sidebar(this.options);
-    // }
-
-    // private generateTraceConfig(): Array<{ [key: string]: any }> {
-    //     const traceConfigs: Array<{ [key: string]: any }> = [];
-    //     for (let i = 0; i < this.grouping.numTraces(); i++) {
-    //         const singleTraceConfig: { [key: string]: any } = {};
-    //         singleTraceConfig.type = 'scatter';
-
-    //         const lineConfig: { [key: string]: any } = {};
-    //         lineConfig.color = this.options[i].value();
-    //         singleTraceConfig.line = lineConfig;
-    //         traceConfigs.push(singleTraceConfig);
-    //     }
-    //     return traceConfigs;
-    // }
-
-    // public render(): JSX.Element {
-    //     const plotLayout = {
-    //         width: 400,
-    //         height: 210,
-    //         title: {
-    //             text: 'Line Chart'
-    //         },
-    //         margin: {
-    //             l: 30,
-    //             r: 30,
-    //             b: 50,
-    //             t: 65
-    //         }
-    //     };
-    //     const { traces, layout } = this.grouping.getChart(this.generateTraceConfig(), plotLayout);
-    //     const plotConfig = {
-    //         //staticPlot: true,
-    //         modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
-    //     };
-    //     return <Plot data={traces} layout={layout} config={plotConfig} />;
-
-    public constructor(panel: Panel, config: WidgetConfig) {
-        super(panel, config);
-        this.generateOptions();
+    // Initialize & Update the 'grouping' field of Timechart
+    public updateGrouping(): void {
         // Get the selected groupings for x and y.
         const yGrouping = this.yAxisSelector.selected;
         const [groupingCls] = this.timeRangeGroupings().filter(
             (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
         );
-        // Use the grouping to render the chart data.
+        // Change Value for 'grouping'
         this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
     }
-    public generateOptions(): void {
+    // Initial fill-out of options field to be called in constructor
+    public initOptions(): void {
         // Mutex selector for time (or property) grouping along the x axis.
         this.xAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
@@ -133,19 +63,15 @@ export default abstract class TimeChart extends Widget {
         this.yAxisSelector.extendedCallbacks.push(() => {
             this.refresh();
         });
-        // Use the grouping to find number of traces
-        const [groupingCls] = this.timeRangeGroupings().filter(
-            (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
-        );
-        const grouping = new groupingCls(this.panel.dataFilterer, this.yAxisSelector.selected);
-        // Calculate number of traces and call child method to generate, then bind to options in-line
-        this.options = [
-            this.xAxisSelector,
-            this.yAxisSelector,
-            ...this.generateChartSpecificOptions(grouping.numTraces())
-        ];
-        //this.options = [this.xAxisSelector, this.yAxisSelector];
+
+        // Initialize value for grouping
+        this.updateGrouping();
+        // Generate Trace Options (currently only color)
+        this.generateChartSpecificOptions(this.grouping.numTraces());
+        // bind ColorOptions
+        this.bindOptions();
     }
+
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
