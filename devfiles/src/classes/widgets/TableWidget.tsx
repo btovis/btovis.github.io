@@ -8,6 +8,7 @@ import SetElement from '../data/setutils/SetElement.js';
 import { v4 as uuidv4 } from 'uuid';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 import { hasEmpty, rowComparator, unpack } from '../../utils/DataUtils.js';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 /**
  * This will take in a set of input columns, then
@@ -23,6 +24,7 @@ export default class TableWidget extends Widget {
     private bouncySearchState = '';
     private pageState = 0;
     private pageSize = 10;
+    private readonly searchMax = 5000;
 
     //Hold uuids from DataFilterer
     private seenDataState: number;
@@ -130,6 +132,42 @@ export default class TableWidget extends Widget {
             );
         }
 
+        //Search bar
+        const searchBar = (
+            <span>
+                <span>Find Row:</span>
+                <input
+                    style={{ width: '50%', marginLeft: '5px', display: 'inline' }}
+                    className='form-control'
+                    type='text'
+                    defaultValue={this.searchState}
+                    list={
+                        this.tableEntries.length < this.searchMax
+                            ? this.uuid.toString() + '-search'
+                            : undefined
+                    }
+                    onChange={(event) => {
+                        this.bouncySearchState = event.currentTarget.value;
+                        const oldState = this.bouncySearchState;
+                        setTimeout(() => {
+                            if (oldState === this.bouncySearchState) {
+                                this.searchState = this.bouncySearchState;
+                                this.refresh();
+                            }
+                        }, 300);
+                    }}
+                />
+                <datalist id={this.uuid.toString() + '-search'}>
+                    {this.tableEntries
+                        .filter(() => this.tableEntries.length <= this.searchMax)
+                        .map(([rowIdx, _freq]) => {
+                            const key = this.keyFromRow(rowIdx);
+                            return <option key={key + '-option'} value={key} />;
+                        })}
+                </datalist>
+            </span>
+        );
+
         //Return the actual sorted table
         return (
             <div>
@@ -154,7 +192,7 @@ export default class TableWidget extends Widget {
                             ? this.pageState +
                               1 +
                               '/' +
-                              (Math.floor(this.tableEntries.length / this.pageSize) + 1)
+                              Math.ceil(this.tableEntries.length / this.pageSize)
                             : '-/-'}
                     </span>
                     {/* PgRight Button */}
@@ -174,43 +212,22 @@ export default class TableWidget extends Widget {
                         ▷
                     </button>
                     {/* Search Bar */}
-                    <span>Find Row:</span>
-                    <input
-                        style={{ width: '50%', marginLeft: '5px', display: 'inline' }}
-                        className='form-control'
-                        type='text'
-                        defaultValue={this.searchState}
-                        list={this.uuid.toString() + '-search'}
-                        onChange={(event) => {
-                            this.bouncySearchState = event.currentTarget.value;
-                            const oldState = this.bouncySearchState;
-                            setTimeout(() => {
-                                if (oldState === this.bouncySearchState) {
-                                    this.searchState = this.bouncySearchState;
-                                    this.refresh();
-                                }
-                            }, 300);
-                        }}
-                        onBlur={(event) => {
-                            if (this.searchState === this.bouncySearchState) return;
-                            this.searchState = this.bouncySearchState;
-                            this.refresh();
-                        }}
-                        onKeyUp={(e) => {
-                            if (this.searchState === this.bouncySearchState) return;
-                            if (e.key == 'Enter') {
-                                e.currentTarget.blur();
-                                this.searchState = this.bouncySearchState;
-                                this.refresh();
-                            }
-                        }}
-                    />
-                    <datalist id={this.uuid.toString() + '-search'}>
-                        {this.tableEntries.map(([rowIdx, _freq]) => {
-                            const key = this.keyFromRow(rowIdx);
-                            return <option key={key + '-option'} value={key} />;
-                        })}
-                    </datalist>
+                    {this.tableEntries.length >= this.searchMax ? (
+                        <OverlayTrigger
+                            placement='top'
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={(props) => (
+                                <Tooltip {...props}>
+                                    There are too many rows. Search is limited to the top{' '}
+                                    {this.searchMax} most frequent rows and autocomplete is off
+                                </Tooltip>
+                            )}
+                        >
+                            {searchBar}
+                        </OverlayTrigger>
+                    ) : (
+                        searchBar
+                    )}
                 </div>
                 {/* Actual table */}
                 <table className='table'>
@@ -252,10 +269,12 @@ export default class TableWidget extends Widget {
                                       );
                                   })
                             : this.tableEntries
-                                  .filter(([key, _freq]) =>
-                                      this.keyFromRow(key)
-                                          .toLowerCase()
-                                          .includes(this.searchState.toLowerCase())
+                                  .filter(
+                                      ([key, _freq], idx) =>
+                                          idx <= this.searchMax &&
+                                          this.keyFromRow(key)
+                                              .toLowerCase()
+                                              .includes(this.searchState.toLowerCase())
                                   )
                                   .map(([key, freq]) => {
                                       return (
