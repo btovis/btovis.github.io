@@ -288,9 +288,9 @@ describe('Grouping', async () => {
         it('should get traces with selected properties', () => {
             const grouping = new BatchNameGrouping(filter, YGrouping.Species);
             const { traces, layout } = grouping.getChart(
-                {
+                Array(grouping.numTraces()).fill({
                     type: 'bar'
-                },
+                }),
                 {
                     title: 'Bar Chart'
                 }
