@@ -106,7 +106,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     });
 
     function addwidget(widget) {
-        panel.addWidget(new widget(params.pageManager.panels[params.panelIdx], new WidgetConfig()));
+        panel.addWidget(new widget(params.pageManager.panels[params.panelIdx]));
         //If negative, scroll rightwards
         setSnapRight(-Math.abs(snapRight) - 1);
     }
