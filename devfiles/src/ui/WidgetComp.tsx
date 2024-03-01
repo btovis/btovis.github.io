@@ -2,6 +2,7 @@ import { useState } from 'react';
 import CloseButton from 'react-bootstrap/CloseButton';
 import PageManager from '../classes/PageManager.js';
 import Widget from '../classes/widgets/Widget.js';
+import React from 'react';
 
 function WidgetComp(params: {
     panelIdx: number;
@@ -17,14 +18,10 @@ function WidgetComp(params: {
     widget.refresh = () => dud(r + 1);
     const [highlighted, setHighlighted] = useState(false);
     function selectThisWidget() {
-        console.log('Calling select widget');
         //If there is a previous selected panel, render unselection
         if (params.pageManager.unselectWidget) params.pageManager.unselectWidget();
 
-        console.log('Highlighting');
-
         //Update class state
-        console.log('Selecting', params.widgetIdx);
         params.pageManager.selectedWidget = params.widgetIdx;
         params.pageManager.unselectWidget = () => setHighlighted(false);
         setHighlighted(true);
@@ -33,10 +30,14 @@ function WidgetComp(params: {
         params.pageManager.setSidebarTab('widgetTab');
     }
 
+    console.log('Rendering widget', widget.uuid, 'under panel', panel.uuid);
+
     return (
         <div
-            className={highlighted ? 'widget panelactive' : 'widget'}
+            className={highlighted ? 'widgetactive widget' : 'widget'}
             onClick={(event) => {
+                //Ignore this if the actual panel isn't selected
+                if (params.pageManager.selectedPanel != params.panelIdx) return;
                 event.stopPropagation();
                 selectThisWidget();
             }}
@@ -55,4 +56,4 @@ function WidgetComp(params: {
     );
 }
 
-export default WidgetComp;
+export default React.memo(WidgetComp);

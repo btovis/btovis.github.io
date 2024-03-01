@@ -26,7 +26,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const widgets = panel.getWidgets().map((w, idx) => {
         return (
             <WidgetComp
-                key={idx}
+                key={w.uuid}
                 panelIdx={params.panelIdx}
                 widgetIdx={idx}
                 pageManager={params.pageManager}
@@ -39,7 +39,12 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
 
     function selectThisPanel() {
         //If there is a previous selected panel, render unselection
-        if (params.pageManager.unselectPanel) params.pageManager.unselectPanel();
+        if (params.pageManager.unselectPanel) {
+            //Ensure previous widget is unselected
+            params.pageManager.selectedWidget = -1;
+            if (params.pageManager.unselectWidget) params.pageManager.unselectWidget();
+            params.pageManager.unselectPanel();
+        }
 
         //Update class state
         params.pageManager.selectedPanel = params.panelIdx;

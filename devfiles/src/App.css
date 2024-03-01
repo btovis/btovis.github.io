@@ -183,17 +183,19 @@ input[type=number] {
 } */
 
 .panel {
-  border: solid;
-  border-color: rgba(0, 0, 0, 0);
+  border: none;
   border-radius: 10px;
   margin: auto;
   width: 90%;
   margin-top: 16px;
   margin-bottom: 16px;
 }
+.panel:hover {
+  box-shadow: 1px 1px 3px 5px lightgray;
+}
 
 .panelactive {
-  
+  border: solid;
   border-color: rgb(134, 201, 219);
 }
 
@@ -302,43 +304,6 @@ span {
   width: 100%;
 }
 
-.widget {
-  overflow-y: scroll;
-  width: fit-content;
-  margin: auto;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  /* position: relative; */
-  /* float: left; */
-  border: solid;
-  border-color: rgba(0, 0, 0, 0);
-  border-radius: 10px;
-}
-
-.widget:hover {
-  border-color: lightgray;
-}
-
-.widget-row {
-  height: 90%;
-  width: 100%;
-  overflow-y: scroll;
-}
-
-.add-widget-btns {
-  display: inline-grid;
-  row-gap: 2px;
-}
-
-.widget-btn {
-  width: 150px;
-}
-
-.close-widget {
-  position: relative;
-  float: right;
-}
-
 .delete-btn {
   border-width: medium;
   border-color: #d00000;
@@ -382,6 +347,44 @@ span {
   margin-bottom: 0px;
 }
 
+.widget {
+  width: fit-content;
+  margin: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  /* position: relative; */
+  /* float: left; */
+  border: solid;
+  border-color: rgba(0, 0, 0, 0);
+  border-radius: 10px;
+}
+.widgetactive {
+  border-color: rgb(134, 201, 219, 1);
+}
+
+.widget:hover {
+  box-shadow: 1px 1px 3px 5px lightgray;
+}
+
+.widget-row {
+  height: 90%;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.add-widget-btns {
+  display: inline-grid;
+  row-gap: 2px;
+}
+
+.widget-btn {
+  width: 150px;
+}
+
+.close-widget {
+  position: relative;
+  float: right;
+}
 
 /**
 * Table Widget styles
