@@ -2,12 +2,12 @@ import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
 import Selector from '../options/Selector.js';
-import WidgetConfig from './WidgetConfig.js';
 import Panel from '../Panel.js';
-import { Attribute, Data } from '../data/Data.js';
+import { Attribute } from '../data/Data.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { v4 as uuidv4 } from 'uuid';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
+import { hasEmpty, rowComparator, unpack } from '../../utils/DataUtils.js';
 
 /**
  * This will take in a set of input columns, then
@@ -16,10 +16,9 @@ import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
  * Sort by top frequency
  */
 export default class TableWidget extends Widget {
-    //A SORTED array of table keys:frequencies. It is like that for ease of sorting.
-    private tableEntries: [string, number][] = [];
+    //A SORTED array of row indices to numbers
+    private tableEntries: [number, number][] = [];
     private columns: [column: string, columnIndex: number][] = [];
-    private tableRows: JSX.Element[] = []; //pre-computed table rows
     private searchState = '';
     private bouncySearchState = '';
     private pageState = 0;
@@ -37,10 +36,9 @@ export default class TableWidget extends Widget {
      * Initiatise all options here in private variables. These options will persist
      * state for the widget.
      * @param panel
-     * @param config
      */
-    public constructor(panel: Panel, config: WidgetConfig) {
-        super(panel, config);
+    public constructor(panel: Panel) {
+        super(panel);
         this.seenDataState = panel.dataFilterer.getDataState();
         this.seenFilterState = panel.dataFilterer.getFilterState();
 
@@ -130,22 +128,6 @@ export default class TableWidget extends Widget {
                 indices,
                 this.cullEmpty.selected === 'True'
             );
-
-            //Build the DOM objects from the sorted list
-            this.tableRows = [];
-            for (let i = 0; i < this.tableEntries.length; i++) {
-                const key = this.tableEntries[i][0];
-                const freq = this.tableEntries[i][1];
-                const row = (
-                    <tr key={key.split('\0').join('/') + ':' + freq}>
-                        {key.split('\0').map((colVal) => (
-                            <td key={uuidv4()}>{colVal}</td>
-                        ))}
-                        <td>{freq}</td>
-                    </tr>
-                );
-                this.tableRows.push(row);
-            }
         }
 
         //Return the actual sorted table
@@ -172,7 +154,7 @@ export default class TableWidget extends Widget {
                             ? this.pageState +
                               1 +
                               '/' +
-                              (Math.floor(this.tableRows.length / this.pageSize) + 1)
+                              (Math.floor(this.tableEntries.length / this.pageSize) + 1)
                             : '-/-'}
                     </span>
                     {/* PgRight Button */}
@@ -180,10 +162,10 @@ export default class TableWidget extends Widget {
                         className='btn btn-primary lr-button'
                         disabled={
                             this.searchState.trim() !== '' ||
-                            (this.pageState + 1) * this.pageSize >= this.tableRows.length
+                            (this.pageState + 1) * this.pageSize >= this.tableEntries.length
                         }
                         onClick={() => {
-                            if ((this.pageState + 1) * this.pageSize >= this.tableRows.length)
+                            if ((this.pageState + 1) * this.pageSize >= this.tableEntries.length)
                                 return;
                             this.pageState += 1;
                             this.refresh();
@@ -224,8 +206,9 @@ export default class TableWidget extends Widget {
                         }}
                     />
                     <datalist id={this.uuid.toString() + '-search'}>
-                        {this.tableRows.map((row) => {
-                            return <option key={row.key + '-option'} value={row.key} />;
+                        {this.tableEntries.map(([rowIdx, _freq]) => {
+                            const key = this.keyFromRow(rowIdx);
+                            return <option key={key + '-option'} value={key} />;
                         })}
                     </datalist>
                 </div>
@@ -247,77 +230,123 @@ export default class TableWidget extends Widget {
                         {/* If search state is empty, show the paged table.
                             If not, extend the table and just show everything */}
                         {this.searchState.trim() === ''
-                            ? this.tableRows.filter((_row, idx) => {
-                                  return Math.floor(idx / this.pageSize) === this.pageState;
-                              })
-                            : this.tableRows.filter((row) =>
-                                  row.key.toLowerCase().includes(this.searchState.toLowerCase())
-                              )}
+                            ? this.tableEntries
+                                  .filter(
+                                      (_rowFreq, idx) =>
+                                          Math.floor(idx / this.pageSize) === this.pageState
+                                  )
+                                  .map(([key, freq]) => {
+                                      return (
+                                          <tr key={this.keyFromRow(key)}>
+                                              {this.columns.map(([_colName, cIdx]) => (
+                                                  <td key={uuidv4()}>
+                                                      {unpack(
+                                                          this.panel.dataFilterer.getData()[0][key][
+                                                              cIdx
+                                                          ]
+                                                      )}
+                                                  </td>
+                                              ))}
+                                              <td>{freq}</td>
+                                          </tr>
+                                      );
+                                  })
+                            : this.tableEntries
+                                  .filter(([key, _freq]) =>
+                                      this.keyFromRow(key)
+                                          .toLowerCase()
+                                          .includes(this.searchState.toLowerCase())
+                                  )
+                                  .map(([key, freq]) => {
+                                      return (
+                                          <tr
+                                              key={this.columns
+                                                  .map(([_colName, cIdx]) =>
+                                                      unpack(
+                                                          this.panel.dataFilterer.getData()[0][key][
+                                                              cIdx
+                                                          ]
+                                                      )
+                                                  )
+                                                  .join('/')}
+                                          >
+                                              {this.columns.map(([_colName, cIdx]) => (
+                                                  <td key={uuidv4()}>
+                                                      {unpack(
+                                                          this.panel.dataFilterer.getData()[0][key][
+                                                              cIdx
+                                                          ]
+                                                      )}
+                                                  </td>
+                                              ))}
+                                              <td>{freq}</td>
+                                          </tr>
+                                      );
+                                  })}
                     </tbody>
                 </table>
             </div>
         );
     }
 
-    protected static processAsArray(
+    private keyFromRow(rowIdx: number) {
+        return this.columns
+            .map(([_colName, cIdx]) => unpack(this.panel.dataFilterer.getData()[0][rowIdx][cIdx]))
+            .join('/');
+    }
+
+    /**
+     * When given some filtered data from panel.dataFilterer, this will
+     * calculate the unique rows (of indices) along with their frequencies
+     * @param data panel.dataFilterer.getData()[0]
+     * @param dataLength panel.dataFilterer.getData()[1]
+     * @param indices Column indices of the columns that you want to include
+     * @param cullEmpty Whether or not to ignore rows that contain [none] in the
+     * supplied indices
+     * @returns An array of [number,number][], where the first index of each
+     * array entry is the row index in panel.dataFilterer.getData, and the
+     * second index is the frequency that the row appears in
+     */
+    public static processAsArray(
         data: (string | number | SetElement)[][],
         dataLength: number,
         indices: number[],
         cullEmpty: boolean
-    ): [string, number][] {
-        // Write rows as strings
-        // Order the strings
-        // Collect same strings, they're consecutive
-        // Sort by frequency
+    ): [number, number][] {
+        // Sort the rows according to the input indices
+        // Iterate the rows in one pass and count identical rows,
+        // as they will be grouped together
+        // Sort by frequency at the end
 
-        const arr = [],
-            indicesLength = indices.length;
+        // don't bother with calculations
+        if (dataLength === 0) return [];
 
-        // Rows as strings
+        //[0,1,2...,dataLength]
+        const sortedArray = [...Array(dataLength).keys()];
 
-        // variable "row" reused inside loop
-        const row = new Array(indicesLength);
-        nextRow: for (let i = 0; i < dataLength; i++) {
-            const dataRow = data[i];
-            for (let x = 0; x < indicesLength; x++) {
-                const val = dataRow[indices[x]];
-                if (val instanceof SetElement) row[x] = val.value;
-                else row[x] = val;
-                // issue #91: skip or not (Do not skip)
-                if (cullEmpty)
-                    if (row[x] === '[none]')
-                        continue nextRow;
-            }
-            arr.push(row.join('\0'));
-        }
+        // Order the array by the selected columns
+        sortedArray.sort((id1, id2) => rowComparator(data, indices, id1, id2));
 
-        const arrLength = arr.length;
-
-        // needed for the loop later
-        if (arrLength == 0) return [];
-
-        // Order the strings
-        arr.sort();
-
-        // Collect same strings, they're consecutive
-        //Potential optimisation to build the DOM straight in here
-        const newArr = [];
-        let old: string = arr[0],
+        // Collect same data rows, they're consecutive
+        const groupedArray = [];
+        let old: number = sortedArray[0],
             oldCount: number = 1;
-        for (let i = 1; i < arrLength; i++) {
-            if (arr[i] == old) {
+        for (let i = 1; i < sortedArray.length; i++) {
+            if (rowComparator(data, indices, sortedArray[i], old) === 0) {
                 oldCount++;
             } else {
-                newArr.push([old, oldCount]);
-                old = arr[i];
+                //If the row contains blanks, cull it if necessary
+                if (!cullEmpty || !hasEmpty(data[old], indices)) groupedArray.push([old, oldCount]);
+                old = sortedArray[i];
                 oldCount = 1;
             }
         }
-        newArr.push([old, oldCount]);
-        arr.length = 0;
-        newArr.sort((a, b) => b[1] - a[1]);
+        //Remember to check again here
+        if (!cullEmpty || !hasEmpty(data[old], indices)) groupedArray.push([old, oldCount]);
 
-        return newArr;
+        groupedArray.sort((a, b) => b[1] - a[1]);
+
+        return groupedArray;
     }
 
     public delete(): void {
@@ -329,4 +358,5 @@ export default class TableWidget extends Widget {
     public export(fileType: ExportFileType): void {
         throw new Error('Method not implemented.');
     }
+    public updateTraceOptions(): void {}
 }

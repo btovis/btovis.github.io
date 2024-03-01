@@ -2,6 +2,7 @@ import { useState } from 'react';
 import CloseButton from 'react-bootstrap/CloseButton';
 import PageManager from '../classes/PageManager.js';
 import Widget from '../classes/widgets/Widget.js';
+import React from 'react';
 
 function WidgetComp(params: {
     panelIdx: number;
@@ -16,18 +17,9 @@ function WidgetComp(params: {
     const widget = panel.getWidget(params.widgetIdx);
     widget.refresh = () => dud(r + 1);
 
-    return (
-        <div className='widget'>
-            <CloseButton
-                className='close-widget'
-                onClick={() => {
-                    panel.removeWidget(params.widgetIdx);
-                    panel.refresh();
-                }}
-            />
-            {params.widgetClass.render()}
-        </div>
-    );
+    console.log('Rendering widget', widget.uuid, 'under panel', panel.uuid);
+
+    return params.widgetClass.render();
 }
 
-export default WidgetComp;
+export default React.memo(WidgetComp);

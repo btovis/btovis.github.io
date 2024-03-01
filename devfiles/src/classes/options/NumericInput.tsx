@@ -111,7 +111,6 @@ export default class NumericInput extends InputOption {
     }
 
     public callback(newValue: number): void {
-        console.log(newValue);
         this.value = newValue;
         //If filter is active then indicate with title colour
         document.getElementById(this.uuid.toString() + 'title').style.color =
