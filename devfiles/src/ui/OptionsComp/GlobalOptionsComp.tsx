@@ -61,6 +61,7 @@ function GlobalOptionsComp(params: {
                     {key}
                 </label>
                 <button
+                    type='button'
                     style={{ width: '10%' }}
                     id={checkboxId}
                     className='form-check-input btn-close'
