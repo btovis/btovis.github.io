@@ -67,85 +67,106 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                     </Accordion.Header>
 
                     <Accordion.Body className='body'>
-                        <div ref={widgetRowRef} className='widget-row'>
-                            {widgets}
-                        </div>
-                        <div className='add-widget-btns'>
-                            <button
-                                className='widget-btn'
-                                onClick={() => {
-                                    panel.addWidget(
-                                        new BarChart(params.pageManager.panels[params.panelIdx])
-                                    );
-                                    //If negative, scroll rightwards
-                                    setSnapRight(-Math.abs(snapRight) - 1);
-                                }}
-                            >
-                                Add Barchart
-                            </button>
-                            <button
-                                className='widget-btn'
-                                onClick={() => {
-                                    panel.addWidget(
-                                        new TableWidget(params.pageManager.panels[params.panelIdx])
-                                    );
-                                    //If negative, scroll rightwards
-                                    setSnapRight(-Math.abs(snapRight) - 1);
-                                }}
-                            >
-                                Add Table
-                            </button>
-                            <button
-                                className='widget-btn'
-                                onClick={() => {
-                                    panel.addWidget(
-                                        new MapWidget(params.pageManager.panels[params.panelIdx])
-                                    );
-                                    //If negative, scroll rightwards
-                                    setSnapRight(-Math.abs(snapRight) - 1);
-                                }}
-                            >
-                                Add Map
-                            </button>
-                            <button
-                                className='widget-btn'
-                                onClick={() => {
-                                    panel.addWidget(
-                                        new LineChart(params.pageManager.panels[params.panelIdx])
-                                    );
-                                    //If negative, scroll rightwards
-                                    setSnapRight(-Math.abs(snapRight) - 1);
-                                }}
-                            >
-                                Add Linechart
-                            </button>
-                            <button
-                                className='widget-btn'
-                                onClick={() => {
-                                    panel.addWidget(
-                                        new StackedLineChart(
-                                            params.pageManager.panels[params.panelIdx]
-                                        )
-                                    );
-                                    //If negative, scroll rightwards
-                                    setSnapRight(-Math.abs(snapRight) - 1);
-                                }}
-                            >
-                                Add Stacked Linechart
-                            </button>
-                            <button
-                                className='widget-btn'
-                                onClick={() => {
-                                    panel.addWidget(
-                                        new DebugWidget(params.pageManager.panels[params.panelIdx])
-                                    );
-                                    //If negative, scroll rightwards
-                                    setSnapRight(-Math.abs(snapRight) - 1);
-                                }}
-                            >
-                                Add Debug Widget
-                            </button>
-                        </div>
+                        <Resizable
+                            ref={widgetRowRef}
+                            onResize={onResize}
+                            width={0}
+                            height={panelHeight}
+                        >
+                            <span>
+                                <div className='panel-body' style={{ height: panelHeight + 'px' }}>
+                                    <div ref={widgetRowRef} className='widget-row'>
+                                        {widgets}
+                                    </div>
+                                    <div className='add-widget-btns'>
+                                        <button
+                                            className='widget-btn'
+                                            onClick={() => {
+                                                panel.addWidget(
+                                                    new BarChart(
+                                                        params.pageManager.panels[params.panelIdx]
+                                                    )
+                                                );
+                                                //If negative, scroll rightwards
+                                                setSnapRight(-Math.abs(snapRight) - 1);
+                                            }}
+                                        >
+                                            Add Barchart
+                                        </button>
+                                        <button
+                                            className='widget-btn'
+                                            onClick={() => {
+                                                panel.addWidget(
+                                                    new TableWidget(
+                                                        params.pageManager.panels[params.panelIdx]
+                                                    )
+                                                );
+                                                //If negative, scroll rightwards
+                                                setSnapRight(-Math.abs(snapRight) - 1);
+                                            }}
+                                        >
+                                            Add Table
+                                        </button>
+                                        <button
+                                            className='widget-btn'
+                                            onClick={() => {
+                                                panel.addWidget(
+                                                    new MapWidget(
+                                                        params.pageManager.panels[params.panelIdx]
+                                                    )
+                                                );
+                                                //If negative, scroll rightwards
+                                                setSnapRight(-Math.abs(snapRight) - 1);
+                                            }}
+                                        >
+                                            Add Map
+                                        </button>
+                                        <button
+                                            className='widget-btn'
+                                            onClick={() => {
+                                                panel.addWidget(
+                                                    new LineChart(
+                                                        params.pageManager.panels[params.panelIdx]
+                                                    )
+                                                );
+                                                //If negative, scroll rightwards
+                                                setSnapRight(-Math.abs(snapRight) - 1);
+                                            }}
+                                        >
+                                            Add Linechart
+                                        </button>
+                                        <button
+                                            className='widget-btn'
+                                            onClick={() => {
+                                                panel.addWidget(
+                                                    new StackedLineChart(
+                                                        params.pageManager.panels[params.panelIdx]
+                                                    )
+                                                );
+                                                //If negative, scroll rightwards
+                                                setSnapRight(-Math.abs(snapRight) - 1);
+                                            }}
+                                        >
+                                            Add Stacked Linechart
+                                        </button>
+                                        <button
+                                            className='widget-btn'
+                                            onClick={() => {
+                                                panel.addWidget(
+                                                    new DebugWidget(
+                                                        params.pageManager.panels[params.panelIdx]
+                                                    )
+                                                );
+                                                //If negative, scroll rightwards
+                                                setSnapRight(-Math.abs(snapRight) - 1);
+                                            }}
+                                        >
+                                            Add Debug Widget
+                                        </button>
+                                    </div>
+                                </div>
+                            </span>
+                        </Resizable>
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
