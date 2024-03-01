@@ -158,7 +158,7 @@ export default class Panel {
         //Refresh after internal class state is updated
         this.refreshComponent();
     }
-
+    // Refresh Widgets, Trace Related Options, and Sidebar
     public refreshWidgets(): void {
         this.widgets.forEach((w) => {
             if (w instanceof TimeChart) w.updateGrouping();
@@ -166,6 +166,7 @@ export default class Panel {
         this.widgets.forEach((w) => w.updateTraceOptions());
         this.widgets.forEach((w) => w.refresh());
     }
+    // Refresh Widget's rendering only
     public refreshWidgetsRender(): void {
         this.widgets.forEach((w) => w.refresh());
     }

@@ -32,8 +32,11 @@ export default class ColorOption extends InputOption {
     }
 
     public callback(newValue: any): void {
+        // Update Selected Color
         this.selectedColor = newValue;
+        // Refresh the sidebar component of this option
         this.refreshComponent();
+        // Refresh the relavent Graph Widget
         this.extendedCallbacks.forEach((f) => f(newValue));
     }
     public query(): Query {
