@@ -32,15 +32,17 @@ export default class MapWidget extends Widget {
         const latCol = panel.dataFilterer.getColumnIndex(Attribute.latitude);
         const lonCol = panel.dataFilterer.getColumnIndex(Attribute.longitude);
         const groupCol = panel.dataFilterer.getColumnIndex(Attribute.speciesGroup);
-        for (let i = 0; i < panel.dataFilterer.getData()[1]; i++) {
-            const row = panel.dataFilterer.getData()[0][i];
+        const [data, l] = panel.dataFilterer.getData();
+        for (let i = 0; i < l; i++) {
+            const row = data[i];
             if (row[latCol] === Infinity) continue; //Ignore invalid coords
             const key = row[latCol].toString() + '\0' + row[lonCol].toString();
             const speciesGroup = row[groupCol] as SetElement;
             coords.add(key);
 
             //Aggregate species types
-            if (seenGroups.has(key)) seenGroups.get(key).add(speciesGroup);
+            const group = seenGroups.get(key);
+            if (group !== undefined) group.add(speciesGroup);
             else seenGroups.set(key, new Set([speciesGroup]));
 
             //Crunch min/max coords
