@@ -170,7 +170,9 @@ function integrateNewCSV(
     const earliestColumnWithNameInNew = new Map<string, number>();
 
     for (let i = 1; i < newColumnList.length; i++) {
-        if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
+        if (newColumnList[i] == '_FILE') {
+            permutes[i] = -2;
+        } else if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
             earliestColumnWithNameInNew.set(newColumnList[i], i);
             permutes[i] = titleToColumnIndex.get(newColumnList[i]);
         }
