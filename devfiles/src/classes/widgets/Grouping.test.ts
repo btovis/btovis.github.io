@@ -32,7 +32,7 @@ describe('Grouping', async () => {
     describe('selectByColumn', () => {
         it('should select values by column', () => {
             const grouping = new BatchNameGrouping(filter, YGrouping.Species);
-            const columnIdx = filter.getColumnIndex(Attribute.originalFileName);
+            const columnIdx = filter.getColumnIndex(Attribute.csvName);
             const [dataSubset, _] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectByColumnIndex(row, columnIdx));
             for (const v1 of values) {
@@ -51,7 +51,7 @@ describe('Grouping', async () => {
         [
             {
                 grouping: FilenameGrouping,
-                attribute: Attribute.originalFileName
+                attribute: Attribute.csvName
             },
             {
                 grouping: ProjectNameGrouping,
@@ -295,7 +295,7 @@ describe('Grouping', async () => {
             },
             {
                 grouping: FilenameGrouping,
-                attribute: Attribute.originalFileName
+                attribute: Attribute.csvName
             },
             {
                 grouping: YearGrouping,
