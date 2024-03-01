@@ -1,6 +1,7 @@
 import Panel from '../Panel';
 import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
+import Modal from 'react-bootstrap/Modal';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
 import ExportFileType from './ExportFileType';
 import {
@@ -32,6 +33,8 @@ export default abstract class TimeChart extends Widget {
     // Initialize grouping
     public grouping: Grouping;
 
+    private fullscreenModalShown: boolean = false;
+
     public constructor(panel: Panel) {
         super(panel);
         this.initOptions();
@@ -48,7 +51,7 @@ export default abstract class TimeChart extends Widget {
         this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
     }
     public async initOptions(): Promise<void> {
-        // The filteringn is slow so this is made async to reduce user wait time.
+        // The filtering is slow so this is made async to reduce user wait time.
         const filter = this.panel.dataFilterer;
         const groupings = this.timeRangeGroupings()
             .filter((grouping) => {
@@ -106,10 +109,14 @@ export default abstract class TimeChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
-    public render(): JSX.Element {
+    public render(
+        width: number = 400,
+        height: number = 210,
+        isFullscreen: boolean = false
+    ): JSX.Element {
         const plotLayout = {
-            width: 400,
-            height: 210,
+            width: width,
+            height: height,
             margin: {
                 l: 30,
                 r: 30,
@@ -125,7 +132,21 @@ export default abstract class TimeChart extends Widget {
         const plotConfig = {
             modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
         };
-        return <Plot data={traces} layout={layout} config={plotConfig} />;
+        const fullscreenDisplay = isFullscreen ? (
+            <></>
+        ) : (
+            <Modal show={this.fullscreenModalShown} onHide={() => this.hideFullscreen()}>
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>{this.render(800, 600, true)}</Modal.Body>
+            </Modal>
+        );
+        return (
+            <div>
+                <Plot data={traces} layout={layout} config={plotConfig} />
+                <button onClick={() => this.showFullscreen()}>e</button>
+                {fullscreenDisplay}
+            </div>
+        );
     }
     public delete(): void {}
     public clone(): Widget {
@@ -133,5 +154,15 @@ export default abstract class TimeChart extends Widget {
     }
     public export(fileType: ExportFileType): void {
         throw new Error('Method not implemented.');
+    }
+
+    private showFullscreen() {
+        this.fullscreenModalShown = true;
+        this.refresh();
+    }
+
+    private hideFullscreen() {
+        this.fullscreenModalShown = false;
+        this.refresh();
     }
 }
