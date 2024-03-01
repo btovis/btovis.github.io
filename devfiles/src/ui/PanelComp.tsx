@@ -22,7 +22,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
         setPanelHeight(Math.max(panel.minHeight, size.height));
     };
 
-    const iconSize = 48;
+    const iconSize = 50;
 
     const panel = params.pageManager.panels[params.panelIdx];
     const [panelHeight, setPanelHeight] = useState(panel.minHeight);
@@ -86,166 +86,86 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         >
                             <span>
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
-                                    <div className='widget-row'>
+                                    <div
+                                        className='widget-row'
+                                        style={{ height: panelHeight - iconSize + 'px' }}
+                                    >
                                         {widgets}
-                                        <div className='add-widget-row'>
-                                            <div className='show-widget-icons'>
-                                                <Icon.PlusCircle
+                                    </div>
+                                    <div className='add-widget-row'>
+                                        <div className='show-widget-icons'>
+                                            <Icon.PlusCircle
+                                                size={iconSize}
+                                                className='show-widget-icons'
+                                            />
+                                        </div>
+
+                                        <div className='widget-icon-row'>
+                                            <div
+                                                className='widget-icon'
+                                                onClick={() => {
+                                                    addwidget(BarChart);
+                                                }}
+                                            >
+                                                <Icon.BarChart
                                                     size={iconSize}
-                                                    className='show-widget-icons'
+                                                    className='widget-icon'
                                                 />
-                                                <div className='tool-tip'>Add widget</div>
+                                                <div className='tool-tip'>Barchart</div>
                                             </div>
 
-                                            <div className='widget-icon-row'>
-                                                <div
+                                            <div
+                                                className='widget-icon'
+                                                onClick={() => {
+                                                    addwidget(LineChart);
+                                                }}
+                                            >
+                                                <Icon.GraphUp
+                                                    size={iconSize}
                                                     className='widget-icon'
-                                                    onClick={() => {
-                                                        addwidget(BarChart);
-                                                    }}
-                                                >
-                                                    <Icon.BarChart
-                                                        size={iconSize}
-                                                        className='widget-icon'
-                                                    />
-                                                    <div className='tool-tip'>Barchart</div>
-                                                </div>
+                                                />
+                                                <div className='tool-tip'>Linechart</div>
+                                            </div>
 
-                                                <div
+                                            <div
+                                                className='widget-icon'
+                                                onClick={() => {
+                                                    addwidget(StackedLineChart);
+                                                }}
+                                            >
+                                                <Icon.GraphUp
+                                                    size={iconSize}
                                                     className='widget-icon'
-                                                    onClick={() => {
-                                                        addwidget(LineChart);
-                                                    }}
-                                                >
-                                                    <Icon.GraphUp
-                                                        size={iconSize}
-                                                        className='widget-icon'
-                                                    />
-                                                    <div className='tool-tip'>Linechart</div>
-                                                </div>
+                                                />
+                                                <div className='tool-tip'>Stacked linechart</div>
+                                            </div>
 
-                                                <div
+                                            <div
+                                                className='widget-icon'
+                                                onClick={() => {
+                                                    addwidget(TableWidget);
+                                                }}
+                                            >
+                                                <Icon.Table
+                                                    size={iconSize}
                                                     className='widget-icon'
-                                                    onClick={() => {
-                                                        addwidget(StackedLineChart);
-                                                    }}
-                                                >
-                                                    <Icon.GraphUp
-                                                        size={iconSize}
-                                                        className='widget-icon'
-                                                    />
-                                                    <div className='tool-tip'>
-                                                        Stacked linechart
-                                                    </div>
-                                                </div>
+                                                />
+                                                <div className='tool-tip'>Table</div>
+                                            </div>
 
-                                                <div
+                                            <div
+                                                className='widget-icon'
+                                                onClick={() => {
+                                                    addwidget(Map);
+                                                }}
+                                            >
+                                                <Icon.GeoAlt
+                                                    size={iconSize}
                                                     className='widget-icon'
-                                                    onClick={() => {
-                                                        addwidget(TableWidget);
-                                                    }}
-                                                >
-                                                    <Icon.Table
-                                                        size={iconSize}
-                                                        className='widget-icon'
-                                                    />
-                                                    <div className='tool-tip'>Table</div>
-                                                </div>
-
-                                                <div
-                                                    className='widget-icon'
-                                                    onClick={() => {
-                                                        addwidget(Map);
-                                                    }}
-                                                >
-                                                    <Icon.GeoAlt
-                                                        size={iconSize}
-                                                        className='widget-icon'
-                                                    />
-                                                    <div className='tool-tip'>Map</div>
-                                                </div>
+                                                />
+                                                <div className='tool-tip'>Map</div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className='add-widget-btns'>
-                                        <button className='widget-btn' onClick={() => {}}>
-                                            Add Barchart
-                                        </button>
-                                        <button
-                                            className='widget-btn'
-                                            onClick={() => {
-                                                panel.addWidget(
-                                                    new TableWidget(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
-                                                    )
-                                                );
-                                                //If negative, scroll rightwards
-                                                setSnapRight(-Math.abs(snapRight) - 1);
-                                            }}
-                                        >
-                                            Add Table
-                                        </button>
-                                        <button
-                                            className='widget-btn'
-                                            onClick={() => {
-                                                panel.addWidget(
-                                                    new MapWidget(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
-                                                    )
-                                                );
-                                                //If negative, scroll rightwards
-                                                setSnapRight(-Math.abs(snapRight) - 1);
-                                            }}
-                                        >
-                                            Add Map
-                                        </button>
-                                        <button
-                                            className='widget-btn'
-                                            onClick={() => {
-                                                panel.addWidget(
-                                                    new LineChart(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
-                                                    )
-                                                );
-                                                //If negative, scroll rightwards
-                                                setSnapRight(-Math.abs(snapRight) - 1);
-                                            }}
-                                        >
-                                            Add Linechart
-                                        </button>
-                                        <button
-                                            className='widget-btn'
-                                            onClick={() => {
-                                                panel.addWidget(
-                                                    new StackedLineChart(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
-                                                    )
-                                                );
-                                                //If negative, scroll rightwards
-                                                setSnapRight(-Math.abs(snapRight) - 1);
-                                            }}
-                                        >
-                                            Add Stacked Linechart
-                                        </button>
-                                        <button
-                                            className='widget-btn'
-                                            onClick={() => {
-                                                panel.addWidget(
-                                                    new DebugWidget(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
-                                                    )
-                                                );
-                                                //If negative, scroll rightwards
-                                                setSnapRight(-Math.abs(snapRight) - 1);
-                                            }}
-                                        >
-                                            Add Debug Widget
-                                        </button>
                                     </div>
                                 </div>
                             </span>

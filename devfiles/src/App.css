@@ -263,9 +263,7 @@ input[type=number] {
 }
 
 .panel-body {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
+  overflow: hidden;
 }
 
 .modal {
@@ -305,7 +303,7 @@ span {
 .widget-icon-row {
   display: flex;
   transition: transform 0.5s;
-  z-index: 0;
+  z-index: 10;
   position: relative;
   transform: translateX(-250px);
   /* visibility: hidden; */
@@ -322,7 +320,7 @@ span {
   width: 50px;
   border-radius: 0% 50% 50% 0%;
   position: relative;
-  z-index: 1;
+  z-index: 100;
 }
 
 .widget-icon {
@@ -344,7 +342,7 @@ span {
   transform: translateX(0px);
 }
 
-.tool-tip {
+.widget-icon .tool-tip {
   visibility: hidden;
   width: 120px;
   background-color: black;
@@ -356,6 +354,10 @@ span {
   /* Position the tooltip text - see examples below! */
   position: absolute;
   z-index: 1;
+  width: 120px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
@@ -384,7 +386,7 @@ span {
 }
 
 .widget-row {
-  height: 90%;
+  height: 85%;
   width: 100%;
   overflow-y: scroll;
 }
