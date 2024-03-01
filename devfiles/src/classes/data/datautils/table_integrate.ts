@@ -363,6 +363,13 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
             // Set
             return (a) => set.addRawOrGet(a);
 
+        case 'VIEW':
+            // Set
+            return (a) => set.addRawOrGet(a);
+        case 'LOW_HZ':
+            return parseInt;
+        case 'HIGH_HZ':
+            return parseInt;
         // For now:
         // TODO: sets, infer american or british
         default:
@@ -401,6 +408,7 @@ function columnNeedsSet(columnName) {
         case 'BATCH NAME':
         case 'PROJECT NAME':
         case 'VULNERABILITY':
+        case 'VIEW':
             return true;
 
         default:
