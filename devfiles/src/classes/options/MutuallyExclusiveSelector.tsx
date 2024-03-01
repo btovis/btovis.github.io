@@ -24,6 +24,5 @@ export default class MutuallyExclusiveSelector extends Selector {
     public callback(newValue: any): void {
         this.selected = newValue.item;
         super.callback(newValue);
-        this.panel.refreshWidgets();
     }
 }

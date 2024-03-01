@@ -58,9 +58,13 @@ export default abstract class TimeChart extends Widget {
 
         // Refresh widgets when options are change.
         this.xAxisSelector.extendedCallbacks.push(() => {
+            this.updateGrouping();
+            this.updateTraceOptions();
             this.refresh();
         });
         this.yAxisSelector.extendedCallbacks.push(() => {
+            this.updateGrouping();
+            this.updateTraceOptions();
             this.refresh();
         });
 

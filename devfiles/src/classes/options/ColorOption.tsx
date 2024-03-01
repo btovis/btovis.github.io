@@ -33,10 +33,8 @@ export default class ColorOption extends InputOption {
 
     public callback(newValue: any): void {
         this.selectedColor = newValue;
-
-        //Refresh to show new panel name
         this.refreshComponent();
-        this.panel.refreshWidgetsRender();
+        this.extendedCallbacks.forEach((f) => f(newValue));
     }
     public query(): Query {
         throw new Error('Method not implemented.');

@@ -88,6 +88,9 @@ export default class LineChart extends TimeChart {
                     'color of trace ' + i.toString(),
                     palette[(i + currentLen) % 40]
                 );
+                colorOption.extendedCallbacks.push(() => {
+                    this.refresh();
+                });
                 this.colorOptions.push(colorOption);
             }
         } else {
