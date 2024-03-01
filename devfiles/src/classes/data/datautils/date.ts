@@ -70,7 +70,7 @@ export function processDates(
                 example.includes('' + BTOPipelineAvailable)
             ];
         }
-        const potentialYears = years.filter((a) => a[1]);
+        const potentialYears: [number, boolean][] = years.filter((a) => a[1]);
         if (potentialYears.length > 2 || potentialYears.length == 0) return [undefined, undefined];
         // we could look at all other dates in data
         // DDMMYYY or MMDDYYYY
@@ -79,10 +79,11 @@ export function processDates(
             // assert MMDDYYYY
             type = DateType.MMDDYYYY;
         } else {
+            const potentialYear = '' + potentialYears[0][0];
             // assert year at beginning or at end
-            if (example.startsWith('' + years[0])) {
+            if (example.startsWith(potentialYear)) {
                 type = DateType.YYYYMMDD;
-            } else if (example.endsWith('' + years[0])) {
+            } else if (example.endsWith(potentialYear)) {
                 //SCAN and decide if DDMM or MMDD
                 scanNeeded = true;
                 processBeforeScan = (s) => [s.slice(0, 2), s.slice(2, 4)];
