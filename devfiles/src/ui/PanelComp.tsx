@@ -17,7 +17,6 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [snapRight, setSnapRight] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
-    const [showWidgetTypes, setShowWidgetTypes] = useState(false);
     const refreshComponent = () => setSnapRight(Math.abs(snapRight) + 1);
     const onResize = (event, { node, size, handle }) => {
         setPanelHeight(Math.max(panel.minHeight, size.height));
@@ -90,97 +89,81 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                     <div className='widget-row'>
                                         {widgets}
                                         <div className='add-widget-row'>
-                                            <div
-                                                className='widget-icon'
-                                                onClick={() => {
-                                                    setShowWidgetTypes(!showWidgetTypes);
-                                                    console.log('click');
-                                                }}
-                                            >
+                                            <div className='show-widget-icons'>
                                                 <Icon.PlusCircle
                                                     size={iconSize}
-                                                    className='widget-icon'
+                                                    className='show-widget-icons'
                                                 />
                                                 <div className='tool-tip'>Add widget</div>
                                             </div>
 
                                             <div className='widget-icon-row'>
-                                                {showWidgetTypes && (
-                                                    <div
+                                                <div
+                                                    className='widget-icon'
+                                                    onClick={() => {
+                                                        addwidget(BarChart);
+                                                    }}
+                                                >
+                                                    <Icon.BarChart
+                                                        size={iconSize}
                                                         className='widget-icon'
-                                                        onClick={() => {
-                                                            addwidget(BarChart);
-                                                        }}
-                                                    >
-                                                        <Icon.BarChart
-                                                            size={iconSize}
-                                                            className='widget-icon'
-                                                        />
-                                                        <div className='tool-tip'>Barchart</div>
-                                                    </div>
-                                                )}
+                                                    />
+                                                    <div className='tool-tip'>Barchart</div>
+                                                </div>
 
-                                                {showWidgetTypes && (
-                                                    <div
+                                                <div
+                                                    className='widget-icon'
+                                                    onClick={() => {
+                                                        addwidget(LineChart);
+                                                    }}
+                                                >
+                                                    <Icon.GraphUp
+                                                        size={iconSize}
                                                         className='widget-icon'
-                                                        onClick={() => {
-                                                            addwidget(LineChart);
-                                                        }}
-                                                    >
-                                                        <Icon.GraphUp
-                                                            size={iconSize}
-                                                            className='widget-icon'
-                                                        />
-                                                        <div className='tool-tip'>Linechart</div>
-                                                    </div>
-                                                )}
+                                                    />
+                                                    <div className='tool-tip'>Linechart</div>
+                                                </div>
 
-                                                {showWidgetTypes && (
-                                                    <div
+                                                <div
+                                                    className='widget-icon'
+                                                    onClick={() => {
+                                                        addwidget(StackedLineChart);
+                                                    }}
+                                                >
+                                                    <Icon.GraphUp
+                                                        size={iconSize}
                                                         className='widget-icon'
-                                                        onClick={() => {
-                                                            addwidget(StackedLineChart);
-                                                        }}
-                                                    >
-                                                        <Icon.GraphUp
-                                                            size={iconSize}
-                                                            className='widget-icon'
-                                                        />
-                                                        <div className='tool-tip'>
-                                                            Stacked linechart
-                                                        </div>
+                                                    />
+                                                    <div className='tool-tip'>
+                                                        Stacked linechart
                                                     </div>
-                                                )}
+                                                </div>
 
-                                                {showWidgetTypes && (
-                                                    <div
+                                                <div
+                                                    className='widget-icon'
+                                                    onClick={() => {
+                                                        addwidget(TableWidget);
+                                                    }}
+                                                >
+                                                    <Icon.Table
+                                                        size={iconSize}
                                                         className='widget-icon'
-                                                        onClick={() => {
-                                                            addwidget(TableWidget);
-                                                        }}
-                                                    >
-                                                        <Icon.Table
-                                                            size={iconSize}
-                                                            className='widget-icon'
-                                                        />
-                                                        <div className='tool-tip'>Table</div>
-                                                    </div>
-                                                )}
+                                                    />
+                                                    <div className='tool-tip'>Table</div>
+                                                </div>
 
-                                                {showWidgetTypes && (
-                                                    <div
+                                                <div
+                                                    className='widget-icon'
+                                                    onClick={() => {
+                                                        addwidget(Map);
+                                                    }}
+                                                >
+                                                    <Icon.GeoAlt
+                                                        size={iconSize}
                                                         className='widget-icon'
-                                                        onClick={() => {
-                                                            addwidget(Map);
-                                                        }}
-                                                    >
-                                                        <Icon.GeoAlt
-                                                            size={iconSize}
-                                                            className='widget-icon'
-                                                        />
-                                                        <div className='tool-tip'>Map</div>
-                                                    </div>
-                                                )}
+                                                    />
+                                                    <div className='tool-tip'>Map</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
