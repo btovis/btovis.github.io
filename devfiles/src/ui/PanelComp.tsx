@@ -10,6 +10,8 @@ import StackedLineChart from '../classes/widgets/StackedLineChart.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
 import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
+import { CloseButton } from 'react-bootstrap';
+import generateHash from '../utils/generateHash.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
@@ -23,15 +25,51 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const panel = params.pageManager.panels[params.panelIdx];
     const [panelHeight, setPanelHeight] = useState(panel.minHeight);
     panel.refreshComponent = refreshComponent;
+
+    //THIS WAS MOVED HERE ON PURPOSE.
+    //WidgetComp is memo'ed by react. Updating the widget name and
+    //the widget's selections tatus should not trigger a re-render of widget comp
     const widgets = panel.getWidgets().map((w, idx) => {
+        function selectThisWidget() {
+            //Update class state
+            params.pageManager.selectedWidget = idx;
+            panel.refreshComponent();
+            //Force sidebar to refresh by setting the tab
+            params.pageManager.setSidebarTab('widgetTab');
+        }
         return (
-            <WidgetComp
-                key={w.uuid}
-                panelIdx={params.panelIdx}
-                widgetIdx={idx}
-                pageManager={params.pageManager}
-                widgetClass={w}
-            />
+            <div
+                key={generateHash(panel.uuid, w.uuid)}
+                className={
+                    params.pageManager.selectedPanel === params.panelIdx &&
+                    params.pageManager.selectedWidget === idx
+                        ? 'widgetactive widget'
+                        : 'widget'
+                }
+                onClick={(event) => {
+                    //Ignore this if the actual panel isn't selected
+                    if (params.pageManager.selectedPanel != params.panelIdx) return;
+                    event.stopPropagation();
+                    selectThisWidget();
+                }}
+            >
+                <CloseButton
+                    className='close-widget'
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        panel.removeWidget(idx);
+                        panel.refresh();
+                    }}
+                />
+                <p className='widgetTitle'>{w.name}</p>
+                <WidgetComp
+                    key={w.uuid}
+                    panelIdx={params.panelIdx}
+                    widgetIdx={idx}
+                    pageManager={params.pageManager}
+                    widgetClass={w}
+                />
+            </div>
         );
     });
 

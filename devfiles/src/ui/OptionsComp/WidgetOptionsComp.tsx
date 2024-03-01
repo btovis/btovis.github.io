@@ -32,7 +32,11 @@ function WidgetOptionsComp(params: { pageManager: PageManager }) {
                     defaultValue={widget.name}
                     onChange={(event) => {
                         widget.name = event.currentTarget.value;
-                        widget.refresh();
+                        const bouncy = event.currentTarget.value;
+                        setTimeout(() => {
+                            if (widget.name === bouncy)
+                                params.pageManager.getSelectedPanel().refreshComponent();
+                        }, 300);
                     }}
                 />
             </div>
