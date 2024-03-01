@@ -27,7 +27,8 @@ export default abstract class TimeChart extends Widget {
         super(panel, config);
         this.generateOptions();
     }
-    public generateOptions(): void {
+    public async generateOptions(): Promise<void> {
+        // The filteringn is slow so this is made async to reduce user wait time.
         const filter = this.panel.dataFilterer;
         const groupings = this.timeRangeGroupings()
             .filter((grouping) => {
