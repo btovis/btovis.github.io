@@ -38,7 +38,7 @@ export default class TimeRange extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong>{this.name}</strong>
+                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
@@ -79,12 +79,22 @@ export default class TimeRange extends InputOption {
             </Accordion>
         );
     }
+
+    private isDefaultRange() {
+        return this.fromTime.diff(this.toTime, 'm') == 1;
+    }
+
     public callback(newValue: { which: number; time: Dayjs }): void {
         if (newValue.which === 0) {
             this.fromTime = newValue.time;
         } else {
             this.toTime = newValue.time;
         }
+
+        //If filter is active then indicate with title colour
+        document.getElementById(this.uuid.toString() + 'title').style.color = this.isDefaultRange()
+            ? ''
+            : 'chocolate';
 
         this.panel.recalculateFilters(this);
         //Refresh to update the associated panel and its widgets

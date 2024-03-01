@@ -5,6 +5,7 @@ import SidebarComp from './ui/SidebarComp.tsx';
 import MainPage from './ui/MainPage.tsx';
 import PageManager from './classes/PageManager.ts';
 import { Fade, Spinner } from 'react-bootstrap';
+import Panel from './classes/Panel.ts';
 
 // https://caniuse.com/?search=es2020 "Feature support list"
 // We target ES2020, 95% of browsers
@@ -25,6 +26,7 @@ function App() {
     const spinnerRef = useRef(null);
 
     const renderFileProcess = (files: FileList) => {
+        console.log('Enter render file proc');
         //Yes, do this AGAIN to facilitate use from GlobalOptionsComp
         if (borderRef.current) borderRef.current.style.opacity = 0.8;
         if (spinnerRef.current) spinnerRef.current.style.opacity = 1;
@@ -33,6 +35,7 @@ function App() {
             if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
             return;
         }
+        console.log('Added file:', files);
         Promise.allSettled(
             Array.prototype.map.call(files, async (file) => ({
                 name: file.name,
@@ -65,6 +68,12 @@ function App() {
                 );
             else setOverlayMessage('Loaded file(s).');
             setOverlayVisible(true);
+
+            //If there's no panel after a successful upload, make one
+            if (pageManager.data.sets[0].size() > 0 && pageManager.panels.length === 0) {
+                pageManager.addPanel(new Panel(pageManager));
+                pageManager.refreshEverything();
+            }
         });
     };
 

@@ -8,11 +8,12 @@ import { Accordion } from 'react-bootstrap';
 
 export default class NumericInput extends InputOption {
     private value: number;
+    private bouncyValue: number;
+    private timer: NodeJS.Timeout;
     private min: number;
     private max: number;
     private step: number;
     private accordionOpen = false;
-    private newValue: number;
 
     public constructor(
         panel: Panel,
@@ -23,7 +24,7 @@ export default class NumericInput extends InputOption {
         template?: NumericInput
     ) {
         super(panel, name);
-        this.value = 0;
+        this.value = 0; //default
         this.min = min;
         this.max = max;
         this.step = step;
@@ -31,11 +32,7 @@ export default class NumericInput extends InputOption {
             this.value = template.value;
             this.accordionOpen = template.accordionOpen;
         }
-        this.newValue = this.value;
-    }
-
-    public getValue(): number {
-        return this.value;
+        this.bouncyValue = this.value;
     }
 
     public render(): JSX.Element {
@@ -50,50 +47,50 @@ export default class NumericInput extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong>{this.name}</strong>
+                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
                         <div className='sidebar-padding'>
                             <Form.Range
-                                value={this.value}
+                                id={this.uuid + '-rangesel'}
+                                defaultValue={this.value}
                                 min={this.min}
                                 max={this.max}
                                 step={this.step}
                                 onChange={(event) => {
-                                    this.value = event.target.valueAsNumber;
-                                    this.newValue = this.value;
+                                    //Sync display with other input
+                                    (
+                                        document.getElementById(
+                                            this.uuid + '-textsel'
+                                        ) as HTMLInputElement
+                                    ).value = event.currentTarget.value;
+                                    this.debounce(event.target.valueAsNumber);
                                     this.refreshComponent();
-                                }}
-                                onMouseUp={(event) => {
-                                    this.callback();
                                 }}
                             />
                             <div style={{ display: 'inline' }}>
                                 <span>Selected Value:</span>
                                 <input
+                                    id={this.uuid + '-textsel'}
                                     style={{ width: '30%', marginLeft: '5px', display: 'inline' }}
                                     className='form-control'
                                     type='number'
                                     min={this.min}
                                     max={this.max}
                                     step={this.step}
-                                    value={this.newValue}
+                                    defaultValue={this.value}
                                     onChange={(event) => {
-                                        this.newValue = event.target.valueAsNumber;
-                                        this.refreshComponent();
-                                    }}
-                                    onBlur={(event) => {
-                                        this.callback();
+                                        //Sync display with other input
+                                        (
+                                            document.getElementById(
+                                                this.uuid + '-rangesel'
+                                            ) as HTMLInputElement
+                                        ).value = event.currentTarget.value;
+                                        this.debounce(event.target.valueAsNumber);
                                     }}
                                     onScroll={(event) => {
                                         event.preventDefault();
-                                    }}
-                                    onKeyUp={(e) => {
-                                        if (e.key == 'Enter') {
-                                            this.callback();
-                                            e.currentTarget.blur();
-                                        }
                                     }}
                                 />
                             </div>
@@ -104,8 +101,22 @@ export default class NumericInput extends InputOption {
         );
     }
 
-    public callback(): void {
-        this.value = this.newValue;
+    private debounce(newValue: number) {
+        this.bouncyValue = newValue;
+        this.refreshComponent();
+        if (this.timer !== undefined) clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
+            if (this.bouncyValue === newValue) this.callback(this.bouncyValue);
+        }, 300);
+    }
+
+    public callback(newValue: number): void {
+        console.log(newValue);
+        this.value = newValue;
+        //If filter is active then indicate with title colour
+        document.getElementById(this.uuid.toString() + 'title').style.color =
+            this.value == 0 ? '' : 'chocolate';
+
         // this.panel.refreshComponent();
         this.panel.recalculateFilters(this);
         this.panel.refreshWidgets();
@@ -115,7 +126,7 @@ export default class NumericInput extends InputOption {
 
     public query(): Query {
         return new RangeQuery(this.panel.dataFilterer.getColumnIndex(Attribute.probability)).query(
-            this.value,
+            this.value == 0 ? -Infinity : this.value,
             Infinity
         );
     }

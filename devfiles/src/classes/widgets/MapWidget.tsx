@@ -4,6 +4,9 @@ import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
 import { Attribute } from '../data/Data.js';
 import Panel from '../Panel.js';
+import SetElement from '../data/setutils/SetElement.js';
+import { unpack } from '../../utils/DataUtils.js';
+import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 
 export default class MapWidget extends Widget {
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
@@ -25,14 +28,27 @@ export default class MapWidget extends Widget {
      */
     public static generatePlotlySettings(panel: Panel) {
         const coords: Set<string> = new Set();
+        const seenGroups: Map<string, Set<SetElement>> = new Map();
         const min = [+Infinity, +Infinity];
         const max = [-Infinity, -Infinity];
 
         const latCol = panel.dataFilterer.getColumnIndex(Attribute.latitude);
         const lonCol = panel.dataFilterer.getColumnIndex(Attribute.longitude);
-        for (let i = 0; i < panel.dataFilterer.getData()[1]; i++) {
-            const row = panel.dataFilterer.getData()[0][i];
-            coords.add(row[latCol].toString() + '\0' + row[lonCol].toString());
+        const groupCol = panel.dataFilterer.getColumnIndex(Attribute.speciesGroup);
+        const [data, l] = panel.dataFilterer.getData();
+        for (let i = 0; i < l; i++) {
+            const row = data[i];
+            if (row[latCol] === Infinity) continue; //Ignore invalid coords
+            const key = row[latCol].toString() + '\0' + row[lonCol].toString();
+            const speciesGroup = row[groupCol] as SetElement;
+            coords.add(key);
+
+            //Aggregate species types
+            const group = seenGroups.get(key);
+            if (group !== undefined) group.add(speciesGroup);
+            else seenGroups.set(key, new Set([speciesGroup]));
+
+            //Crunch min/max coords
             min[0] = Math.min(min[0], row[latCol]);
             min[1] = Math.min(min[1], row[lonCol]);
             max[0] = Math.max(max[0], row[latCol]);
@@ -56,14 +72,18 @@ export default class MapWidget extends Widget {
                     size: 7,
                     color: 'red'
                 },
-                text: ['Germany', 'Germany']
+                text: [...coords].map((key) =>
+                    [...seenGroups.get(key)]
+                        .map((elem) => document.createTextNode(unpack(elem) as string).textContent)
+                        .join('<br />')
+                )
             }
         ];
 
         //plot layout for plotly
         const plotLayout = {
-            width: 290,
-            height: 210,
+            width: window.innerWidth * 0.4,
+            height: window.innerHeight * 0.5,
             autosize: false,
             hovermode: 'closest',
             mapbox: {

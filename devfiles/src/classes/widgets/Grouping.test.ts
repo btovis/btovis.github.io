@@ -226,6 +226,62 @@ describe('Grouping', async () => {
                 }
             }
         });
+        describe('test on expected examples', () => {
+            beforeEach(async () => {
+                data = await loadData(filename3);
+                filter = new DataFilterer(data);
+            });
+            [
+                {
+                    xGrouping: BatchNameGrouping,
+                    yGrouping: YGrouping.Species,
+                    expected: [
+                        ['scotland pam', 'clanga clanga', 4],
+                        ['scotland pam', 'cygnus olor', 2],
+                        ['scotland pam', 'barbitistes serricauda', 2],
+                        ['scotland pam', 'barbitistes fischeri', 2]
+                    ]
+                },
+                {
+                    xGrouping: DayGrouping,
+                    yGrouping: YGrouping.VulnerabilityStatus,
+                    expected: [
+                        ['01-08-23', 'vulnerable', 4],
+                        ['01-08-23', 'least concern', 2],
+                        ['02-08-23', 'least concern', 4]
+                    ]
+                },
+                {
+                    xGrouping: HourGrouping,
+                    yGrouping: YGrouping.SpeciesGroup,
+                    expected: [
+                        ['06:00', 'insects', 1],
+                        ['07:00', 'insects', 1],
+                        ['12:00', 'insects', 2],
+                        ['10:00', 'birds', 3],
+                        ['12:00', 'birds', 1],
+                        ['18:00', 'birds', 1],
+                        ['21:00', 'birds', 1]
+                    ]
+                }
+            ].forEach(({ xGrouping, yGrouping, expected }) => {
+                it(`should aggregate pairs for ${xGrouping} and ${yGrouping}`, () => {
+                    const grouping = new xGrouping(filter, yGrouping);
+                    const aggregated = grouping.aggregatePairs();
+                    for (const [y, xMap] of aggregated) {
+                        for (const [x, count] of xMap) {
+                            if (count != 0) {
+                                expect(expected).toContainEqual([
+                                    x.value.toLowerCase(),
+                                    y.value.toLowerCase(),
+                                    count
+                                ]);
+                            }
+                        }
+                    }
+                });
+            });
+        });
     });
     describe('xValueMap', () => {
         [

@@ -21,6 +21,7 @@ abstract class Grouping {
     yColumnIdx: number;
     yGrouping: YGrouping;
     speciesMeta: SpeciesMeta;
+    static maxXValues: number = 1000;
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         this.filter = filter;
         this.referenceSet = new ReferenceSet();

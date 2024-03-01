@@ -41,6 +41,7 @@ export default class Panel {
 
     public dataFilterer: DataFilterer;
     public readonly uuid: number;
+    public minHeight: number;
 
     public constructor(pageManager: PageManager) {
         this.uuid = uuidv4();
@@ -56,6 +57,7 @@ export default class Panel {
         this.updateInputOptions();
 
         this.widgets = [new BarChart(this)];
+        this.minHeight = 350; // panel body minimum height
     }
 
     public getName(): string {
@@ -74,7 +76,14 @@ export default class Panel {
         this.geographic = new Geographic(this, 'Location', this.geographic);
         this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
         this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
-        this.minimumProbability = new NumericInput(this, 'Minimum Probability', 0, 1, 0.01);
+        this.minimumProbability = new NumericInput(
+            this,
+            'Minimum Probability',
+            0,
+            1,
+            0.01,
+            this.minimumProbability
+        );
         this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
@@ -141,6 +150,9 @@ export default class Panel {
         if ('compound' in query)
             (query.queries as Query[]).forEach((q) => this.dataFilterer.processQuery(q));
         else this.dataFilterer.processQuery(query as Query);
+
+        //For the row/filtered count
+        this.nameInput.refreshComponent();
     }
 
     /**
@@ -154,6 +166,7 @@ export default class Panel {
 
         //Update options to reflect new filters
         this.updateInputOptions();
+        this.pageManager.refreshPanelOptions();
 
         //Refresh after internal class state is updated
         this.refreshComponent();

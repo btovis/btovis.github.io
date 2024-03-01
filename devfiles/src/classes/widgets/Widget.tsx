@@ -3,10 +3,12 @@ import InputOption from '../options/InputOption.js';
 import Panel from '../Panel.js';
 import Sidebar from '../Sidebar.js';
 import ExportFileType from './ExportFileType.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export default abstract class Widget {
     protected panel: Panel;
     protected options: InputOption[];
+    public uuid = uuidv4();
     public refresh: () => void = () => {};
     public abstract updateTraceOptions(): void;
 

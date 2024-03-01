@@ -7,6 +7,7 @@ import { Attribute } from './Data';
 import { Query, QueryType } from '../query/Query';
 import RangeFilter from '../filters/RangeFilter';
 import SwappableRangeFilter from '../filters/SwappableRangeFilter';
+import { v4 as uuidv4 } from 'uuid';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
@@ -21,6 +22,16 @@ export default class DataFilterer {
     private filterPredsForData = []; // Only updated when the user changes filtering setting (hence, indirectly) or when data is updated
     private filteredData; // Only updated when filterPredsForData is updated
     private filteredDataArrLen; // keeps len of output array. to reuse memory, the same array for filteredData
+
+    //Meant for widgets to understand why render was called for optimisation purposes.
+    private filterState = uuidv4(); //Changes when filters change
+    private dataState = uuidv4(); //Changes when a file is added/removed
+    public getFilterState() {
+        return this.filterState;
+    }
+    public getDataState() {
+        return this.dataState;
+    }
 
     // Opaque: User has requested an impossible filter (e.g. no species) so terminate early
     private opaqueFilters = new Set<number>([]);
@@ -72,6 +83,7 @@ export default class DataFilterer {
                 }
             }
         }
+        this.dataState = uuidv4(); //update data state
         this.recalculateFilteredData();
     }
 
@@ -125,6 +137,7 @@ export default class DataFilterer {
     }
 
     public recalculateFilteredData() {
+        this.filterState = uuidv4(); //Filters changed
         if (this.opaqueFilters.size) {
             this.filteredDataArrLen = 0;
             return;

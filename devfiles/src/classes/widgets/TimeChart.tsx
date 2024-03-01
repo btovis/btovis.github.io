@@ -3,7 +3,13 @@ import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
 import ExportFileType from './ExportFileType';
-import { ContinuousMonthGrouping, DayGrouping, Grouping, YGrouping } from './Grouping';
+import {
+    ContinuousMonthGrouping,
+    DayGrouping,
+    Grouping,
+    YGrouping,
+    YearGrouping
+} from './Grouping';
 import Widget from './Widget';
 import InputOption from '../options/InputOption';
 import ColorOption from '../options/ColorOption.js';
@@ -41,13 +47,31 @@ export default abstract class TimeChart extends Widget {
         // Change Value for 'grouping'
         this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
     }
-    // Initial fill-out of options field to be called in constructor
-    public initOptions(): void {
+    public async initOptions(): Promise<void> {
+        // The filteringn is slow so this is made async to reduce user wait time.
+        const filter = this.panel.dataFilterer;
+        const groupings = this.timeRangeGroupings()
+            .filter((grouping) => {
+                // Manually filter groupings of x axis to prevent too many x values.
+                const groupingInstance = new grouping(filter, YGrouping.Species);
+                const [data, length] = filter.getData();
+                const xValues = new Set();
+                for (let i = 0; i < length; i++) {
+                    const row = data[i];
+                    const x = groupingInstance.selectX(row);
+                    xValues.add(x);
+                    if (xValues.size > Grouping.maxXValues) {
+                        return false;
+                    }
+                }
+                return true;
+            })
+            .map((grouping: typeof Grouping) => grouping.name);
         // Mutex selector for time (or property) grouping along the x axis.
         this.xAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
             `Time Grouping for ${this.chartType()} Widget`,
-            this.timeRangeGroupings().map((grouping: typeof Grouping) => grouping.name)
+            groupings
         );
         // Mutex selector for grouping along the y axis (species, species group, etc).
         this.yAxisSelector = new MutuallyExclusiveSelector(
@@ -57,6 +81,9 @@ export default abstract class TimeChart extends Widget {
         );
 
         // Refresh widgets when options are changed. Also update Trace related Options and reflect on sidebar.
+        this.xAxisSelector.useSearchBar = false;
+        this.yAxisSelector.useSearchBar = false;
+        // Refresh widgets when options are change.
         this.xAxisSelector.extendedCallbacks.push(() => {
             this.updateGrouping();
             this.updateTraceOptions();

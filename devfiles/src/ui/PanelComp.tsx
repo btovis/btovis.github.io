@@ -9,14 +9,19 @@ import MapWidget from '../classes/widgets/MapWidget.js';
 import StackedLineChart from '../classes/widgets/StackedLineChart.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
 import DebugWidget from '../classes/widgets/DebugWidget.js';
+import { Resizable } from 'react-resizable';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [snapRight, setSnapRight] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
     const refreshComponent = () => setSnapRight(Math.abs(snapRight) + 1);
+    const onResize = (event, { node, size, handle }) => {
+        setPanelHeight(Math.max(panel.minHeight, size.height));
+    };
 
     const panel = params.pageManager.panels[params.panelIdx];
+    const [panelHeight, setPanelHeight] = useState(panel.minHeight);
     panel.refreshComponent = refreshComponent;
     const widgets = panel.getWidgets().map((w, idx) => {
         return (
@@ -32,29 +37,31 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
 
     const widgetRowRef = useRef(null);
 
+    function selectThisPanel() {
+        //If there is a previous selected panel, render unselection
+        if (params.pageManager.unselectPanel) params.pageManager.unselectPanel();
+
+        //Update class state
+        params.pageManager.selectedPanel = params.panelIdx;
+        params.pageManager.unselectPanel = () => setHighlighted(false);
+        setHighlighted(true);
+
+        //Force sidebar to refresh by setting the tab
+        params.pageManager.setSidebarTab('panelTab');
+        params.pageManager.refreshPanelOptions();
+    }
+
     useEffect(() => {
+        //This was the first panel
+        if (params.pageManager.selectedPanel === -1) selectThisPanel();
+
         if (snapRight <= 0 && widgetRowRef.current)
             widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
     });
     return (
         <div className={highlighted ? 'panel panelactive' : 'panel'}>
             <Accordion defaultActiveKey='0'>
-                <Accordion.Item
-                    eventKey='0'
-                    onClick={() => {
-                        //If there is a previous selected panel, render unselection
-                        if (params.pageManager.unselectPanel) params.pageManager.unselectPanel();
-
-                        //Update class state
-                        params.pageManager.selectedPanel = params.panelIdx;
-                        params.pageManager.unselectPanel = () => setHighlighted(false);
-                        setHighlighted(true);
-
-                        //Force sidebar to refresh by setting the tab
-                        params.pageManager.setSidebarTab('panelTab');
-                        params.pageManager.refreshPanelOptions();
-                    }}
-                >
+                <Accordion.Item eventKey='0' onClick={() => selectThisPanel()}>
                     <Accordion.Header className=''>
                         <div className='title'>{panel.getName()}</div>
                     </Accordion.Header>
