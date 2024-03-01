@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
-import { Container, Button, Link } from 'react-floating-action-button';
+import * as Icon from 'react-bootstrap-icons';
 import '../App.css';
-import React from 'react';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
 import WidgetConfig from '../classes/widgets/WidgetConfig.js';
@@ -13,17 +12,18 @@ import StackedLineChart from '../classes/widgets/StackedLineChart.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
 import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [snapRight, setSnapRight] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
+    const [showWidgetTypes, setShowWidgetTypes] = useState(false);
     const refreshComponent = () => setSnapRight(Math.abs(snapRight) + 1);
     const onResize = (event, { node, size, handle }) => {
         setPanelHeight(Math.max(panel.minHeight, size.height));
     };
+
+    const iconSize = 48;
 
     const panel = params.pageManager.panels[params.panelIdx];
     const [panelHeight, setPanelHeight] = useState(panel.minHeight);
@@ -63,6 +63,13 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
         if (snapRight <= 0 && widgetRowRef.current)
             widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
     });
+
+    function addwidget(widget) {
+        panel.addWidget(new widget(params.pageManager.panels[params.panelIdx], new WidgetConfig()));
+        //If negative, scroll rightwards
+        setSnapRight(-Math.abs(snapRight) - 1);
+    }
+
     return (
         <div className={highlighted ? 'panel panelactive' : 'panel'}>
             <Accordion defaultActiveKey='0'>
@@ -82,72 +89,103 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
                                     <div className='widget-row'>
                                         {widgets}
-                                        <div className='mb-2'>
-                                            <Dropdown drop='end'>
-                                                <Dropdown.Toggle
-                                                    variant='success'
-                                                    id='dropdown-basic'
-                                                >
-                                                    Add
-                                                </Dropdown.Toggle>
+                                        <div className='add-widget-row'>
+                                            <div
+                                                className='widget-icon'
+                                                onClick={() => {
+                                                    setShowWidgetTypes(!showWidgetTypes);
+                                                    console.log('click');
+                                                }}
+                                            >
+                                                <Icon.PlusCircle
+                                                    size={iconSize}
+                                                    className='widget-icon'
+                                                />
+                                                <div className='tool-tip'>Add widget</div>
+                                            </div>
 
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item href='#/action-1'>
-                                                        Barchart
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item href='#/action-2'>
-                                                        Table
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item href='#/action-1'>
-                                                        Line Graph
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item href='#/action-2'>
-                                                        Stacked Line Graph
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item href='#/action-1'>
-                                                        Map
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item href='#/action-2'>
-                                                        Debug Widget
-                                                    </Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
+                                            <div className='widget-icon-row'>
+                                                {showWidgetTypes && (
+                                                    <div
+                                                        className='widget-icon'
+                                                        onClick={() => {
+                                                            addwidget(BarChart);
+                                                        }}
+                                                    >
+                                                        <Icon.BarChart
+                                                            size={iconSize}
+                                                            className='widget-icon'
+                                                        />
+                                                        <div className='tool-tip'>Barchart</div>
+                                                    </div>
+                                                )}
+
+                                                {showWidgetTypes && (
+                                                    <div
+                                                        className='widget-icon'
+                                                        onClick={() => {
+                                                            addwidget(LineChart);
+                                                        }}
+                                                    >
+                                                        <Icon.GraphUp
+                                                            size={iconSize}
+                                                            className='widget-icon'
+                                                        />
+                                                        <div className='tool-tip'>Linechart</div>
+                                                    </div>
+                                                )}
+
+                                                {showWidgetTypes && (
+                                                    <div
+                                                        className='widget-icon'
+                                                        onClick={() => {
+                                                            addwidget(StackedLineChart);
+                                                        }}
+                                                    >
+                                                        <Icon.GraphUp
+                                                            size={iconSize}
+                                                            className='widget-icon'
+                                                        />
+                                                        <div className='tool-tip'>
+                                                            Stacked linechart
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {showWidgetTypes && (
+                                                    <div
+                                                        className='widget-icon'
+                                                        onClick={() => {
+                                                            addwidget(TableWidget);
+                                                        }}
+                                                    >
+                                                        <Icon.Table
+                                                            size={iconSize}
+                                                            className='widget-icon'
+                                                        />
+                                                        <div className='tool-tip'>Table</div>
+                                                    </div>
+                                                )}
+
+                                                {showWidgetTypes && (
+                                                    <div
+                                                        className='widget-icon'
+                                                        onClick={() => {
+                                                            addwidget(Map);
+                                                        }}
+                                                    >
+                                                        <Icon.GeoAlt
+                                                            size={iconSize}
+                                                            className='widget-icon'
+                                                        />
+                                                        <div className='tool-tip'>Map</div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-
-                                        <Container>
-                                            <Link
-                                                href='#'
-                                                tooltip='Create note link'
-                                                icon='far fa-sticky-note'
-                                            />
-                                            <Link
-                                                href='#'
-                                                tooltip='Add user link'
-                                                icon='fas fa-user-plus'
-                                            />
-                                            className="fab-item btn btn-link btn-lg text-white"
-                                            <Button
-                                                tooltip='The big plus button!'
-                                                icon='fas fa-plus'
-                                                rotate={true}
-                                                onClick={() => alert('FAB Rocks!')}
-                                            />
-                                        </Container>
                                     </div>
                                     <div className='add-widget-btns'>
-                                        <button
-                                            className='widget-btn'
-                                            onClick={() => {
-                                                panel.addWidget(
-                                                    new BarChart(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
-                                                    )
-                                                );
-                                                //If negative, scroll rightwards
-                                                setSnapRight(-Math.abs(snapRight) - 1);
-                                            }}
-                                        >
+                                        <button className='widget-btn' onClick={() => {}}>
                                             Add Barchart
                                         </button>
                                         <button

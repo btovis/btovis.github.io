@@ -302,6 +302,42 @@ span {
   width: 100%;
 }
 
+.widget-icon-row {
+  display: flex;
+}
+
+.add-widget-row {
+  display: flex;
+}
+
+.widget-icon {
+  border-radius: 50%;
+  background-color: var(--element-bg);
+  color: white;
+  height: 50px;
+  width: 50px;
+  position: relative
+}
+
+.widget-icon .tool-tip {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.widget-icon:hover .tool-tip {
+  visibility: visible;
+}
+
 .widget {
   overflow-y: scroll;
   width: fit-content;
