@@ -170,7 +170,9 @@ function integrateNewCSV(
     const earliestColumnWithNameInNew = new Map<string, number>();
 
     for (let i = 1; i < newColumnList.length; i++) {
-        if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
+        if (newColumnList[i] == '_FILE') {
+            permutes[i] = -2;
+        } else if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
             earliestColumnWithNameInNew.set(newColumnList[i], i);
             permutes[i] = titleToColumnIndex.get(newColumnList[i]);
         }
@@ -363,6 +365,13 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
             // Set
             return (a) => set.addRawOrGet(a);
 
+        case 'VIEW':
+            // Set
+            return (a) => set.addRawOrGet(a);
+        case 'LOW_HZ':
+            return parseInt;
+        case 'HIGH_HZ':
+            return parseInt;
         // For now:
         // TODO: sets, infer american or british
         default:
@@ -401,6 +410,7 @@ function columnNeedsSet(columnName) {
         case 'BATCH NAME':
         case 'PROJECT NAME':
         case 'VULNERABILITY':
+        case 'VIEW':
             return true;
 
         default:
