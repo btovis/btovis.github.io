@@ -3,7 +3,6 @@ import Accordion from 'react-bootstrap/Accordion';
 import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
-import WidgetConfig from '../classes/widgets/WidgetConfig.js';
 import WidgetComp from './WidgetComp.js';
 import BarChart from '../classes/widgets/BarChart.js';
 import MapWidget from '../classes/widgets/MapWidget.js';
@@ -67,7 +66,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         <div className='title'>{panel.getName()}</div>
                     </Accordion.Header>
 
-                    <Accordion.Body>
+                    <Accordion.Body className='body'>
                         <Resizable
                             ref={widgetRowRef}
                             onResize={onResize}
@@ -76,15 +75,16 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         >
                             <span>
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
-                                    <div className='widget-row'>{widgets}</div>
+                                    <div ref={widgetRowRef} className='widget-row'>
+                                        {widgets}
+                                    </div>
                                     <div className='add-widget-btns'>
                                         <button
                                             className='widget-btn'
                                             onClick={() => {
                                                 panel.addWidget(
                                                     new BarChart(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
+                                                        params.pageManager.panels[params.panelIdx]
                                                     )
                                                 );
                                                 //If negative, scroll rightwards
@@ -98,8 +98,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             onClick={() => {
                                                 panel.addWidget(
                                                     new TableWidget(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
+                                                        params.pageManager.panels[params.panelIdx]
                                                     )
                                                 );
                                                 //If negative, scroll rightwards
@@ -113,8 +112,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             onClick={() => {
                                                 panel.addWidget(
                                                     new MapWidget(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
+                                                        params.pageManager.panels[params.panelIdx]
                                                     )
                                                 );
                                                 //If negative, scroll rightwards
@@ -128,8 +126,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             onClick={() => {
                                                 panel.addWidget(
                                                     new LineChart(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
+                                                        params.pageManager.panels[params.panelIdx]
                                                     )
                                                 );
                                                 //If negative, scroll rightwards
@@ -143,8 +140,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             onClick={() => {
                                                 panel.addWidget(
                                                     new StackedLineChart(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
+                                                        params.pageManager.panels[params.panelIdx]
                                                     )
                                                 );
                                                 //If negative, scroll rightwards
@@ -158,8 +154,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             onClick={() => {
                                                 panel.addWidget(
                                                     new DebugWidget(
-                                                        params.pageManager.panels[params.panelIdx],
-                                                        new WidgetConfig()
+                                                        params.pageManager.panels[params.panelIdx]
                                                     )
                                                 );
                                                 //If negative, scroll rightwards
