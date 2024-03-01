@@ -20,7 +20,7 @@ import TimeChart from './widgets/TimeChart.tsx';
 export default class Panel {
     //TODO: Consider protecting with private
     //Mutator methods below do more than touch this list
-    public widgets: Widget[];
+    public widgets: Widget[] = [];
 
     public refreshComponent: () => void = () => {};
     public pageManager: PageManager;
@@ -162,7 +162,6 @@ export default class Panel {
     public refresh(): void {
         //Update dataFilterers
         this.dataFilterer.dataUpdated();
-        this.refreshWidgets();
 
         //Update options to reflect new filters
         this.updateInputOptions();
@@ -170,6 +169,7 @@ export default class Panel {
 
         //Refresh after internal class state is updated
         this.refreshComponent();
+        this.refreshWidgets();
     }
     // Refresh Widgets, Trace Related Options, and Sidebar
     public refreshWidgets(): void {
@@ -210,13 +210,7 @@ export default class Panel {
             this.useridSelector
         ]);
 
-        //InputOption sidebars DO NOT contain filters, only widget-specific
-        //options.
-        const options = this.widgets
-            .map((widget) => widget.generateSidebar().options)
-            .reduce((acc, a) => acc.concat(a), []);
-
-        return new Sidebar(baseSidebar.options.concat(options));
+        return new Sidebar(baseSidebar.options);
     }
 
     public render(): void {}
@@ -226,6 +220,8 @@ export default class Panel {
     }
 
     public removeWidget(widgetIdx: number) {
+        this.pageManager.selectedWidget = -1;
+        this.pageManager.setSidebarTab('panelTab');
         this.widgets[widgetIdx].delete(); //Call child method
         this.widgets.splice(widgetIdx, 1); //mutable delete
     }

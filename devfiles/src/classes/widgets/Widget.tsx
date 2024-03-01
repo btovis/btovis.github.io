@@ -6,6 +6,7 @@ import ExportFileType from './ExportFileType.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export default abstract class Widget {
+    public name: string;
     protected panel: Panel;
     protected options: InputOption[];
     public uuid = uuidv4();
@@ -16,6 +17,7 @@ export default abstract class Widget {
     public constructor(panel: Panel) {
         this.panel = panel;
         this.options = [];
+        this.name = 'Widget ' + (panel.getWidgets().length + 1);
     }
 
     public displaySidebar() {}
