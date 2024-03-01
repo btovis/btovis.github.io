@@ -10,6 +10,7 @@ export default abstract class Widget {
     protected options: InputOption[];
     public uuid = uuidv4();
     public refresh: () => void = () => {};
+    // to be implemented in specific widgets
     public abstract updateTraceOptions(): void;
 
     public constructor(panel: Panel) {
