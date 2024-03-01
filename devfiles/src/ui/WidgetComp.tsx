@@ -49,6 +49,7 @@ function WidgetComp(params: {
                     panel.refresh();
                 }}
             />
+            <p className='widgetTitle'>{params.widgetClass.name}</p>
             {params.widgetClass.render()}
         </div>
     );

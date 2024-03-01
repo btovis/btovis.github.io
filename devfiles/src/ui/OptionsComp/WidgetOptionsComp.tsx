@@ -26,6 +26,16 @@ function WidgetOptionsComp(params: { pageManager: PageManager }) {
 
     return (
         <div key={uuidv4()}>
+            <div key={uuidv4()} className='sidebarContainer'>
+                <input
+                    className='form-control form-control-lg'
+                    defaultValue={widget.name}
+                    onChange={(event) => {
+                        widget.name = event.currentTarget.value;
+                        widget.refresh();
+                    }}
+                />
+            </div>
             {renderedOptions}
             <br />
         </div>

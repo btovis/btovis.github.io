@@ -19,7 +19,7 @@ import { Query } from './query/Query';
 export default class Panel {
     //TODO: Consider protecting with private
     //Mutator methods below do more than touch this list
-    public widgets: Widget[];
+    public widgets: Widget[] = [];
 
     public refreshComponent: () => void = () => {};
     public pageManager: PageManager;

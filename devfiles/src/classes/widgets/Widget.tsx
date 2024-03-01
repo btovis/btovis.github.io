@@ -7,6 +7,7 @@ import WidgetConfig from './WidgetConfig.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export default abstract class Widget {
+    public name: string;
     protected panel: Panel;
     protected options: InputOption[];
     protected config: WidgetConfig;
@@ -17,6 +18,7 @@ export default abstract class Widget {
         this.panel = panel;
         this.config = config;
         this.options = [];
+        this.name = 'Widget ' + (panel.getWidgets().length + 1);
     }
 
     public displaySidebar() {}

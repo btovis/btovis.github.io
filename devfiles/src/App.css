@@ -374,6 +374,16 @@ span {
 }
 
 /**
+* General Widget styles
+*/
+.widgetTitle {
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+
+/**
 * Table Widget styles
 */
 .lr-button {
