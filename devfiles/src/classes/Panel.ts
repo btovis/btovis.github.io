@@ -162,7 +162,6 @@ export default class Panel {
     public refresh(): void {
         //Update dataFilterers
         this.dataFilterer.dataUpdated();
-        this.refreshWidgets();
 
         //Update options to reflect new filters
         this.updateInputOptions();
@@ -170,6 +169,7 @@ export default class Panel {
 
         //Refresh after internal class state is updated
         this.refreshComponent();
+        this.refreshWidgets();
     }
     // Refresh Widgets, Trace Related Options, and Sidebar
     public refreshWidgets(): void {
