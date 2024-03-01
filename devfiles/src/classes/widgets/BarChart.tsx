@@ -17,6 +17,7 @@ export default class BarChart extends TimeChart {
     // Generate Specific Layout for BarChart from specific options
     public chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }> {
         const traceConfigs: Array<{ [key: string]: any }> = [];
+        // Modify the JS object for every trace
         for (let i = 0; i < numTraces; i++) {
             const singleTraceConfig: { [key: string]: any } = {};
             singleTraceConfig.type = 'bar';

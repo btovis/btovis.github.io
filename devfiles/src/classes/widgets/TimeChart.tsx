@@ -56,7 +56,7 @@ export default abstract class TimeChart extends Widget {
             Object.values(YGrouping)
         );
 
-        // Refresh widgets when options are change.
+        // Refresh widgets when options are changed. Also update Trace related Options and reflect on sidebar.
         this.xAxisSelector.extendedCallbacks.push(() => {
             this.updateGrouping();
             this.updateTraceOptions();

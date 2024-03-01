@@ -37,7 +37,9 @@ export default class LineChart extends TimeChart {
         this.panel.pageManager.refreshPanelOptions();
     }
 
+    // Change internal states of object: widget specific options.
     public generateChartSpecificOptions(numTraces: number): void {
+        // Default Palette
         const palette = [
             '#039cad',
             '#ce4458',
@@ -80,6 +82,7 @@ export default class LineChart extends TimeChart {
             '#a441ea',
             '#b210cc'
         ];
+        // Adjust number of ColorOptions, keep still useful ones.
         const currentLen = this.colorOptions.length;
         if (numTraces > this.colorOptions.length) {
             for (let i = 0; i < numTraces - currentLen; i++) {
