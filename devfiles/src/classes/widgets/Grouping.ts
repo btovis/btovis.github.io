@@ -224,7 +224,7 @@ class FilenameGrouping extends Grouping {
     columnIdx: number;
     constructor(filter: DataFilterer, yGrouping: YGrouping) {
         super(filter, yGrouping);
-        this.columnIdx = filter.getColumnIndex(Attribute.originalFileName);
+        this.columnIdx = filter.getColumnIndex(Attribute.csvName);
     }
     public selectX(row: Row): SetElement {
         return this.selectByColumnIndex(row, this.columnIdx);

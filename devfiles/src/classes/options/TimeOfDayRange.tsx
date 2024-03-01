@@ -81,7 +81,8 @@ export default class TimeRange extends InputOption {
     }
 
     private isDefaultRange() {
-        return this.fromTime.diff(this.toTime, 'm') == 1;
+        const diff = this.fromTime.diff(this.toTime, 'm');
+        return diff == 1 || diff == -1439; // 1440 minutes in a day
     }
 
     public callback(newValue: { which: number; time: Dayjs }): void {
