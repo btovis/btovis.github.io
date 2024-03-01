@@ -55,6 +55,7 @@ export default class DataFilterer {
     // columnIndex can't be larger than the number of total columns
     // filterClass needs to be correct type, won't be checked here
     public replaceFilter(columnIndex, filterClass: Filter) {
+        this.filterState = uuidv4(); //Filters changed
         this.filtersClasses[columnIndex] = filterClass;
         const [status, pred] = filterClass.getPredicate();
         this.filterPredsForData[columnIndex] = pred;
@@ -89,6 +90,7 @@ export default class DataFilterer {
 
     // The caller needs to ensure that filters[columnIndex] is a set filter and not a range filter
     public updateSetFilter(columnIndex, e: SetElement, filterAwayFromNowOn: boolean) {
+        this.filterState = uuidv4(); //Filters changed
         let c: SetFilter = this.filtersClasses[columnIndex] as SetFilter;
         if (!c) {
             c = this.filtersClasses[columnIndex] = new SetFilter(
@@ -114,6 +116,7 @@ export default class DataFilterer {
 
     // The caller needs to ensure that filters[columnIndex] is a set filter and not a range filter
     public invertSetFilter(columnIndex) {
+        this.filterState = uuidv4(); //Filters changed
         let c: SetFilter = this.filtersClasses[columnIndex] as SetFilter;
         if (!c) {
             c = this.filtersClasses[columnIndex] = new SetFilter(
@@ -137,7 +140,6 @@ export default class DataFilterer {
     }
 
     public recalculateFilteredData() {
-        this.filterState = uuidv4(); //Filters changed
         if (this.opaqueFilters.size) {
             this.filteredDataArrLen = 0;
             return;

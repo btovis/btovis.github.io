@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 import Panel from './Panel';
 import GlobalSettings from './GlobalSettings';
 import { Data } from './data/Data';
+import Widget from './widgets/Widget';
 
 export default class PageManager {
     private static instance: PageManager;
@@ -13,11 +14,14 @@ export default class PageManager {
     public data: Data;
     public globalSettings: GlobalSettings;
     public selectedPanel: number = -1;
+    public selectedWidget: number = -1;
     public panels: Panel[];
     public refreshEverything?: () => void;
     public refreshPanelOptions?: () => void;
+    public refreshWidgetOptions?: () => void;
     public setSidebarTab?: (tab: string) => void;
     public unselectPanel?: () => void;
+    public unselectWidget?: () => void;
 
     private constructor() {
         console.log('Pagemanager was initialised.');
@@ -52,8 +56,12 @@ export default class PageManager {
         this.panels.splice(panelIdx, 1);
     }
 
-    public getSelectedPanel() {
+    public getSelectedPanel(): Panel {
         return this.panels[this.selectedPanel];
+    }
+
+    public getSelectedWidget(): Widget {
+        return this.panels[this.selectedPanel].getWidget(this.selectedWidget);
     }
 
     public getPanel(panelIdx: number) {

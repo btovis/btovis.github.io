@@ -202,13 +202,7 @@ export default class Panel {
             this.useridSelector
         ]);
 
-        //InputOption sidebars DO NOT contain filters, only widget-specific
-        //options.
-        const options = this.widgets
-            .map((widget) => widget.generateSidebar().options)
-            .reduce((acc, a) => acc.concat(a), []);
-
-        return new Sidebar(baseSidebar.options.concat(options));
+        return new Sidebar(baseSidebar.options);
     }
 
     public render(): void {}
@@ -218,6 +212,8 @@ export default class Panel {
     }
 
     public removeWidget(widgetIdx: number) {
+        this.pageManager.selectedWidget = -1;
+        this.pageManager.setSidebarTab('panelTab');
         this.widgets[widgetIdx].delete(); //Call child method
         this.widgets.splice(widgetIdx, 1); //mutable delete
     }
