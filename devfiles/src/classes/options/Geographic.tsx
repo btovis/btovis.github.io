@@ -94,7 +94,10 @@ export default class Geographic extends InputOption {
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
-                        <div id='panel-map-filter' style={{}}>
+                        <div
+                            id='panel-map-filter'
+                            style={{ minHeight: plotLayout.height, minWidth: plotLayout.width }}
+                        >
                             {/* If the accordion is closed, cheat and do not render */}
                             {this.accordionOpen ? (
                                 <Plot
@@ -161,6 +164,7 @@ export default class Geographic extends InputOption {
             autosize: false,
             hovermode: 'closest',
             mapbox: {
+                style: 'open-street-map',
                 center: {
                     lat:
                         this.posMeta().globalMin[0] +
@@ -181,7 +185,6 @@ export default class Geographic extends InputOption {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            mapboxAccessToken: MapWidget.mapToken,
             modeBarButtonsToRemove: ['toImage', 'lasso2d'] //Block lasso as I can't support points now
         };
 
