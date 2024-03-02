@@ -65,10 +65,11 @@ abstract class Grouping {
     }
     public selectByColumnIndex(row: Row, columnIdx: number): SetElement {
         if (row[columnIdx] instanceof SetElement) {
-            return row[columnIdx];
+            return row[columnIdx] as SetElement;
         }
         // Create a new set element and add the value to the reference set.
-        return this.referenceSet.addRawOrGet(row[columnIdx]);
+        //Warning: This will break if row[columnIdx] is a number.
+        return this.referenceSet.addRawOrGet(row[columnIdx] as string);
     }
     // Select the value to be used for the y-axis.
     public selectY(row: Row): SetElement {
