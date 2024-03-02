@@ -128,7 +128,7 @@ export default abstract class TimeChart extends Widget {
     public render(): JSX.Element {
         const plotLayout = {
             width: 500,
-            height: 300,
+            height: 250,
             font: {
                 size: 16
             }
