@@ -137,35 +137,39 @@ export default class SpeciesSelector extends InputOption {
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
-                        {/* For checking everything */}
-                        <input
-                            style={{ marginLeft: '10px' }}
-                            key={this.uuid + '-select-all'}
-                            id={this.uuid + '-select-all'}
-                            onChange={(event) => {
-                                //Add all values
-                                if (event.currentTarget.checked) {
-                                    endangermentValues.forEach((s) =>
-                                        this.allowedEndangerment.add(s)
-                                    );
-                                    this.possibleGroups.forEach((s) => this.allowedGroups.add(s));
-                                }
-                                this.callback({
-                                    checked: event.currentTarget.checked,
-                                    item: this.choices
-                                });
-                            }}
-                            onClick={(event) => event.stopPropagation()}
-                            checked={this.isEverythingSelected()}
-                            className='form-check-input'
-                            type='checkbox'
-                        />
-                        <label
-                            className='form-check-label selectorLabel select-all-label fw-bold'
-                            htmlFor={this.uuid + '-select-all'}
-                        >
-                            Select All
-                        </label>
+                        <div style={{ display: 'flex' }}>
+                            {/* For checking everything */}
+                            <input
+                                style={{ marginLeft: '10px' }}
+                                key={this.uuid + '-select-all'}
+                                id={this.uuid + '-select-all'}
+                                onChange={(event) => {
+                                    //Add all values
+                                    if (event.currentTarget.checked) {
+                                        endangermentValues.forEach((s) =>
+                                            this.allowedEndangerment.add(s)
+                                        );
+                                        this.possibleGroups.forEach((s) =>
+                                            this.allowedGroups.add(s)
+                                        );
+                                    }
+                                    this.callback({
+                                        checked: event.currentTarget.checked,
+                                        item: this.choices
+                                    });
+                                }}
+                                onClick={(event) => event.stopPropagation()}
+                                checked={this.isEverythingSelected()}
+                                className='form-check-input'
+                                type='checkbox'
+                            />
+                            <label
+                                className='form-check-label selectorLabel select-all-label fw-bold'
+                                htmlFor={this.uuid + '-select-all'}
+                            >
+                                Select All
+                            </label>
+                        </div>
                         {/* Endangerment Filters */}
                         <span className='mb-2 font-italic'>Conservation Status</span>
                         {/* For checking all the endangerment filters */}

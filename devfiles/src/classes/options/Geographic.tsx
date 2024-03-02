@@ -56,17 +56,20 @@ export default class Geographic extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <span>
-                                <strong
-                                    style={{ color: this.minLat === -Infinity ? '' : 'chocolate' }}
-                                    id={this.uuid.toString() + 'title'}
-                                >
-                                    {this.name}
-                                </strong>
-                            </span>
+                            <strong
+                                style={{ color: this.minLat === -Infinity ? '' : 'chocolate' }}
+                                id={this.uuid.toString() + 'title'}
+                            >
+                                {this.name}
+                            </strong>
+                        </span>
+                    </Accordion.Header>
+                    <Accordion.Body>
+                        <div style={{ display: 'flex' }}>
                             <input
                                 style={{ marginLeft: '10px' }}
                                 key={uuidv4()}
+                                id={this.uuid + '-select-all'}
                                 onChange={(event) => {
                                     this.callback(
                                         event.currentTarget.checked
@@ -92,9 +95,13 @@ export default class Geographic extends InputOption {
                                 className='form-check-input'
                                 type='checkbox'
                             />
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
+                            <label
+                                className='form-check-label selectorLabel select-all-label fw-bold'
+                                htmlFor={this.uuid + '-select-all'}
+                            >
+                                Select All
+                            </label>
+                        </div>
                         <div
                             id='panel-map-filter'
                             style={{
