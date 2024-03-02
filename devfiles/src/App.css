@@ -141,7 +141,10 @@ input[type='number'] {
     float: right;
 }
 .speciesGroupRowDiv {
-    padding-bottom: 3px;
+    padding-bottom: 5px;
+}
+.speciesGroupRowDiv button {
+    margin-left: 15px;
 }
 .speciesTooltip {
     width: 300px;
@@ -371,7 +374,6 @@ span {
     visibility: visible;
 }
 .widget {
-    overflow-y: scroll;
     width: fit-content;
     margin: auto;
     margin-top: 25px;

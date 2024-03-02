@@ -38,7 +38,12 @@ export default class TimeRange extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
+                            <strong
+                                style={{ color: this.isDefaultRange() ? '' : 'chocolate' }}
+                                id={this.uuid.toString() + 'title'}
+                            >
+                                {this.name}
+                            </strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
@@ -91,12 +96,6 @@ export default class TimeRange extends InputOption {
         } else {
             this.toTime = newValue.time;
         }
-
-        //If filter is active then indicate with title colour
-        document.getElementById(this.uuid.toString() + 'title').style.color = this.isDefaultRange()
-            ? ''
-            : 'chocolate';
-
         this.panel.recalculateFilters(this);
         //Refresh to update the associated panel and its widgets
         this.panel.refreshComponent();
