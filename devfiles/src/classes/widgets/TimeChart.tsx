@@ -42,6 +42,7 @@ export default abstract class TimeChart extends Widget {
         'toggleSpikelines',
         'resetViewMapbox'
     ];
+    public colorOption: ColorOption;
 
     // Subclasses implement these methods for specific chart types.
     public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;
