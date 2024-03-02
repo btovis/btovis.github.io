@@ -24,6 +24,7 @@
 
 .widget {
     overflow: auto;
+    width: auto;
 }
 
 a {

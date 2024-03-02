@@ -1,6 +1,7 @@
 import Panel from '../Panel';
 import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
+import { Resizable } from 'react-resizable';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
 import ExportFileType from './ExportFileType';
 import {
@@ -31,7 +32,6 @@ export default abstract class TimeChart extends Widget {
         'zoomIn2d',
         'zoomOut2d',
         'autoScale2d',
-        'resetScale2d',
         'hoverClosestCartesian',
         'hoverCompareCartesian',
         'zoom3d',

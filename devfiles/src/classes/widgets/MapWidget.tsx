@@ -106,7 +106,8 @@ export default class MapWidget extends Widget {
         const plotConfig = {
             mapboxAccessToken: MapWidget.mapToken,
             modeBarButtonsToRemove: TimeChart.buttonsToRemove,
-            displaylogo: false
+            displaylogo: false,
+            responsive: true
         };
 
         return { plotData, plotLayout, plotConfig, min, max };
