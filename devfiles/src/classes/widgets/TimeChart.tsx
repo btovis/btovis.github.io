@@ -23,6 +23,37 @@ export default abstract class TimeChart extends Widget {
     // This is declared here only because it isn't working when it's declared only in LineChart class
     public colorOptions: Array<ColorOption> = [];
 
+    static readonly buttonsToRemove = [
+        'zoom2d',
+        'pan2d',
+        'select2d',
+        'lasso2d',
+        'zoomIn2d',
+        'zoomOut2d',
+        'autoScale2d',
+        'resetScale2d',
+        'hoverClosestCartesian',
+        'hoverCompareCartesian',
+        'zoom3d',
+        'pan3d',
+        'resetCameraDefault3d',
+        'resetCameraLastSave3d',
+        'hoverClosest3d',
+        'orbitRotation',
+        'tableRotation',
+        'zoomInGeo',
+        'zoomOutGeo',
+        'resetGeo',
+        'hoverClosestGeo',
+        'sendDataToCloud',
+        'hoverClosestGl2d',
+        'hoverClosestPie',
+        'toggleHover',
+        'resetViews',
+        'toggleSpikelines',
+        'resetViewMapbox'
+    ];
+
     // Subclasses implement these methods for specific chart types.
     public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }>;
     public abstract chartType(): string;
@@ -122,7 +153,7 @@ export default abstract class TimeChart extends Widget {
             plotLayout
         );
         const plotConfig = {
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove
         };
         return <Plot data={traces} layout={layout} config={plotConfig} />;
     }

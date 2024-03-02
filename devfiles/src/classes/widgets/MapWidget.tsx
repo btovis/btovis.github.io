@@ -7,6 +7,7 @@ import Panel from '../Panel.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { unpack } from '../../utils/DataUtils.js';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
+import TimeChart from './TimeChart.js';
 
 export default class MapWidget extends Widget {
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
@@ -104,37 +105,7 @@ export default class MapWidget extends Widget {
         //plot config for plotly includes mapbox token *
         const plotConfig = {
             mapboxAccessToken: MapWidget.mapToken,
-            modeBarButtonsToRemove: [
-                'zoom2d',
-                'pan2d',
-                'select2d',
-                'lasso2d',
-                'zoomIn2d',
-                'zoomOut2d',
-                'autoScale2d',
-                'resetScale2d',
-                'hoverClosestCartesian',
-                'hoverCompareCartesian',
-                'zoom3d',
-                'pan3d',
-                'resetCameraDefault3d',
-                'resetCameraLastSave3d',
-                'hoverClosest3d',
-                'orbitRotation',
-                'tableRotation',
-                'zoomInGeo',
-                'zoomOutGeo',
-                'resetGeo',
-                'hoverClosestGeo',
-                'toImage',
-                'sendDataToCloud',
-                'hoverClosestGl2d',
-                'hoverClosestPie',
-                'toggleHover',
-                'resetViews',
-                'toggleSpikelines',
-                'resetViewMapbox'
-            ]
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove
         };
 
         return { plotData, plotLayout, plotConfig, min, max };
