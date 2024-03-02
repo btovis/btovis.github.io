@@ -55,9 +55,10 @@ export default class ColorOption extends TraceOption {
                 '#b210cc'
             ];
             // Put duplicates if default palette is not long enough.
-            if (numTraces > this.traceValList.length) {
-                for (let i = this.traceValList.length; i < numTraces; i++) {
-                    this.traceValList.push(this.traceValList[i % this.traceValList.length]);
+            const currentLen = this.traceValList.length;
+            if (numTraces > currentLen) {
+                for (let i = currentLen; i < numTraces; i++) {
+                    this.traceValList.push(this.traceValList[i % currentLen]);
                 }
             }
         }
