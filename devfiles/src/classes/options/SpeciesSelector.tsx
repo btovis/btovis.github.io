@@ -1,4 +1,4 @@
-import { Accordion, OverlayTrigger, Popover, ToggleButton, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Popover, ToggleButton, Tooltip } from 'react-bootstrap';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import SetQueryArray from '../query/SetQueryArray';
@@ -20,7 +20,6 @@ export default class SpeciesSelector extends InputOption {
     public selected: Set<SetElement> = new Set<SetElement>(); //Set of latin names
     public allowedEndangerment = new Set<EndangermentStatus>();
     public allowedGroups = new Set<SetElement>();
-    private accordionOpen = false;
     private choices: Set<SetElement>;
     private possibleGroups: Set<SetElement>;
     private debouncerTimer;
@@ -111,164 +110,140 @@ export default class SpeciesSelector extends InputOption {
      *
      */
     public render(): JSX.Element {
-        return (
-            <Accordion
-                onSelect={(eventKey) => {
-                    this.accordionOpen = typeof eventKey === 'string';
-                }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
-            >
-                <Accordion.Item eventKey='0'>
-                    <Accordion.Header>
-                        <span
-                            style={{
-                                color: this.isEverythingSelected() ? '' : 'chocolate',
-                                fontSize: 'larger'
-                            }}
-                            id={this.uuid.toString() + 'title'}
-                        >
-                            {this.name}
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <div style={{ display: 'flex' }}>
-                            {/* For checking everything */}
-                            <input
-                                style={{ marginLeft: '10px' }}
-                                key={this.uuid + '-select-all'}
-                                id={this.uuid + '-select-all'}
-                                onChange={(event) => {
-                                    //Add all values
-                                    if (event.currentTarget.checked) {
-                                        endangermentValues.forEach((s) =>
-                                            this.allowedEndangerment.add(s)
-                                        );
-                                        this.possibleGroups.forEach((s) =>
-                                            this.allowedGroups.add(s)
-                                        );
+        return this.generateAccordion(
+            <>
+                <div style={{ display: 'flex' }}>
+                    {/* For checking everything */}
+                    <input
+                        style={{ marginLeft: '10px' }}
+                        key={this.uuid + '-select-all'}
+                        id={this.uuid + '-select-all'}
+                        onChange={(event) => {
+                            //Add all values
+                            if (event.currentTarget.checked) {
+                                endangermentValues.forEach((s) => this.allowedEndangerment.add(s));
+                                this.possibleGroups.forEach((s) => this.allowedGroups.add(s));
+                            }
+                            this.callback({
+                                checked: event.currentTarget.checked,
+                                item: this.choices
+                            });
+                        }}
+                        onClick={(event) => event.stopPropagation()}
+                        checked={this.isEverythingSelected()}
+                        className='form-check-input'
+                        type='checkbox'
+                    />
+                    <label
+                        className='form-check-label selectorLabel select-all-label fw-bold'
+                        htmlFor={this.uuid + '-select-all'}
+                    >
+                        Select All
+                    </label>
+                </div>
+                {/* Endangerment Filters */}
+                <span className='mb-2 font-italic'>Conservation Status</span>
+                {/* For checking all the endangerment filters */}
+                <input
+                    style={{ marginLeft: '10px' }}
+                    key={uuidv4()}
+                    onChange={(event) => {
+                        if (event.currentTarget.checked)
+                            endangermentValues.forEach((s) => this.allowedEndangerment.add(s));
+                        else this.allowedEndangerment.clear();
+                        //Refresh state
+                        this.callback({ checked: false, item: new Set([]) });
+                    }}
+                    checked={this.allowedEndangerment.size == endangermentValues.length}
+                    className='form-check-input'
+                    type='checkbox'
+                />
+                <br />
+                {this.endangermentStatusFilters()}
+                <hr />
+                {/* Group Filters */}
+                <span className='mb-2 font-italic'>Species Groups</span>
+                {/* For checking all the group filters */}
+                <input
+                    style={{ marginLeft: '10px' }}
+                    key={uuidv4()}
+                    onChange={(event) => {
+                        if (event.currentTarget.checked)
+                            this.possibleGroups.forEach((s) => this.allowedGroups.add(s));
+                        else this.allowedGroups.clear();
+                        //Refresh state
+                        this.callback({ checked: false, item: new Set([]) });
+                    }}
+                    checked={this.allowedGroups.size == this.possibleGroups.size}
+                    className='form-check-input'
+                    type='checkbox'
+                />
+                <br />
+                {this.speciesGroupFilters()}
+                <hr />
+                {/* Search Bar */}
+                <div style={{ paddingBottom: '5px' }}>
+                    <input
+                        type='text'
+                        list={this.uuid.toString() + '-search'}
+                        placeholder='Search'
+                        onChange={(event) => {
+                            this.searchState = event.target.value;
+                            this.refreshComponent();
+                        }}
+                    />
+                    <datalist id={this.uuid.toString() + '-search'}>
+                        {[...this.choices].map((latinName) => {
+                            return (
+                                <option
+                                    key={uuidv4()}
+                                    value={
+                                        this.speciesMeta.englishName(latinName).value +
+                                        '/' +
+                                        latinName.value
                                     }
-                                    this.callback({
-                                        checked: event.currentTarget.checked,
-                                        item: this.choices
-                                    });
-                                }}
-                                onClick={(event) => event.stopPropagation()}
-                                checked={this.isEverythingSelected()}
-                                className='form-check-input'
-                                type='checkbox'
-                            />
-                            <label
-                                className='form-check-label selectorLabel select-all-label fw-bold'
-                                htmlFor={this.uuid + '-select-all'}
-                            >
-                                Select All
-                            </label>
+                                />
+                            );
+                        })}
+                    </datalist>
+                </div>
+                {/* Every species row */}
+                <div className='form-check'>
+                    {[...this.speciesMeta.groupByGroup.keys()].map((group) => (
+                        <div key={uuidv4()}>
+                            <hr />
+                            <div className='speciesGroupRowDiv' key={uuidv4()}>
+                                <strong>{group.value}</strong>
+                                <button
+                                    className='btn btn-outline-dark btn-sm'
+                                    type='button'
+                                    onClick={() => {
+                                        [...this.speciesMeta.groupByGroup.get(group)].map((s) => {
+                                            this.selected.has(s)
+                                                ? this.selected.delete(s)
+                                                : this.selected.add(s);
+                                        });
+                                        this.callback({
+                                            checked: false,
+                                            item: new Set([])
+                                        });
+                                    }}
+                                >
+                                    Invert
+                                </button>
+                            </div>
+                            {this.speciesMeta.groupByGroup
+                                .get(group)
+                                .map((latinName) => this.speciesRow(latinName))}
                         </div>
-                        {/* Endangerment Filters */}
-                        <span className='mb-2 font-italic'>Conservation Status</span>
-                        {/* For checking all the endangerment filters */}
-                        <input
-                            style={{ marginLeft: '10px' }}
-                            key={uuidv4()}
-                            onChange={(event) => {
-                                if (event.currentTarget.checked)
-                                    endangermentValues.forEach((s) =>
-                                        this.allowedEndangerment.add(s)
-                                    );
-                                else this.allowedEndangerment.clear();
-                                //Refresh state
-                                this.callback({ checked: false, item: new Set([]) });
-                            }}
-                            checked={this.allowedEndangerment.size == endangermentValues.length}
-                            className='form-check-input'
-                            type='checkbox'
-                        />
-                        <br />
-                        {this.endangermentStatusFilters()}
-                        <hr />
-                        {/* Group Filters */}
-                        <span className='mb-2 font-italic'>Species Groups</span>
-                        {/* For checking all the group filters */}
-                        <input
-                            style={{ marginLeft: '10px' }}
-                            key={uuidv4()}
-                            onChange={(event) => {
-                                if (event.currentTarget.checked)
-                                    this.possibleGroups.forEach((s) => this.allowedGroups.add(s));
-                                else this.allowedGroups.clear();
-                                //Refresh state
-                                this.callback({ checked: false, item: new Set([]) });
-                            }}
-                            checked={this.allowedGroups.size == this.possibleGroups.size}
-                            className='form-check-input'
-                            type='checkbox'
-                        />
-                        <br />
-                        {this.speciesGroupFilters()}
-                        <hr />
-                        {/* Search Bar */}
-                        <div style={{ paddingBottom: '5px' }}>
-                            <input
-                                type='text'
-                                list={this.uuid.toString() + '-search'}
-                                placeholder='Search'
-                                onChange={(event) => {
-                                    this.searchState = event.target.value;
-                                    this.refreshComponent();
-                                }}
-                            />
-                            <datalist id={this.uuid.toString() + '-search'}>
-                                {[...this.choices].map((latinName) => {
-                                    return (
-                                        <option
-                                            key={uuidv4()}
-                                            value={
-                                                this.speciesMeta.englishName(latinName).value +
-                                                '/' +
-                                                latinName.value
-                                            }
-                                        />
-                                    );
-                                })}
-                            </datalist>
-                        </div>
-                        {/* Every species row */}
-                        <div className='form-check'>
-                            {[...this.speciesMeta.groupByGroup.keys()].map((group) => (
-                                <div key={uuidv4()}>
-                                    <hr />
-                                    <div className='speciesGroupRowDiv' key={uuidv4()}>
-                                        <strong>{group.value}</strong>
-                                        <button
-                                            className='btn btn-outline-dark btn-sm'
-                                            type='button'
-                                            onClick={() => {
-                                                [...this.speciesMeta.groupByGroup.get(group)].map(
-                                                    (s) => {
-                                                        this.selected.has(s)
-                                                            ? this.selected.delete(s)
-                                                            : this.selected.add(s);
-                                                    }
-                                                );
-                                                this.callback({
-                                                    checked: false,
-                                                    item: new Set([])
-                                                });
-                                            }}
-                                        >
-                                            Invert
-                                        </button>
-                                    </div>
-                                    {this.speciesMeta.groupByGroup
-                                        .get(group)
-                                        .map((latinName) => this.speciesRow(latinName))}
-                                </div>
-                            ))}
-                        </div>
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
+                    ))}
+                </div>
+            </>
         );
+    }
+
+    protected checkDefault(): boolean {
+        return this.isEverythingSelected();
     }
 
     /**

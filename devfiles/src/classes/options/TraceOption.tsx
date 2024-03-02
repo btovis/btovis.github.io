@@ -1,7 +1,6 @@
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
-import Accordion from 'react-bootstrap/Accordion';
 
 export default abstract class TraceOption extends InputOption {
     // States that TraceOptions hold
@@ -9,7 +8,6 @@ export default abstract class TraceOption extends InputOption {
     public numTraces: number;
     // Attribute each trace holds, careful the any type
     public traceValList: Array<any>;
-    public accordionOpen: boolean;
     public traceTypeName: string;
 
     public constructor(
@@ -46,28 +44,12 @@ export default abstract class TraceOption extends InputOption {
     public abstract getTraceComponent(traceValue: any, index: number): JSX.Element;
 
     public render(): JSX.Element {
-        return (
-            <Accordion
-                onSelect={(eventKey) => {
-                    this.accordionOpen = typeof eventKey === 'string';
-                }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
-            >
-                <Accordion.Item eventKey='0'>
-                    <Accordion.Header>
-                        <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <div className='ColorOptions'>
-                            {this.traceValList
-                                .slice(0, this.numTraces)
-                                .map((color, index) => this.getTraceComponent(color, index))}
-                        </div>
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
+        return this.generateAccordion(
+            <div className='ColorOptions'>
+                {this.traceValList
+                    .slice(0, this.numTraces)
+                    .map((color, index) => this.getTraceComponent(color, index))}
+            </div>
         );
     }
 
