@@ -65,7 +65,6 @@ export default class ColorOption extends TraceOption {
                 type='color'
                 value={traceValue}
                 onBlur={(e) => {
-                    this.refreshComponent();
                     this.callback(e.target.value);
                 }}
                 onChange={(e) => (this.traceValList[index] = e.target.value)}
