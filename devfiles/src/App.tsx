@@ -4,8 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import SidebarComp from './ui/SidebarComp.tsx';
 import MainPage from './ui/MainPage.tsx';
 import PageManager from './classes/PageManager.ts';
-import { Fade, Spinner } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 import Panel from './classes/Panel.ts';
+import PersistentOverlay from './ui/FadingOverlay.tsx';
 
 // https://caniuse.com/?search=es2020 "Feature support list"
 // We target ES2020, 95% of browsers
@@ -15,9 +16,11 @@ if (!Promise.allSettled) {
 }
 
 function App() {
-    const [overlayVisible, setOverlayVisible] = useState(false);
-    const [overlayMessage, setOverlayMessage] = useState('');
-    const [isOverlaySuccess, setIsOverlaySuccess] = useState(true);
+    const [successVisible, setSuccessVisible] = useState(false);
+    const [warningVisible, setWarningVisible] = useState(false);
+    const [warningMessage, setWarningMessage] = useState<[string, string, string][]>([
+        ['', '', '']
+    ]);
     const [r, dud] = useState(0);
     const [pageManager] = useState(PageManager.get());
     pageManager.refreshEverything = () => dud(r + 1);
@@ -42,32 +45,30 @@ function App() {
                 data: new Uint8Array(await file.arrayBuffer())
             }))
         ).then((arr) => {
-            const rejected = [];
+            const rejected: [string, string, string][] = [];
             arr.forEach((file: PromiseFulfilledResult<{ name: string; data: Uint8Array }>) => {
                 if (!file.value.name.toLowerCase().endsWith('csv')) {
-                    rejected.push(file.value.name);
+                    rejected.push([file.value.name, 'Not a CSV', 'Only CSVs can be processed']);
                     return;
                 }
                 window['pageManager'] = pageManager;
                 try {
                     pageManager.addCSV(file.value.name, file.value.data, true);
                 } catch (e) {
-                    rejected.push(file.value.name + ': ' + e);
+                    rejected.push([
+                        file.value.name,
+                        (e as string).split(':')[0],
+                        (e as string).split(':')[1]
+                    ]);
                     return;
                 }
             });
             pageManager.finaliseAddingCSVs();
             if (borderRef.current) borderRef.current.style.opacity = 0;
             if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
-            setIsOverlaySuccess(rejected.length == 0);
-            if (rejected.length > 0)
-                setOverlayMessage(
-                    'Did not parse:\n - ' +
-                        rejected.join('\n - ') +
-                        '\n Only CSVs exported from the BTO pipeline can be processed.'
-                );
-            else setOverlayMessage('Loaded file(s).');
-            setOverlayVisible(true);
+            if (rejected.length > 0) setWarningMessage(rejected);
+            setSuccessVisible(rejected.length <= 0);
+            setWarningVisible(rejected.length > 0);
 
             //If there's no panel after a successful upload, make one
             if (pageManager.data.sets[0].size() > 0 && pageManager.panels.length === 0) {
@@ -83,15 +84,18 @@ function App() {
         <div
             onDragOver={(event) => {
                 event.preventDefault();
+                if (warningVisible) return;
                 if (borderRef.current) borderRef.current.style.opacity = 0.8;
             }}
             onDragLeave={(event) => {
                 event.preventDefault();
+                if (warningVisible) return;
                 if (borderRef.current) borderRef.current.style.opacity = 0;
             }}
             onDrop={(event) => {
                 event.stopPropagation();
                 event.preventDefault();
+                if (warningVisible) return;
                 renderFileProcess(event.dataTransfer.files);
             }}
         >
@@ -113,32 +117,20 @@ function App() {
                 </div>
             </div>
             {/* This is the red or green banner that displays feedback*/}
-            <Fade
-                appear={true}
-                timeout={1000}
-                onEntered={() =>
-                    setTimeout(() => setOverlayVisible(false), isOverlaySuccess ? 500 : 2000)
-                }
-                in={overlayVisible}
-            >
-                <div
-                    className={
-                        (isOverlaySuccess ? 'fileUploadSuccess' : 'fileUploadWarn') + ' rounded'
-                    }
-                >
-                    <table>
-                        <tbody>
-                            {overlayMessage.split('\n').map((line, lineIdx) => (
-                                <tr key={lineIdx}>
-                                    <td>
-                                        <strong>{line}</strong>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </Fade>
+            <PersistentOverlay
+                className={'fileUploadSuccess'}
+                message={warningMessage}
+                visible={successVisible}
+                setVisible={setSuccessVisible}
+                autoFades={true}
+            />
+            <PersistentOverlay
+                className={'fileUploadWarn'}
+                message={warningMessage}
+                setVisible={setWarningVisible}
+                visible={warningVisible}
+                autoFades={false}
+            />
             <div id='delete_panel_modal' className='modal'>
                 <div className='modal-box'>
                     <p>Are you sure you want to delete this panel?</p>

@@ -77,7 +77,7 @@ class Data {
             var { columnNames, content } = parseCSVFromByteArray(CSVFile, CSVIdentifier);
         } catch (e) {
             this.sets[0].removeRef(CSVIdentifier);
-            throw 'Malformed CSV ' + e;
+            throw 'Malformed CSV: ' + e;
         }
 
         if (content.length == 0) {
