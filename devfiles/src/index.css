@@ -13,6 +13,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.widget-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: center;
+  justify-content: center;
+}
+
+.widget {
+  overflow: auto;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -24,7 +36,6 @@ a:hover {
 
 body {
   margin: 0;
-  /*display: flex;*/
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
