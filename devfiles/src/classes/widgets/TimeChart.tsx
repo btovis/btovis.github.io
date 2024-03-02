@@ -122,7 +122,8 @@ export default abstract class TimeChart extends Widget {
             plotLayout
         );
         const plotConfig = {
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
+            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d'],
+            displaylogo: false
         };
         return <Plot data={traces} layout={layout} config={plotConfig} />;
     }
