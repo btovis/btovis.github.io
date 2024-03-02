@@ -134,9 +134,14 @@ export default abstract class TimeChart extends Widget {
         const fullscreenDisplay = isFullscreen ? (
             <></>
         ) : (
-            <Modal show={this.fullscreenModalShown} onHide={() => this.hideFullscreen()}>
+            <Modal
+                className='widget-fullscreen-modal'
+                show={this.fullscreenModalShown}
+                onHide={() => this.hideFullscreen()}
+                fullscreen={true}
+            >
                 <Modal.Header closeButton></Modal.Header>
-                <Modal.Body>{this.render(800, 600, true)}</Modal.Body>
+                <Modal.Body>{this.render(-1, -1, true)}</Modal.Body>
             </Modal>
         );
         return (
