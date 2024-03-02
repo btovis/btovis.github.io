@@ -56,7 +56,7 @@ export default class Panel {
         );
         this.updateInputOptions();
 
-        this.widgets = [new BarChart(this)];
+        this.widgets = [new LineChart(this)];
         this.minHeight = 350; // panel body minimum height
     }
 
