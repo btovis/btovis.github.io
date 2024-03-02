@@ -69,7 +69,7 @@ abstract class Grouping {
         }
         // Create a new set element and add the value to the reference set.
         //Warning: This will break if row[columnIdx] is a number.
-        return this.referenceSet.addRawOrGet(row[columnIdx] as string);
+        return this.referenceSet.getRef(row[columnIdx] as string);
     }
     // Select the value to be used for the y-axis.
     public selectY(row: Row): SetElement {
