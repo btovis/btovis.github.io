@@ -29,7 +29,8 @@ enum Attribute {
     time = 'TIME',
     uploadKey = 'UPLOAD KEY',
     batchName = 'BATCH NAME',
-    projectName = 'PROJECT NAME'
+    projectName = 'PROJECT NAME',
+    vulnerability = 'VULNERABILITY'
 }
 
 // Calling addCSV will require calling dataUpdated in all DataFiltered!!!!!

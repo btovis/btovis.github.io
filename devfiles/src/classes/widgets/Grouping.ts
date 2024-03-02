@@ -33,8 +33,10 @@ abstract class Grouping {
         let attribute: Attribute;
         switch (yGrouping) {
             case YGrouping.Species:
-            case YGrouping.VulnerabilityStatus:
                 attribute = Attribute.speciesLatinName;
+                break;
+            case YGrouping.VulnerabilityStatus:
+                attribute = Attribute.vulnerability;
                 break;
             case YGrouping.Animal:
                 attribute = Attribute.speciesEnglishName;
@@ -70,15 +72,7 @@ abstract class Grouping {
     }
     // Select the value to be used for the y-axis.
     public selectY(row: Row): SetElement {
-        switch (this.yGrouping) {
-            case YGrouping.VulnerabilityStatus: {
-                const species = row[this.yColumnIdx];
-                const status = this.speciesMeta.endStatus(species);
-                return this.referenceSet.addRawOrGet(status);
-            }
-            default:
-                return this.selectByColumnIndex(row, this.yColumnIdx);
-        }
+        return this.selectByColumnIndex(row, this.yColumnIdx);
     }
     // Select pairs of x-y values that will be aggregated and plotted.
     public generatePairs(): [SetElement, SetElement][] {
