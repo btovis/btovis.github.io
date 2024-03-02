@@ -7,6 +7,7 @@ import DataFilterer from '../data/DataFilterer';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
 enum YGrouping {
+    Animal = 'Animal',
     Species = 'Species',
     SpeciesGroup = 'Species Group',
     VulnerabilityStatus = 'Vulnerability Status'
@@ -34,6 +35,9 @@ abstract class Grouping {
             case YGrouping.Species:
             case YGrouping.VulnerabilityStatus:
                 attribute = Attribute.speciesLatinName;
+                break;
+            case YGrouping.Animal:
+                attribute = Attribute.speciesEnglishName;
                 break;
             case YGrouping.SpeciesGroup:
                 attribute = Attribute.speciesGroup;
