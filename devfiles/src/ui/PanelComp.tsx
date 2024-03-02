@@ -12,6 +12,7 @@ import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
 import { CloseButton } from 'react-bootstrap';
 import generateHash from '../utils/generateHash.js';
+import TimeChart from '../classes/widgets/TimeChart.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
@@ -39,6 +40,20 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             //Force sidebar to refresh by setting the tab
             params.pageManager.setSidebarTab('widgetTab');
         }
+
+        const fullscreenButton =
+            w instanceof TimeChart ? (
+                <Icon.ArrowsFullscreen
+                    className='fullscreen-widget'
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        (w as TimeChart).showFullscreen();
+                    }}
+                ></Icon.ArrowsFullscreen>
+            ) : (
+                <></>
+            );
+
         return (
             <div
                 key={generateHash(panel.uuid, w.uuid)}
@@ -63,6 +78,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         panel.refresh();
                     }}
                 />
+                {fullscreenButton}
                 <p className='widgetTitle'>{w.name}</p>
                 <WidgetComp
                     key={w.uuid}

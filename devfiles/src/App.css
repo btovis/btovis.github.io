@@ -407,6 +407,14 @@ span {
   float: right;
 }
 
+.fullscreen-widget {
+  position: relative;
+  float: left;
+  padding: 3px;
+  width: 1.5em;
+  height: 1.5em;
+}
+
 .delete-btn {
   border-width: medium;
   border-color: #d00000;

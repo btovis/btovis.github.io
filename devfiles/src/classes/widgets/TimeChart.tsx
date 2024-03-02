@@ -146,9 +146,8 @@ export default abstract class TimeChart extends Widget {
         );
         return (
             <div>
-                <Plot data={traces} layout={layout} config={plotConfig} />
-                <button onClick={() => this.showFullscreen()}>e</button>
                 {fullscreenDisplay}
+                <Plot data={traces} layout={layout} config={plotConfig} />
             </div>
         );
     }
@@ -160,7 +159,7 @@ export default abstract class TimeChart extends Widget {
         throw new Error('Method not implemented.');
     }
 
-    private showFullscreen() {
+    public showFullscreen() {
         this.fullscreenModalShown = true;
         this.refresh();
     }
