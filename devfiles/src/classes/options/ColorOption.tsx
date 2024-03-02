@@ -1,21 +1,10 @@
 import Panel from '../Panel';
-import { Query } from '../query/Query';
-import InputOption from './InputOption';
-import Accordion from 'react-bootstrap/Accordion';
 import { v4 as uuidv4 } from 'uuid';
-import { debounce } from 'lodash';
-import { useMemo, useState } from 'react';
+import TraceOption from './TraceOption';
 
-export default class ColorOption extends InputOption {
-    // States that ColorOption hold
-    public numTraces: number;
-    public traceValList: Array<string>;
-    public accordionOpen: boolean;
-
+export default class ColorOption extends TraceOption {
     public constructor(panel: Panel, name: string, numTraces: number, template?: ColorOption) {
-        super(panel, name);
-        this.numTraces = numTraces;
-        this.accordionOpen = false;
+        super(panel, name, numTraces, template);
         if (template == undefined) {
             this.traceValList = [
                 '#039cad',
@@ -63,15 +52,15 @@ export default class ColorOption extends InputOption {
     }
 
     // ColorOptions implementation of getTraceComponent
-    public getTraceComponent(traceValue: any, index: number) {
+    public getTraceComponent(traceValue: any, index: number): JSX.Element {
         const textField = <input type='text' value={traceValue} readOnly={true} />;
         const colorField = (
             <input
                 type='color'
                 value={traceValue}
                 onBlur={(e) => {
-                    this.callback(e.target.value);
                     this.refreshComponent();
+                    this.callback(e.target.value);
                 }}
                 onChange={(e) => (this.traceValList[index] = e.target.value)}
             />
@@ -84,47 +73,5 @@ export default class ColorOption extends InputOption {
                 {textField}
             </div>
         );
-    }
-
-    public updateNumTraces(numTraces: number): void {
-        this.numTraces = numTraces;
-        this.refreshComponent();
-    }
-
-    public render(): JSX.Element {
-        return (
-            <Accordion
-                onSelect={(eventKey) => {
-                    this.accordionOpen = typeof eventKey === 'string';
-                }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
-            >
-                <Accordion.Item eventKey='0'>
-                    <Accordion.Header>
-                        <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <div className='ColorOptions'>
-                            {this.traceValList
-                                .slice(0, this.numTraces)
-                                .map((color, index) => this.getTraceComponent(color, index))}
-                        </div>
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
-        );
-    }
-
-    public callback(newValue): void {
-        console.log('called');
-        this.extendedCallbacks.forEach((f) => f(newValue));
-    }
-    public query(): Query {
-        throw new Error('Method not implemented.');
-    }
-    public value(): any[] {
-        return this.traceValList.slice(0, this.numTraces);
     }
 }
