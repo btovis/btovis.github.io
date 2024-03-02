@@ -138,13 +138,10 @@ export default abstract class TimeChart extends Widget {
     }
     public render(): JSX.Element {
         const plotLayout = {
-            width: 700,
-            height: 400,
-            margin: {
-                l: 30,
-                r: 30,
-                b: 50,
-                t: 65
+            width: 500,
+            height: 300,
+            font: {
+                size: 16
             }
         };
         // Add specific layout to each chart.
