@@ -60,7 +60,7 @@ export default class ColorOption extends TraceOption {
                     this.traceValList.push(this.traceValList[i % this.traceValList.length]);
                 }
             }
-        } else this.traceValList = template.traceValList;
+        }
     }
 
     // ColorOptions implementation of getTraceComponent

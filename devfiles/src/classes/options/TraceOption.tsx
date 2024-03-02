@@ -23,6 +23,9 @@ export default abstract class TraceOption extends InputOption {
         this.numTraces = numTraces;
         this.accordionOpen = false;
         this.traceTypeName = traceTypeName;
+        if (template != undefined) {
+            this.traceValList = template.traceValList;
+        }
     }
 
     // update number of traces: lazy update doesn't directly affect size of ValList if numTraces decrease
