@@ -14,7 +14,6 @@ import { Attribute } from './data/Data';
 import SpeciesSelector from './options/SpeciesSelector';
 import TimeOfDayRange from './options/TimeOfDayRange';
 import { Query } from './query/Query';
-import LineChart from './widgets/LineChart.tsx';
 import TimeChart from './widgets/TimeChart.tsx';
 
 export default class Panel {

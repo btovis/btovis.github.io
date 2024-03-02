@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
 import Panel from './Panel';
 import GlobalSettings from './GlobalSettings';
 import { Data } from './data/Data';
