@@ -26,7 +26,9 @@ export default abstract class TraceOption extends InputOption {
                 this.traceValList.push(this.traceValList[i % this.traceValList.length]);
             }
         }
-        this.refreshComponent();
+        if (this.refreshComponent != undefined) {
+            this.refreshComponent();
+        }
     }
 
     // Returns the JSXElement for sidebar for each trace
