@@ -53,13 +53,14 @@ export default class TimeRange extends InputOption {
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
-                        <span>
-                            <strong
-                                style={{ color: this.isDefaultRange() ? '' : 'chocolate' }}
-                                id={this.uuid.toString() + 'title'}
-                            >
-                                {this.name}
-                            </strong>
+                        <span
+                            style={{
+                                color: this.isDefaultRange() ? '' : 'chocolate',
+                                fontSize: 'larger'
+                            }}
+                            id={this.uuid.toString() + 'title'}
+                        >
+                            {this.name}
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>

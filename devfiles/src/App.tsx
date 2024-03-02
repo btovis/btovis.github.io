@@ -141,7 +141,7 @@ function App() {
                 </div>
             </Fade>
             <div id='delete_panel_modal' className='modal'>
-                <div className='modal-box'>
+                <div className='modal-box' style={{ fontSize: 'larger' }}>
                     <p>Are you sure you want to delete this panel?</p>
                     <p>
                         <i id='delete_modal_name'></i>

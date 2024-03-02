@@ -134,13 +134,14 @@ export default class Selector extends InputOption {
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
-                        <span>
-                            <strong
-                                style={{ color: this.isEverythingSelected() ? '' : 'chocolate' }}
-                                id={this.uuid.toString() + 'title'}
-                            >
-                                {this.name}
-                            </strong>
+                        <span
+                            style={{
+                                color: this.isEverythingSelected() ? '' : 'chocolate',
+                                fontSize: 'larger'
+                            }}
+                            id={this.uuid.toString() + 'title'}
+                        >
+                            {this.name}
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>

@@ -76,7 +76,7 @@ function GlobalOptionsComp(params: {
 
     return (
         <>
-            <h3>Data Files:</h3>
+            <h3>Data Files</h3>
             {fileNameList}
             <hr />
             {fileUploadTooltip}

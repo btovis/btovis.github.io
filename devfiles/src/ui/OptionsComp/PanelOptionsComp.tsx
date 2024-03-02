@@ -27,6 +27,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         <div key={uuidv4()}>
             <button
                 className='delete-btn'
+                style={{ fontSize: 'larger' }}
                 onClick={() => {
                     document.getElementById('delete_panel_modal').style.display = 'block';
                     document.getElementById('delete_modal_name').innerText = params.pageManager

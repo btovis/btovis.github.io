@@ -46,13 +46,14 @@ export default class NumericInput extends InputOption {
             >
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
-                        <span>
-                            <strong
-                                style={{ color: this.value == 0 ? '' : 'chocolate' }}
-                                id={this.uuid.toString() + 'title'}
-                            >
-                                {this.name}
-                            </strong>
+                        <span
+                            style={{
+                                color: this.value == 0 ? '' : 'chocolate',
+                                fontSize: 'larger'
+                            }}
+                            id={this.uuid.toString() + 'title'}
+                        >
+                            {this.name}
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
