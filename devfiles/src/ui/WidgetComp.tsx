@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import CloseButton from 'react-bootstrap/CloseButton';
 import PageManager from '../classes/PageManager.js';
 import Widget from '../classes/widgets/Widget.js';
 import React from 'react';

@@ -1,12 +1,10 @@
 import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
-import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
 import { Attribute } from '../data/Data.js';
 import Panel from '../Panel.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { unpack } from '../../utils/DataUtils.js';
-import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 import TimeChart from './TimeChart.js';
 
 export default class MapWidget extends Widget {
@@ -115,11 +113,5 @@ export default class MapWidget extends Widget {
     }
     public delete(): void {
         //throw new Error('Method not implemented.');
-    }
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
     }
 }
