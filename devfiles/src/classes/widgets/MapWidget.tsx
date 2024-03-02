@@ -105,7 +105,8 @@ export default class MapWidget extends Widget {
         //plot config for plotly includes mapbox token *
         const plotConfig = {
             mapboxAccessToken: MapWidget.mapToken,
-            modeBarButtonsToRemove: TimeChart.buttonsToRemove
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove,
+            displaylogo: false
         };
 
         return { plotData, plotLayout, plotConfig, min, max };

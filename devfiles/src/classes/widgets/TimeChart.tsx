@@ -153,7 +153,10 @@ export default abstract class TimeChart extends Widget {
             plotLayout
         );
         const plotConfig = {
-            modeBarButtonsToRemove: TimeChart.buttonsToRemove
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove,
+            editable: true,
+            staticplot: true,
+            displaylogo: false
         };
         return <Plot data={traces} layout={layout} config={plotConfig} />;
     }
