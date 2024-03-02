@@ -42,6 +42,7 @@ export default class Geographic extends InputOption {
     }
 
     public render(): JSX.Element {
+        console.log('Rerendering geo');
         const { plotData, plotLayout, plotConfig } = this.generatePlotlySettings();
 
         return (
@@ -96,7 +97,11 @@ export default class Geographic extends InputOption {
                     <Accordion.Body>
                         <div
                             id='panel-map-filter'
-                            style={{ minHeight: plotLayout.height, minWidth: plotLayout.width }}
+                            style={{
+                                height: plotLayout.height,
+                                width: plotLayout.width,
+                                overflowY: 'hidden'
+                            }}
                         >
                             {/* If the accordion is closed, cheat and do not render */}
                             {this.accordionOpen ? (
@@ -116,6 +121,7 @@ export default class Geographic extends InputOption {
                             ) : (
                                 <></>
                             )}
+                            If you can see this, click the title twice to re-render the map.
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
