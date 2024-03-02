@@ -7,7 +7,6 @@ import LineChart from '../classes/widgets/LineChart.js';
 import WidgetComp from './WidgetComp.js';
 import BarChart from '../classes/widgets/BarChart.js';
 import MapWidget from '../classes/widgets/MapWidget.js';
-import StackedLineChart from '../classes/widgets/StackedLineChart.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
 import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
@@ -170,19 +169,6 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                                     className='widget-icon'
                                                 />
                                                 <div className='tool-tip'>Linechart</div>
-                                            </div>
-
-                                            <div
-                                                className='widget-icon'
-                                                onClick={() => {
-                                                    addwidget(StackedLineChart);
-                                                }}
-                                            >
-                                                <Icon.GraphUp
-                                                    size={iconSize}
-                                                    className='widget-icon'
-                                                />
-                                                <div className='tool-tip'>Stacked linechart</div>
                                             </div>
 
                                             <div

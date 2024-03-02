@@ -7,13 +7,26 @@ import {
 } from './Grouping.js';
 import TimeChart from './TimeChart.js';
 import ColorOption from '../options/ColorOption.js';
+import Selector from '../options/Selector.js';
+import Panel from '../Panel.js';
 
 export default class LineChart extends TimeChart {
+    stackedSelector: Selector;
+    public constructor(panel: Panel) {
+        super(panel);
+        // Bug in the way TypeScript calls constructor, so we need to call this here.
+        this.initOptions();
+    }
     public chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }> {
         const traceConfigs: Array<{ [key: string]: any }> = [];
+        const stacked = this.stackedSelector && this.stackedSelector.isEverythingSelected();
         for (let i = 0; i < numTraces; i++) {
             const singleTraceConfig: { [key: string]: any } = {};
             singleTraceConfig.type = 'scatter';
+            if (stacked) {
+                singleTraceConfig.stackgroup = 'one';
+                singleTraceConfig.fill = 'tonexty';
+            }
 
             const lineConfig: { [key: string]: any } = {};
             lineConfig.color = this.colorOptions[i].value();
@@ -22,17 +35,35 @@ export default class LineChart extends TimeChart {
         }
         return traceConfigs;
     }
+    public async initOptions(): Promise<void> {
+        // Selector for determining whether the chart is stacked or not.
+        this.stackedSelector = new Selector(
+            this.panel,
+            'Stack Line Chart',
+            ['Stack Lines'],
+            false,
+            []
+        );
+        this.stackedSelector.hideSelectAll = true;
+        this.stackedSelector.extendedCallbacks.push(() => this.optionsCallback());
+        super.initOptions();
+    }
 
     // bind Chart specific options to Timechart Options
     public bindOptions(): void {
-        this.options = [this.xAxisSelector, this.yAxisSelector, ...this.colorOptions];
+        this.options = [
+            this.xAxisSelector,
+            this.yAxisSelector,
+            this.stackedSelector,
+            ...this.colorOptions
+        ];
     }
 
     // Update Trace Options for Linechart
     public updateTraceOptions(): void {
         // Calculate number of traces and call child method to generate, then bind to options in-line
         this.generateChartSpecificOptions(this.grouping.numTraces());
-        this.options = [this.xAxisSelector, this.yAxisSelector, ...this.colorOptions];
+        this.bindOptions();
         this.refresh();
         this.panel.pageManager.refreshPanelOptions();
     }

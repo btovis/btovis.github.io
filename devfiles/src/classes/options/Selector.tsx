@@ -14,6 +14,7 @@ export default class Selector extends InputOption {
     public readonly columnIndex;
     private accordionOpen = false;
     public useSearchBar: boolean = true;
+    public hideSelectAll: boolean = false;
 
     /**
      * @param panel The associated panel
@@ -99,7 +100,9 @@ export default class Selector extends InputOption {
                 </div>
             );
         }
-        const selectAll = (
+        const selectAll = this.hideSelectAll ? (
+            []
+        ) : (
             <div key={uuidv4()}>
                 <p>
                     <input
