@@ -40,18 +40,15 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             params.pageManager.setSidebarTab('widgetTab');
         }
 
-        const fullscreenButton =
-            w instanceof TimeChart ? (
-                <Icon.ArrowsFullscreen
-                    className='fullscreen-widget'
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        (w as TimeChart).showFullscreen();
-                    }}
-                ></Icon.ArrowsFullscreen>
-            ) : (
-                <></>
-            );
+        const fullscreenButton = (
+            <Icon.ArrowsFullscreen
+                className='fullscreen-widget'
+                onClick={(event) => {
+                    event.stopPropagation();
+                    (w as TimeChart).showFullscreen();
+                }}
+            ></Icon.ArrowsFullscreen>
+        );
 
         return (
             <div

@@ -7,7 +7,7 @@ import SetElement from '../data/setutils/SetElement.js';
 import { v4 as uuidv4 } from 'uuid';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 import { hasEmpty, rowComparator, unpack } from '../../utils/DataUtils.js';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 /**
  * This will take in a set of input columns, then
@@ -32,6 +32,8 @@ export default class TableWidget extends Widget {
     //Options
     private selectorOption: Selector;
     private cullEmpty: MutuallyExclusiveSelector;
+
+    private fullscreenModalShown: boolean = false;
 
     /**
      * Initiatise all options here in private variables. These options will persist
@@ -96,17 +98,51 @@ export default class TableWidget extends Widget {
         return new Sidebar(this.options);
     }
 
+    public renderFullscreen(): JSX.Element {
+        return (
+            <Modal
+                className='widget-fullscreen-modal'
+                onHide={() => this.hideFullscreen()}
+                show={true}
+                fullscreen={true}
+            >
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>{this.render()}</Modal.Body>
+            </Modal>
+        );
+    }
+
+    public showFullscreen() {
+        this.fullscreenModalShown = true;
+        this.refresh();
+    }
+
+    private hideFullscreen() {
+        this.fullscreenModalShown = false;
+        this.refresh();
+    }
+
     public render(): JSX.Element {
+        let fullscreenDisplay = <></>;
+        if (this.fullscreenModalShown) {
+            // Avoid re-rendering the fullscreen modal when it's already shown.
+            this.fullscreenModalShown = false;
+            fullscreenDisplay = this.renderFullscreen();
+            this.fullscreenModalShown = true;
+        }
         //If nothing is selected, render an empty table
         if (this.selectorOption.excluded.size === this.selectorOption.choices.size) {
             return (
-                <table className='table'>
-                    <thead>
-                        <tr>
-                            <td>No Columns Selected</td>
-                        </tr>
-                    </thead>
-                </table>
+                <div>
+                    {fullscreenDisplay}
+                    <table className='table'>
+                        <thead>
+                            <tr>
+                                <td>No Columns Selected</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             );
         }
 
@@ -170,6 +206,7 @@ export default class TableWidget extends Widget {
         //Return the actual sorted table
         return (
             <div>
+                {fullscreenDisplay}
                 {/* Control div */}
                 <div style={{ width: '100%', float: 'left', margin: '5px', display: 'inline' }}>
                     <br />

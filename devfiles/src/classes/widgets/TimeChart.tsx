@@ -129,7 +129,7 @@ export default abstract class TimeChart extends Widget {
         return new Sidebar(this.options);
     }
 
-    public render_fullscreen() {
+    public renderFullscreen(): JSX.Element {
         const scale = 0.9;
         const { innerWidth: innerWidth, innerHeight: innerHeight } = window;
         return (
@@ -170,7 +170,7 @@ export default abstract class TimeChart extends Widget {
         if (this.fullscreenModalShown) {
             // Avoid re-rendering the fullscreen modal when it's already shown.
             this.fullscreenModalShown = false;
-            fullscreenDisplay = this.render_fullscreen();
+            fullscreenDisplay = this.renderFullscreen();
             this.fullscreenModalShown = true;
         }
         return (
