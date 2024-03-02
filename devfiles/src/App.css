@@ -250,6 +250,7 @@ input[type=number] {
   border-style: dotted;
   pointer-events: none;
   background-color: #aaff82;
+  font-weight: bold;
   z-index:1000000;
 }
 

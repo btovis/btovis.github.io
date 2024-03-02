@@ -1,10 +1,8 @@
 import { Fade } from 'react-bootstrap';
-import { v4 as uuidv4 } from 'uuid';
 
-export default function PersistentOverlay(props: {
-    className: string;
-    message: [string, string, string][];
+export default function SuccessOverlay(props: {
     visible: boolean;
+    message: string;
     setVisible: (boolean) => void;
     autoFades: boolean;
 }) {
@@ -35,31 +33,13 @@ export default function PersistentOverlay(props: {
                     event.stopPropagation();
                 }}
             >
-                <div className={[props.className, 'rounded'].join(' ')}>
-                    <h4>Only CSV files exported from the BTO pipeline can be processed</h4>
+                <div className={'fileUploadSuccess rounded'}>
                     <div style={{ display: 'flex' }}>
-                        <table className='table table-danger'>
-                            <thead>
-                                <tr>
-                                    <td>
-                                        <strong>File</strong>
-                                    </td>
-                                    <td>
-                                        <strong>Error Class</strong>
-                                    </td>
-                                    <td>
-                                        <strong>Description</strong>
-                                    </td>
-                                </tr>
-                            </thead>
+                        <table>
                             <tbody>
-                                {props.message.map(([fileName, errorClass, desc]) => (
-                                    <tr key={uuidv4()}>
-                                        <td style={{ textAlign: 'left' }}>{fileName}</td>
-                                        <td style={{ textAlign: 'left' }}>{errorClass}</td>
-                                        <td style={{ textAlign: 'left' }}>{desc}</td>
-                                    </tr>
-                                ))}
+                                <tr>
+                                    <td>{props.message}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

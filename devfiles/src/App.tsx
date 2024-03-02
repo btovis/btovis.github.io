@@ -6,7 +6,8 @@ import MainPage from './ui/MainPage.tsx';
 import PageManager from './classes/PageManager.ts';
 import { Spinner } from 'react-bootstrap';
 import Panel from './classes/Panel.ts';
-import PersistentOverlay from './ui/FadingOverlay.tsx';
+import ErrorOverlay from './ui/ErrorOverlay.tsx';
+import SuccessOverlay from './ui/SuccessOverlay.tsx';
 
 // https://caniuse.com/?search=es2020 "Feature support list"
 // We target ES2020, 95% of browsers
@@ -67,6 +68,7 @@ function App() {
             if (borderRef.current) borderRef.current.style.opacity = 0;
             if (spinnerRef.current) spinnerRef.current.style.opacity = 0;
             if (rejected.length > 0) setWarningMessage(rejected);
+            else setWarningMessage([['Processed (' + arr.length + ') file(s)', '', '']]);
             setSuccessVisible(rejected.length <= 0);
             setWarningVisible(rejected.length > 0);
 
@@ -117,15 +119,13 @@ function App() {
                 </div>
             </div>
             {/* This is the red or green banner that displays feedback*/}
-            <PersistentOverlay
-                className={'fileUploadSuccess'}
-                message={warningMessage}
+            <SuccessOverlay
+                message={warningMessage[0][0]}
                 visible={successVisible}
                 setVisible={setSuccessVisible}
                 autoFades={true}
             />
-            <PersistentOverlay
-                className={'fileUploadWarn'}
+            <ErrorOverlay
                 message={warningMessage}
                 setVisible={setWarningVisible}
                 visible={warningVisible}
