@@ -153,12 +153,6 @@ class Data {
             const row = db[i];
             for (let c = 0; c < setLen; c++) {
                 const ref = row[columnsWithSets[c]] as SetElement; //prevSets[columnsWithSets[c]].getRef(row[columnsWithSets[c]] as string);
-                /*if (!(ref instanceof SetElement)) {
-                    // shouldn't happen, a new data item?
-                    console.error("error: new data item on delete??")
-                    throw row[columnsWithSets[c]] + ' ' + this.columnList[columnsWithSets[c]]
-                    //continue;
-                }*/
                 updatedSets[c].addRef(ref);
             }
         }

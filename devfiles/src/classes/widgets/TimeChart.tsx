@@ -1,21 +1,10 @@
 import Panel from '../Panel';
 import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
-import { Resizable } from 'react-resizable';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
-import ExportFileType from './ExportFileType';
-import {
-    ContinuousMonthGrouping,
-    DayGrouping,
-    Grouping,
-    YGrouping,
-    YearGrouping
-} from './Grouping';
+import { Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
-import InputOption from '../options/InputOption';
 import ColorOption from '../options/ColorOption.js';
-import { getTouchRippleUtilityClass } from '@mui/material';
-import Selector from '../options/Selector.js';
 
 // Covers bar chart, line chart, stacked line chart.
 export default abstract class TimeChart extends Widget {
@@ -55,7 +44,7 @@ export default abstract class TimeChart extends Widget {
     ];
 
     // Subclasses implement these methods for specific chart types.
-    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }>;
+    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;
     public abstract chartType(): string;
     public abstract timeRangeGroupings();
     public abstract generateChartSpecificOptions(numTraces: number): void;
@@ -158,10 +147,4 @@ export default abstract class TimeChart extends Widget {
         return <Plot data={traces} layout={layout} config={plotConfig} />;
     }
     public delete(): void {}
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
-    }
 }

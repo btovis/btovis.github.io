@@ -16,5 +16,5 @@ export default abstract class InputOption {
     }
     public abstract query(): Query | { compound: boolean; queries: Query[] };
     public abstract render(): JSX.Element;
-    public abstract callback(newValue: any);
+    public abstract callback(newValue);
 }

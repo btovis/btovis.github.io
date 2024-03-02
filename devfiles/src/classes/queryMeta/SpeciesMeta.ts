@@ -1,5 +1,4 @@
 import { EndangermentStatus } from '../../utils/speciesVulnerability';
-import ReferenceSet from '../data/setutils/ReferenceSet';
 import SetElement from '../data/setutils/SetElement';
 
 export default class SpeciesMeta {

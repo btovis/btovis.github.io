@@ -44,7 +44,7 @@ export default class PanelNameInput extends InputOption {
         this.text = text;
     }
 
-    public callback(newValue: any): void {
+    public callback(newValue): void {
         this.text = newValue;
 
         //Refresh to show new panel name
