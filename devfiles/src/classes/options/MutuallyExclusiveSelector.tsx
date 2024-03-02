@@ -5,6 +5,7 @@ import Selector from './Selector';
 
 export default class MutuallyExclusiveSelector extends Selector {
     public selected: string;
+    private default_: string;
     public constructor(
         panel: Panel,
         name: string,
@@ -17,6 +18,7 @@ export default class MutuallyExclusiveSelector extends Selector {
         }
         super(panel, name, choices, false, [default_], template);
         this.selected = default_;
+        this.default_ = default_;
     }
     protected inputType(): string {
         return 'radio';
@@ -25,5 +27,9 @@ export default class MutuallyExclusiveSelector extends Selector {
         this.selected = newValue.item;
         this.excluded = new Set([...this.choices].filter((c) => c !== this.selected));
         super.callback(newValue);
+    }
+
+    public override isEverythingSelected(): boolean {
+        return this.selected === this.default_;
     }
 }

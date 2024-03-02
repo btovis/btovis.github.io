@@ -12,9 +12,6 @@ export default class MapWidget extends Widget {
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
     public updateTraceOptions(): void {}
 
-    public static readonly mapToken =
-        'pk.eyJ1Ijoic2F0b3J1enp6IiwiYSI6ImNsc3VmdnltNzE4YzIybHFraWQ3N2k3aWIifQ.TxLQjJE3y5p9cZSzkyeWUQ';
-
     public render(): JSX.Element {
         //fake data to implement map scaling
 
@@ -87,6 +84,7 @@ export default class MapWidget extends Widget {
             autosize: false,
             hovermode: 'closest',
             mapbox: {
+                style: 'open-street-map',
                 center: {
                     lat: min[0] + (max[0] - min[0]) / 2,
                     lon: min[1] + (max[1] - min[1]) / 2
@@ -103,7 +101,6 @@ export default class MapWidget extends Widget {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            mapboxAccessToken: MapWidget.mapToken,
             modeBarButtonsToRemove: [
                 'zoom2d',
                 'pan2d',
