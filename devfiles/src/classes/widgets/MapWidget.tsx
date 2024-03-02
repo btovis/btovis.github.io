@@ -54,7 +54,7 @@ export default class MapWidget extends Widget {
         //map zoom settings
         const latBound = max[0] - min[0];
         const lonBound = max[0] - min[0];
-        const maxBound = Math.max(latBound, lonBound) * 600;
+        const maxBound = Math.max(latBound, lonBound) * 100;
         const zoom = 11.5 - Math.log(maxBound);
 
         //plot data for plotly

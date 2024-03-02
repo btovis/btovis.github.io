@@ -11,7 +11,7 @@ export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
     // This is declared here only because it isn't working when it's declared only in LineChart class
-    public colorOptions: Array<ColorOption> = [];
+    public colorOption: ColorOption;
 
     static readonly buttonsToRemove = [
         'zoom2d',
