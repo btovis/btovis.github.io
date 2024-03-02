@@ -30,6 +30,7 @@ export default class LineChart extends TimeChart {
 
             const lineConfig: { [key: string]: any } = {};
             lineConfig.color = this.colorOption.value()[i];
+            console.log(this.colorOption.value()[i]);
             singleTraceConfig.line = lineConfig;
             traceConfigs.push(singleTraceConfig);
         }

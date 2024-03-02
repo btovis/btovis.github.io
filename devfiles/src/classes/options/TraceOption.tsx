@@ -4,9 +4,11 @@ import InputOption from './InputOption';
 import Accordion from 'react-bootstrap/Accordion';
 
 export default abstract class TraceOption extends InputOption {
-    // States that ColorOption hold
+    // States that TraceOptions hold
+    // Number of Traces
     public numTraces: number;
-    public traceValList: Array<string>;
+    // Attribute each trace holds, careful the any type
+    public traceValList: Array<any>;
     public accordionOpen: boolean;
 
     public constructor(panel: Panel, name: string, numTraces: number, template?: TraceOption) {
@@ -15,13 +17,20 @@ export default abstract class TraceOption extends InputOption {
         this.accordionOpen = false;
     }
 
-    // ColorOptions implementation of getTraceComponent
-    public abstract getTraceComponent(traceValue: any, index: number): JSX.Element;
-
+    // update number of traces: lazy update doesn't directly affect size of ValList if numTraces decrease
     public updateNumTraces(numTraces: number): void {
         this.numTraces = numTraces;
+        if (numTraces > this.traceValList.length) {
+            for (let i = this.traceValList.length; i < numTraces; i++) {
+                // Use the first values to fill out missing ones that appears longer than default
+                this.traceValList.push(this.traceValList[i % this.traceValList.length]);
+            }
+        }
         this.refreshComponent();
     }
+
+    // Returns the JSXElement for sidebar for each trace
+    public abstract getTraceComponent(traceValue: any, index: number): JSX.Element;
 
     public render(): JSX.Element {
         return (
