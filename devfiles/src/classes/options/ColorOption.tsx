@@ -3,8 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 import TraceOption from './TraceOption';
 
 export default class ColorOption extends TraceOption {
-    public constructor(panel: Panel, name: string, numTraces: number, template?: ColorOption) {
-        super(panel, name, numTraces, template);
+    public constructor(
+        panel: Panel,
+        name: string,
+        numTraces: number,
+        traceTypeName: string,
+        template?: ColorOption
+    ) {
+        super(panel, name, numTraces, traceTypeName, template);
         if (template == undefined) {
             this.traceValList = [
                 '#039cad',
@@ -73,7 +79,9 @@ export default class ColorOption extends TraceOption {
 
         return (
             <div className='colorPicker' key={uuidv4()}>
-                <span>Color of Trace {index}: </span>
+                <span>
+                    Color of {this.traceTypeName} {index}:{' '}
+                </span>
                 {colorField}
                 {textField}
             </div>

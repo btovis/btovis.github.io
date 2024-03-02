@@ -10,11 +10,19 @@ export default abstract class TraceOption extends InputOption {
     // Attribute each trace holds, careful the any type
     public traceValList: Array<any>;
     public accordionOpen: boolean;
+    public traceTypeName: string;
 
-    public constructor(panel: Panel, name: string, numTraces: number, template?: TraceOption) {
+    public constructor(
+        panel: Panel,
+        name: string,
+        numTraces: number,
+        traceTypeName: string,
+        template?: TraceOption
+    ) {
         super(panel, name);
         this.numTraces = numTraces;
         this.accordionOpen = false;
+        this.traceTypeName = traceTypeName;
     }
 
     // update number of traces: lazy update doesn't directly affect size of ValList if numTraces decrease

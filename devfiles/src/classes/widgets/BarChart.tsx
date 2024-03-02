@@ -38,7 +38,7 @@ export default class BarChart extends TimeChart {
 
     public generateChartSpecificOptions(numTraces: number): void {
         if (this.colorOption == undefined) {
-            this.colorOption = new ColorOption(this.panel, 'color option', numTraces);
+            this.colorOption = new ColorOption(this.panel, 'BarGroup Colors', numTraces, 'Bar');
             this.colorOption.extendedCallbacks.push(() => this.refresh());
         }
     }

@@ -71,7 +71,7 @@ export default class LineChart extends TimeChart {
     // Change internal states of object: widget specific options.
     public generateChartSpecificOptions(numTraces: number): void {
         if (this.colorOption == undefined) {
-            this.colorOption = new ColorOption(this.panel, 'color option', numTraces);
+            this.colorOption = new ColorOption(this.panel, 'Line Colors', numTraces, 'Line');
             this.colorOption.extendedCallbacks.push(() => this.refresh());
         }
     }
