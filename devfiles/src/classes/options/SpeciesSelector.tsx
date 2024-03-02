@@ -12,6 +12,7 @@ import {
     endangermentValues,
     getEndangermentInfo
 } from '../../utils/speciesVulnerability';
+import generateHash from '../../utils/generateHash';
 
 export default class SpeciesSelector extends InputOption {
     //Internal state unique to every option class.
@@ -23,6 +24,7 @@ export default class SpeciesSelector extends InputOption {
     private accordionOpen = false;
     private choices: Set<SetElement>;
     private possibleGroups: Set<SetElement>;
+    private debouncerTimer;
 
     private speciesMeta: SpeciesMeta;
 
@@ -126,25 +128,48 @@ export default class SpeciesSelector extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
+                            <strong
+                                style={{ color: this.isEverythingSelected() ? '' : 'chocolate' }}
+                                id={this.uuid.toString() + 'title'}
+                            >
+                                {this.name}
+                            </strong>
                         </span>
-                        {/* For checking everything */}
-                        <input
-                            style={{ marginLeft: '10px' }}
-                            key={uuidv4()}
-                            onChange={(event) =>
-                                this.callback({
-                                    checked: event.currentTarget.checked,
-                                    item: this.choices
-                                })
-                            }
-                            onClick={(event) => event.stopPropagation()}
-                            checked={this.isEverythingSelected()}
-                            className='form-check-input'
-                            type='checkbox'
-                        />
                     </Accordion.Header>
                     <Accordion.Body>
+                        <div style={{ display: 'flex' }}>
+                            {/* For checking everything */}
+                            <input
+                                style={{ marginLeft: '10px' }}
+                                key={this.uuid + '-select-all'}
+                                id={this.uuid + '-select-all'}
+                                onChange={(event) => {
+                                    //Add all values
+                                    if (event.currentTarget.checked) {
+                                        endangermentValues.forEach((s) =>
+                                            this.allowedEndangerment.add(s)
+                                        );
+                                        this.possibleGroups.forEach((s) =>
+                                            this.allowedGroups.add(s)
+                                        );
+                                    }
+                                    this.callback({
+                                        checked: event.currentTarget.checked,
+                                        item: this.choices
+                                    });
+                                }}
+                                onClick={(event) => event.stopPropagation()}
+                                checked={this.isEverythingSelected()}
+                                className='form-check-input'
+                                type='checkbox'
+                            />
+                            <label
+                                className='form-check-label selectorLabel select-all-label fw-bold'
+                                htmlFor={this.uuid + '-select-all'}
+                            >
+                                Select All
+                            </label>
+                        </div>
                         {/* Endangerment Filters */}
                         <span className='mb-2 font-italic'>Conservation Status</span>
                         {/* For checking all the endangerment filters */}
@@ -217,9 +242,28 @@ export default class SpeciesSelector extends InputOption {
                         <div className='form-check'>
                             {[...this.speciesMeta.groupByGroup.keys()].map((group) => (
                                 <div key={uuidv4()}>
+                                    <hr />
                                     <div className='speciesGroupRowDiv' key={uuidv4()}>
-                                        <hr />
                                         <strong>{group.value}</strong>
+                                        <button
+                                            className='btn btn-outline-dark btn-sm'
+                                            type='button'
+                                            onClick={() => {
+                                                [...this.speciesMeta.groupByGroup.get(group)].map(
+                                                    (s) => {
+                                                        this.selected.has(s)
+                                                            ? this.selected.delete(s)
+                                                            : this.selected.add(s);
+                                                    }
+                                                );
+                                                this.callback({
+                                                    checked: false,
+                                                    item: new Set([])
+                                                });
+                                            }}
+                                        >
+                                            Invert
+                                        </button>
                                     </div>
                                     {this.speciesMeta.groupByGroup
                                         .get(group)
@@ -416,21 +460,21 @@ export default class SpeciesSelector extends InputOption {
      * If an array was passed,
      */
     public callback(newValue: { checked: boolean; item: Set<SetElement> }): void {
+        clearTimeout(this.debouncerTimer);
         if (newValue.checked) newValue.item.forEach((elem) => this.selected.add(elem));
         else newValue.item.forEach((elem) => this.selected.delete(elem));
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);
 
-        //If filter is active then indicate with title colour
-        document.getElementById(this.uuid.toString() + 'title').style.color =
-            this.isEverythingSelected() ? '' : 'chocolate';
-
-        //Refresh to update the associated widget/panel (Selectors are used for Tables
-        // as well as filters)
-        //Potential to optimise here
-        this.panel.refreshComponent();
-        this.panel.refreshWidgets();
+        //Half a second debounce
+        this.debouncerTimer = setTimeout(() => {
+            //Refresh to update the associated widget/panel (Selectors are used for Tables
+            // as well as filters)
+            //Potential to optimise here
+            this.panel.refreshComponent();
+            this.panel.refreshWidgets();
+        }, 500);
         //Refresh this inputoption
         this.refreshComponent();
     }

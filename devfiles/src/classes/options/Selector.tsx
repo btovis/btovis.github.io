@@ -135,7 +135,12 @@ export default class Selector extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
+                            <strong
+                                style={{ color: this.isEverythingSelected() ? '' : 'chocolate' }}
+                                id={this.uuid.toString() + 'title'}
+                            >
+                                {this.name}
+                            </strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
@@ -206,10 +211,6 @@ export default class Selector extends InputOption {
         //Ask the panel to re-calculate its filters ONLY if the
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)
-
-        //If filter is active then indicate with title colour
-        document.getElementById(this.uuid.toString() + 'title').style.color =
-            this.isEverythingSelected() ? '' : 'chocolate';
 
         if (this.columnIndex !== undefined) {
             //Refreshes the whole panel, along with all its widgets.
