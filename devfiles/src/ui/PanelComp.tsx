@@ -12,6 +12,7 @@ import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
 import { CloseButton } from 'react-bootstrap';
 import generateHash from '../utils/generateHash.js';
+import Widget from '../classes/widgets/Widget.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
@@ -107,8 +108,8 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
     });
 
-    function addwidget(widget) {
-        panel.addWidget(new widget(params.pageManager.panels[params.panelIdx]));
+    function addWidgetType(widgetClass) {
+        panel.addWidget(new widgetClass(params.pageManager.panels[params.panelIdx]));
         //If negative, scroll rightwards
         setSnapRight(-Math.abs(snapRight) - 1);
     }
@@ -148,7 +149,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             <div
                                                 className='widget-icon'
                                                 onClick={() => {
-                                                    addwidget(BarChart);
+                                                    addWidgetType(BarChart);
                                                 }}
                                             >
                                                 <Icon.BarChart
@@ -161,7 +162,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             <div
                                                 className='widget-icon'
                                                 onClick={() => {
-                                                    addwidget(LineChart);
+                                                    addWidgetType(LineChart);
                                                 }}
                                             >
                                                 <Icon.GraphUp
@@ -174,7 +175,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             <div
                                                 className='widget-icon'
                                                 onClick={() => {
-                                                    addwidget(TableWidget);
+                                                    addWidgetType(TableWidget);
                                                 }}
                                             >
                                                 <Icon.Table
@@ -187,7 +188,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             <div
                                                 className='widget-icon'
                                                 onClick={() => {
-                                                    addwidget(Map);
+                                                    addWidgetType(MapWidget);
                                                 }}
                                             >
                                                 <Icon.GeoAlt
