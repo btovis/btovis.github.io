@@ -55,9 +55,9 @@ export default class ColorOption extends TraceOption {
                 '#b210cc'
             ];
             // Put duplicates if default palette is not long enough.
-            if (numTraces > 40) {
-                for (let i = 40; i < numTraces; i++) {
-                    this.traceValList.push(this.traceValList[i % 40]);
+            if (numTraces > this.traceValList.length) {
+                for (let i = this.traceValList.length; i < numTraces; i++) {
+                    this.traceValList.push(this.traceValList[i % this.traceValList.length]);
                 }
             }
         } else this.traceValList = template.traceValList;
@@ -80,7 +80,7 @@ export default class ColorOption extends TraceOption {
         return (
             <div className='colorPicker' key={uuidv4()}>
                 <span>
-                    Color of {this.traceTypeName} {index}:{' '}
+                    Colour of {this.traceTypeName} {index}:{' '}
                 </span>
                 {colorField}
                 {textField}
