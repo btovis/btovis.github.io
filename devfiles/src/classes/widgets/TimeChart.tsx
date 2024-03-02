@@ -14,6 +14,7 @@ import Widget from './Widget';
 import InputOption from '../options/InputOption';
 import ColorOption from '../options/ColorOption.js';
 import { getTouchRippleUtilityClass } from '@mui/material';
+import Selector from '../options/Selector.js';
 
 // Covers bar chart, line chart, stacked line chart.
 export default abstract class TimeChart extends Widget {
@@ -84,16 +85,8 @@ export default abstract class TimeChart extends Widget {
         this.xAxisSelector.useSearchBar = false;
         this.yAxisSelector.useSearchBar = false;
         // Refresh widgets when options are change.
-        this.xAxisSelector.extendedCallbacks.push(() => {
-            this.updateGrouping();
-            this.updateTraceOptions();
-            this.refresh();
-        });
-        this.yAxisSelector.extendedCallbacks.push(() => {
-            this.updateGrouping();
-            this.updateTraceOptions();
-            this.refresh();
-        });
+        this.xAxisSelector.extendedCallbacks.push(() => this.optionsCallback());
+        this.yAxisSelector.extendedCallbacks.push(() => this.optionsCallback());
 
         // Initialize value for grouping
         this.updateGrouping();
@@ -101,6 +94,12 @@ export default abstract class TimeChart extends Widget {
         this.generateChartSpecificOptions(this.grouping.numTraces());
         // bind ColorOptions
         this.bindOptions();
+    }
+
+    protected optionsCallback() {
+        this.updateGrouping();
+        this.updateTraceOptions();
+        this.refresh();
     }
 
     public generateSidebar(): Sidebar {
