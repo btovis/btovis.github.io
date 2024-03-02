@@ -42,21 +42,24 @@ export default class Panel {
     public dataFilterer: DataFilterer;
     public readonly uuid: number;
     public minHeight: number;
+    public lifetimeWidgetCount: number;
 
     public constructor(pageManager: PageManager) {
         this.uuid = uuidv4();
         this.pageManager = pageManager;
         this.dataFilterer = new DataFilterer(pageManager.getData());
+        this.lifetimeWidgetCount = 0;
 
         //Initialise panel filter inputoptions
         this.nameInput = new PanelNameInput(
             this,
             'Panel Name',
-            'Panel ' + ((this.pageManager.panels?.length || 0) + 1)
+            'Panel ' + (this.pageManager.getLifetimePanelsCreated() + 1)
         );
         this.updateInputOptions();
 
-        this.widgets = [new BarChart(this)];
+        this.widgets = [];
+        this.addWidget(new BarChart(this));
         this.minHeight = 350; // panel body minimum height
     }
 
@@ -217,6 +220,7 @@ export default class Panel {
 
     public addWidget(widget: Widget): void {
         this.widgets.push(widget);
+        this.lifetimeWidgetCount++;
     }
 
     public removeWidget(widgetIdx: number) {
@@ -240,5 +244,9 @@ export default class Panel {
         if (widgetIdx < 0 || widgetIdx >= this.widgets.length)
             throw new Error('Invalid widget id ' + widgetIdx + ' for getWidget');
         return this.widgets[widgetIdx];
+    }
+
+    public getLifetimeWidgetsCreated(): number {
+        return this.lifetimeWidgetCount;
     }
 }
