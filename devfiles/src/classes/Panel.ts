@@ -86,7 +86,7 @@ export default class Panel {
             0.01,
             this.minimumProbability
         );
-        this.speciesSelector = new SpeciesSelector(this, 'Species', true, [], this.speciesSelector);
+        this.speciesSelector = new SpeciesSelector(this, 'Species', this.speciesSelector);
         this.warningsSelector = new Selector(
             this,
             'Warnings',

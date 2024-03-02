@@ -2,7 +2,6 @@ import { it, expect, beforeEach, describe } from 'vitest';
 import { Data, Attribute } from '../data/Data';
 import {
     testDataFilename as filename,
-    testDataFilename2 as filename2,
     testDataFilename3 as filename3,
     loadData,
     readBytes,
@@ -10,7 +9,6 @@ import {
 } from '../../tests/utils.test';
 import SetElement from '../data/setutils/SetElement';
 import {
-    Grouping,
     BatchNameGrouping,
     ProjectNameGrouping,
     FilenameGrouping,
@@ -34,7 +32,7 @@ describe('Grouping', async () => {
         it('should select values by column', () => {
             const grouping = new BatchNameGrouping(filter, YGrouping.Species);
             const columnIdx = filter.getColumnIndex(Attribute.csvName);
-            const [dataSubset, _] = filter.getData();
+            const [dataSubset] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectByColumnIndex(row, columnIdx));
             for (const v1 of values) {
                 expect(v1).toBeInstanceOf(SetElement);
@@ -65,7 +63,7 @@ describe('Grouping', async () => {
         ].forEach(({ grouping, attribute }) => {
             it(`should select values by ${attribute}`, () => {
                 const groupingInstance = new grouping(filter, YGrouping.Species);
-                const [dataSubset, _] = filter.getData();
+                const [dataSubset] = filter.getData();
                 const values = dataSubset.map((row) => groupingInstance.selectX(row));
                 for (const v1 of values) {
                     expect(v1).toBeInstanceOf(SetElement);
@@ -113,7 +111,7 @@ describe('Grouping', async () => {
         ].forEach(({ grouping, allowed }) => {
             it(`should select values using ${grouping}`, () => {
                 const groupingInstance = new grouping(filter, YGrouping.Species);
-                const [dataSubset, _] = filter.getData();
+                const [dataSubset] = filter.getData();
                 const values = dataSubset.map((row) => groupingInstance.selectX(row));
                 const recordedValues = new Set();
                 for (const v1 of values) {
@@ -134,7 +132,7 @@ describe('Grouping', async () => {
     describe('selectY', () => {
         it('should select species column', () => {
             const grouping = new BatchNameGrouping(filter, YGrouping.Species);
-            const [dataSubset, _] = filter.getData();
+            const [dataSubset] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectY(row));
             for (const v1 of values) {
                 expect(v1).toBeInstanceOf(SetElement);
@@ -154,7 +152,7 @@ describe('Grouping', async () => {
             const additionalData = await readBytes(filename3);
             data.addCSV(filename3, additionalData, false);
             const grouping = new BatchNameGrouping(filter, YGrouping.SpeciesGroup);
-            const [dataSubset, _] = filter.getData();
+            const [dataSubset] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectY(row));
             const speciesMeta = filter.getDataStats().getSpeciesMeta();
             const speciesGroups = Array.from(new Set(speciesMeta.groupByGroup.keys()));
@@ -172,7 +170,7 @@ describe('Grouping', async () => {
         });
         it('should select species by vulnerability', () => {
             const grouping = new BatchNameGrouping(filter, YGrouping.VulnerabilityStatus);
-            const [dataSubset, _] = filter.getData();
+            const [dataSubset] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectY(row));
             const speciesMeta = filter.getDataStats().getSpeciesMeta();
             const allSpecies = speciesMeta.speciesList();
@@ -334,7 +332,7 @@ describe('Grouping', async () => {
                 const pairs = groupingInstance.generatePairs();
                 const xValueMap = groupingInstance.xIndexMap();
                 const mappings = new Set();
-                for (const [x, y] of pairs) {
+                for (const [x] of pairs) {
                     const mapping = xValueMap.get(x);
                     expect(mapping).not.toBeUndefined();
                     expect(mapping).not.toBeNaN();

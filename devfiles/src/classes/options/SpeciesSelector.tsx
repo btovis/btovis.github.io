@@ -12,7 +12,6 @@ import {
     endangermentValues,
     getEndangermentInfo
 } from '../../utils/speciesVulnerability';
-import generateHash from '../../utils/generateHash';
 
 export default class SpeciesSelector extends InputOption {
     //Internal state unique to every option class.
@@ -37,13 +36,7 @@ export default class SpeciesSelector extends InputOption {
      * @param defaults If allSelected is false, the default selected items will be this.
      * @param template This is the template Selector to "copy" selected options from.
      */
-    public constructor(
-        panel: Panel,
-        name: string,
-        allSelected: boolean = true,
-        defaults?: string[],
-        template: SpeciesSelector = undefined
-    ) {
+    public constructor(panel: Panel, name: string, template: SpeciesSelector = undefined) {
         super(panel, name);
         this.speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
 
