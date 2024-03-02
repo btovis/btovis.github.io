@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SidebarComp from './ui/SidebarComp.tsx';
@@ -76,6 +76,8 @@ function App() {
             }
         });
     };
+
+    AddBeforeUnloadListener(pageManager);
 
     return (
         <div
@@ -172,6 +174,21 @@ function App() {
             </div>
         </div>
     );
+}
+
+function AddBeforeUnloadListener(pageManager: PageManager) {
+    // Add a listener for the beforeunload event - display a warning if there are unsaved changes.
+    useEffect(() => {
+        const onBeforeUnload = (e) => {
+            const message = 'Are you sure you want to leave? All unsaved changes will be lost.';
+            if (pageManager.getData().length() > 0 || pageManager.panels.length > 0) {
+                e.returnValue = message;
+                return message;
+            }
+        };
+
+        window.addEventListener('beforeunload', onBeforeUnload);
+    });
 }
 
 export default App;
