@@ -498,3 +498,7 @@ span {
 .lr-button {
     margin: 5px;
 }
+
+* {
+    font-family: 'Open Sans', sans-serif;
+}

@@ -77,6 +77,7 @@ function App() {
         });
     };
 
+    AddFonts();
     AddBeforeUnloadListener(pageManager);
 
     return (
@@ -189,6 +190,12 @@ function AddBeforeUnloadListener(pageManager: PageManager) {
 
         window.addEventListener('beforeunload', onBeforeUnload);
     });
+}
+
+function AddFonts() {
+    // Load fonts (Open Sans) from Google fonts.
+    document.head.appendChild(document.createElement('link')).href =
+        'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap';
 }
 
 export default App;
