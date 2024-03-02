@@ -1,28 +1,28 @@
 :root {
-  text-align: center;
-  --page-bg: #ffffff;
-  --element-bg: #e7e7e7;
-  --element-hover: #d6d6d6;
-  --text-color: black;
-  --file-box-color: #eeeeee;
+    text-align: center;
+    --page-bg: #ffffff;
+    --element-bg: #e7e7e7;
+    --element-hover: #d6d6d6;
+    --text-color: black;
+    --file-box-color: #eeeeee;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
-    --page-bg: #0a0027;
-    --element-bg: rgb(120, 141, 173);
-    --element-hover: rgb(127, 149, 181);
-    --text-color: white;
-    --file-box-color: rgb(12, 30, 58);
-  }
+    :root {
+        --page-bg: #0a0027;
+        --element-bg: rgb(120, 141, 173);
+        --element-hover: rgb(127, 149, 181);
+        --text-color: white;
+        --file-box-color: rgb(12, 30, 58);
+    }
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
-    appearance: none; 
+    appearance: none;
 }
 
-input[type=number] {
+input[type='number'] {
     -moz-appearance: textfield;
 }
 
@@ -63,100 +63,103 @@ input[type=number] {
 } */
 
 .font-italic {
-  font-style: italic;
+    font-style: italic;
 }
 
 /**
 * SIDEBAR STYLES
 */
 .sidebar {
-  background-color: var(--element-bg);
-  width: 25%;
-  height: 100%;
-  position: fixed;
-  overflow: auto;
-  color: var(--text-color);
+    background-color: var(--element-bg);
+    width: 25%;
+    height: 100%;
+    position: fixed;
+    overflow: auto;
+    color: var(--text-color);
 }
 
 .sidebar strong {
-  color: #052c65;
+    color: #052c65;
 }
 .sidebar strong query-active {
-  color: orange;
+    color: orange;
 }
 
 .sidebarContainer {
-  padding: 20px;
-  text-align: left;
+    padding: 20px;
+    text-align: left;
 }
 
 .inputOption {
-  background-color: var(--element-bg);
-  text-align: left;
+    background-color: var(--element-bg);
+    text-align: left;
 }
-.inputOption .accordion{
-  --bs-accordion-bg: var(--element-bg);
-  --bs-accordion-active-bg: var(--element-bg);
-  --bs-accordion-border-color: var(--element-hover);
-  --bs-accordion-border-radius: 0;
-  --bs-accordion-inner-border-radius: 0;
-  --bs-accordion-padding-x: 5;
+.inputOption .accordion {
+    --bs-accordion-bg: var(--element-bg);
+    --bs-accordion-active-bg: var(--element-bg);
+    --bs-accordion-border-color: var(--element-hover);
+    --bs-accordion-border-radius: 0;
+    --bs-accordion-inner-border-radius: 0;
+    --bs-accordion-padding-x: 5;
 }
 
 .selectorLabel {
-  width: 90%;
-  background-color: var(--element-bg);
-  overflow-wrap: break-word;
+    width: 90%;
+    background-color: var(--element-bg);
+    overflow-wrap: break-word;
 }
 .selectorLabel:hover {
-  background-color: var(--element-hover);
+    background-color: var(--element-hover);
 }
 .select-all-label {
-  margin-left: 8px;
-  width: 85%
+    margin-left: 8px;
+    width: 85%;
 }
 
 /**
 * Handles the styling on each row in the species filter UI
 */
 .speciesRowLabel {
-  width: 100%;
-  background-color: var(--element-bg);
-  display: block;
-  white-space:nowrap;
-  display: inline-flex;
+    width: 100%;
+    background-color: var(--element-bg);
+    display: block;
+    white-space: nowrap;
+    display: inline-flex;
 }
 .speciesRowLabel:hover {
-  width: 100%;
-  background-color: var(--element-hover);
+    width: 100%;
+    background-color: var(--element-hover);
 }
-.speciesRowLabelText{
-  width: 65%;
-  text-overflow: ellipsis;
-  overflow: hidden; 
+.speciesRowLabelText {
+    width: 65%;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .speciesRowLabel .btn {
-  padding: 0;
-  width: 30%;
-  float: right;
+    padding: 0;
+    width: 30%;
+    float: right;
 }
 .speciesGroupRowDiv {
-  padding-bottom: 3px;
+    padding-bottom: 5px;
+}
+.speciesGroupRowDiv button {
+    margin-left: 15px;
 }
 .speciesTooltip {
-  width:300px;
-  max-width: 100%;
-  background-color: rgba(0, 0, 0, 0);
+    width: 300px;
+    max-width: 100%;
+    background-color: rgba(0, 0, 0, 0);
 }
 .speciesTooltipCard {
-  text-align: left;
+    text-align: left;
 }
 .speciesEndangermentFilterBtn {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
 .sidebar-padding {
-  padding: 20px;
+    padding: 20px;
 }
 
 /**
@@ -164,10 +167,10 @@ input[type=number] {
 */
 /* panel container */
 .paner {
-  float: right;
-  width: 75%;
-  min-height: 100vh;
-  background-color: var(--page-bg);
+    float: right;
+    width: 75%;
+    min-height: 100vh;
+    background-color: var(--page-bg);
 }
 
 /* .panel {
@@ -183,303 +186,310 @@ input[type=number] {
 } */
 
 .panel {
-  border: none;
-  border-radius: 10px;
-  margin: auto;
-  width: 90%;
-  margin-top: 16px;
-  margin-bottom: 16px;
+    border: none;
+    border-radius: 10px;
+    margin: auto;
+    width: 90%;
+    margin-top: 16px;
+    margin-bottom: 16px;
 }
 .panel:hover {
-  box-shadow: 1px 1px 3px 5px lightgray;
+    box-shadow: 1px 1px 3px 5px lightgray;
 }
 
 .panelactive {
-  border: solid;
-  border-color: rgb(134, 201, 219);
+    border: solid;
+    border-color: rgb(134, 201, 219);
 }
 
 .panel-header .title {
-  height: 15%;
-  text-align: start;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  font-size: 2.0em;
+    height: 15%;
+    text-align: start;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 2em;
 }
 
 .panel-header {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
 .sidebarFileBox {
-  padding:20px;
-	display: grid;
-	align-items: center;
-  border-style: dotted;
-  background-color: var(--file-box-color);
+    padding: 20px;
+    display: grid;
+    align-items: center;
+    border-style: dotted;
+    background-color: var(--file-box-color);
 }
 
 .fileUploadIndic {
-	display: grid;
-	align-items: center;
-  position: fixed;
-  width: 98%;
-  height: 98%;
-  left: 1%;
-  top: 1%;
-  border-style: dotted;
-  pointer-events: none;
-  background-color: #eeeeee;
-  opacity: 0;
-  z-index:1000000;
+    display: grid;
+    align-items: center;
+    position: fixed;
+    width: 98%;
+    height: 98%;
+    left: 1%;
+    top: 1%;
+    border-style: dotted;
+    pointer-events: none;
+    background-color: #eeeeee;
+    opacity: 0;
+    z-index: 1000000;
 }
 
 .fileUploadSuccess {
-	display: grid;
-	align-items: center;
-  position: fixed;
-  width: 98%;
-  height: 98%;
-  left: 1%;
-  top: 1%;
-  border-style: dotted;
-  pointer-events: none;
-  background-color: #aaff82;
-  z-index:1000000;
+    display: grid;
+    align-items: center;
+    position: fixed;
+    width: 98%;
+    height: 98%;
+    left: 1%;
+    top: 1%;
+    border-style: dotted;
+    pointer-events: none;
+    background-color: #aaff82;
+    z-index: 1000000;
 }
 
 .fileUploadWarn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  width: 98%;
-  height: 98%;
-  left: 1%;
-  top: 1%;
-  border-style: dotted;
-  pointer-events: none;
-  background-color: #ff9999;
-  color: white;
-  z-index:1000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 98%;
+    height: 98%;
+    left: 1%;
+    top: 1%;
+    border-style: dotted;
+    pointer-events: none;
+    background-color: #ff9999;
+    color: white;
+    z-index: 1000000;
 }
 
 .panel-body {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .modal-btn {
-  margin-left: 16px;
-  margin-right: 16px;
+    margin-left: 16px;
+    margin-right: 16px;
 }
 
 .modal-cancel-btn {
-  background-color: #aaa;
+    background-color: #aaa;
 }
 
 span {
-  width: 100%;
+    width: 100%;
 }
 
 .widget-icon-row {
-  display: flex;
-  transition: transform 0.5s;
-  z-index: 10;
-  position: relative;
-  transform: translateX(-250px);
-  /* visibility: hidden; */
+    display: flex;
+    transition: transform 0.5s;
+    z-index: 10;
+    position: relative;
+    transform: translateX(-250px);
+    /* visibility: hidden; */
 }
 
 .add-widget-row {
-  display: flex;
+    display: flex;
 }
 
 .show-widget-icons {
-  background-color: white;
-  color: var(--element-bg);
-  height: 50px;
-  width: 50px;
-  border-radius: 0% 50% 50% 0%;
-  position: relative;
-  z-index: 100;
+    background-color: white;
+    color: var(--element-bg);
+    height: 50px;
+    width: 50px;
+    border-radius: 0% 50% 50% 0%;
+    position: relative;
+    z-index: 100;
 }
 
 .widget-icon {
-  border-radius: 50%;
-  background-color: var(--element-bg);
-  color: white;
-  height: 50px;
-  width: 50px;
-  position: relative
+    border-radius: 50%;
+    background-color: var(--element-bg);
+    color: white;
+    height: 50px;
+    width: 50px;
+    position: relative;
+}
+.widget-icon-inner {
+    background-color: var(--element-bg);
+    color: white;
+    height: 35px;
+    width: 35px;
+    position: relative;
+    margin-top: 7.5px;
 }
 
 .show-widget-icons:hover + .widget-icon-row {
-  transform: translateX(0px);
-  visibility: visible;
+    transform: translateX(0px);
+    visibility: visible;
 }
 
 .widget-icon-row:hover {
-  visibility: visible;
-  transform: translateX(0px);
+    visibility: visible;
+    transform: translateX(0px);
 }
 
 .widget-icon .tool-tip {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
- 
-  /* Position the tooltip text - see examples below! */
-  position: absolute;
-  z-index: 1;
-  width: 120px;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -60px;
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .widget-icon:hover .tool-tip {
-  visibility: visible;
+    visibility: visible;
 }
 
 .show-widget-icons:hover .tool-tip {
-  visibility: visible;
+    visibility: visible;
 }
 .widget {
-  overflow-y: scroll;
-  width: fit-content;
-  margin: auto;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  /* position: relative; */
-  /* float: left; */
-  border: solid;
-  border-color: rgba(0, 0, 0, 0);
-  border-radius: 10px;
+    width: fit-content;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    /* position: relative; */
+    /* float: left; */
+    border: solid;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 10px;
 }
 
 .widget:hover {
-  border-color: lightgray;
+    border-color: lightgray;
 }
 
 .widget-row {
-  height: 85%;
-  width: 100%;
-  overflow-y: scroll;
-  transition: scrollTop 1s;
+    height: 85%;
+    width: 100%;
+    overflow-y: scroll;
+    transition: scrollTop 1s;
 }
 
 .add-widget-btns {
-  display: inline-grid;
-  row-gap: 2px;
+    display: inline-grid;
+    row-gap: 2px;
 }
 
 .widget-btn {
-  width: 150px;
+    width: 150px;
 }
 
 .close-widget {
-  position: relative;
-  float: right;
+    position: relative;
+    float: right;
 }
 
 .fullscreen-widget {
-  position: relative;
-  float: left;
-  padding: 3px;
-  width: 1.5em;
-  height: 1.5em;
+    position: relative;
+    float: left;
+    padding: 3px;
+    width: 1.5em;
+    height: 1.5em;
 }
 
 .delete-btn {
-  border-width: medium;
-  border-color: #d00000;
-  background-color: #f33333;
-  color: white;
+    border-width: medium;
+    border-color: #d00000;
+    background-color: #f33333;
+    color: white;
 }
 
 .add-panel-button {
-  margin-top: 16px;
-  background-color: #ddd;
+    margin-top: 16px;
+    background-color: #ddd;
 }
 
 .text-warning {
-  color: red;
+    color: red;
 }
 
 .react-resizable {
-  position: relative;
-  display: block;
+    position: relative;
+    display: block;
 }
 .react-resizable-handle {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4=');
-  background-position: bottom;
-  padding: 0 3px 3px 0;
-  background-repeat: no-repeat;
-  background-origin: content-box;
-  box-sizing: border-box;
-  cursor: s-resize;
-  transform: rotate(45deg);
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4=');
+    background-position: bottom;
+    padding: 0 3px 3px 0;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    box-sizing: border-box;
+    cursor: s-resize;
+    transform: rotate(45deg);
 }
 
 /**
 * General Widget styles
 */
 .widgetTitle {
-  font-weight: bold;
-  margin-top: 10px;
-  margin-bottom: 0px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 0px;
 }
 
 .widget {
-  width: fit-content;
-  margin: auto;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  /* position: relative; */
-  /* float: left; */
-  border: solid;
-  border-color: rgba(0, 0, 0, 0);
-  border-radius: 10px;
+    width: fit-content;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    /* position: relative; */
+    /* float: left; */
+    border: solid;
+    border-color: rgba(0, 0, 0, 0);
+    border-radius: 10px;
 }
 .widgetactive {
-  border-color: rgb(134, 201, 219, 1);
+    border-color: rgb(134, 201, 219, 1);
 }
 
 .widget:hover {
-  box-shadow: 1px 1px 3px 5px lightgray;
+    box-shadow: 1px 1px 3px 5px lightgray;
 }
 
 .widget-row {
-  height: 90%;
-  width: 100%;
-  overflow-y: scroll;
+    height: 90%;
+    width: 100%;
+    overflow-y: scroll;
 }
 
 .add-widget-btns {
-  display: inline-grid;
-  row-gap: 2px;
+    display: inline-grid;
+    row-gap: 2px;
 }
 
 .widget-btn {
-  width: 150px;
+    width: 150px;
 }
 
 .close-widget {
-  position: relative;
-  float: right;
+    position: relative;
+    float: right;
 }
 
 /**
 * Table Widget styles
 */
 .lr-button {
-  margin: 5px;
+    margin: 5px;
 }

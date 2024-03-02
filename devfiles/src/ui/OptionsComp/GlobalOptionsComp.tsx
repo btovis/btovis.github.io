@@ -1,4 +1,4 @@
-import { MutableRefObject, useRef } from 'react';
+import { useRef } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
 import { v4 as uuidv4 } from 'uuid';

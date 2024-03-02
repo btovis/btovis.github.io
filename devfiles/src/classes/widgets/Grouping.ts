@@ -1,8 +1,7 @@
 import SetElement from '../data/setutils/SetElement';
-import { Attribute, Data } from '../data/Data';
+import { Attribute } from '../data/Data';
 import Row from '../data/Row';
 import ReferenceSet from '../data/setutils/ReferenceSet';
-import { Filter } from '../filters/Filter';
 import DataFilterer from '../data/DataFilterer';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
@@ -65,10 +64,11 @@ abstract class Grouping {
     }
     public selectByColumnIndex(row: Row, columnIdx: number): SetElement {
         if (row[columnIdx] instanceof SetElement) {
-            return row[columnIdx];
+            return row[columnIdx] as SetElement;
         }
         // Create a new set element and add the value to the reference set.
-        return this.referenceSet.addRawOrGet(row[columnIdx]);
+        //Warning: This will break if row[columnIdx] is a number.
+        return this.referenceSet.addRawOrGet(row[columnIdx] as string);
     }
     // Select the value to be used for the y-axis.
     public selectY(row: Row): SetElement {
@@ -145,8 +145,8 @@ abstract class Grouping {
     }
     // Returns chart data and layout for plotly
     public getChart(
-        additionalTracesConfig: Array<{ [key: string]: any }>,
-        additionalLayoutConfig: { [key: string]: any }
+        additionalTracesConfig: Array<{ [key: string]: unknown }>,
+        additionalLayoutConfig: { [key: string]: unknown }
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
         const xIndexMap = this.xIndexMap();

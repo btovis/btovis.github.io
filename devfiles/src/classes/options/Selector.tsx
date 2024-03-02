@@ -135,14 +135,19 @@ export default class Selector extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
+                            <strong
+                                style={{ color: this.isEverythingSelected() ? '' : 'chocolate' }}
+                                id={this.uuid.toString() + 'title'}
+                            >
+                                {this.name}
+                            </strong>
                         </span>
                     </Accordion.Header>
                     <Accordion.Body>
                         {searchBar}
                         {this.inputType() == 'checkbox' ? selectAll : <></>}
                         <div className='form-check'>
-                            {[...this.choices].map((item, itemIdx) => {
+                            {[...this.choices].map((item) => {
                                 return (
                                     <div
                                         key={uuidv4()}
@@ -194,7 +199,7 @@ export default class Selector extends InputOption {
      * @param newValue In this case, contains the "checked" status of
      * a tickbox and the string value of the item that was ticked
      */
-    public callback(newValue: any): void {
+    public callback(newValue): void {
         //If this is a boolean, that means this is a single change
         if (typeof newValue.checked === 'boolean') {
             if (newValue.checked) this.excluded.delete(newValue.item);
@@ -206,10 +211,6 @@ export default class Selector extends InputOption {
         //Ask the panel to re-calculate its filters ONLY if the
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)
-
-        //If filter is active then indicate with title colour
-        document.getElementById(this.uuid.toString() + 'title').style.color =
-            this.isEverythingSelected() ? '' : 'chocolate';
 
         if (this.columnIndex !== undefined) {
             //Refreshes the whole panel, along with all its widgets.

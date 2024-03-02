@@ -2,7 +2,7 @@ import SetElement from '../data/setutils/SetElement';
 import { QueryType, SetElemQueryT } from './Query';
 
 export default class SetQueryElement {
-    colI: any;
+    colI: number;
     e: SetElement;
     public constructor(columnIndex, e) {
         this.colI = columnIndex;

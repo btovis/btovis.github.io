@@ -1,7 +1,7 @@
 import { QueryType, SetAsArrayForRejectT } from './Query';
 
 export default class SetQueryArrayReject {
-    colI: any;
+    colI: number;
     public constructor(columnIndex) {
         this.colI = columnIndex;
     }

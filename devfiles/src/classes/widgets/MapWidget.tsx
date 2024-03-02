@@ -1,19 +1,15 @@
 import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
-import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
 import { Attribute } from '../data/Data.js';
 import Panel from '../Panel.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { unpack } from '../../utils/DataUtils.js';
-import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
+import TimeChart from './TimeChart.js';
 
 export default class MapWidget extends Widget {
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
     public updateTraceOptions(): void {}
-
-    public static readonly mapToken =
-        'pk.eyJ1Ijoic2F0b3J1enp6IiwiYSI6ImNsc3VmdnltNzE4YzIybHFraWQ3N2k3aWIifQ.TxLQjJE3y5p9cZSzkyeWUQ';
 
     public render(): JSX.Element {
         //fake data to implement map scaling
@@ -58,7 +54,7 @@ export default class MapWidget extends Widget {
         //map zoom settings
         const latBound = max[0] - min[0];
         const lonBound = max[0] - min[0];
-        const maxBound = Math.max(latBound, lonBound) * 600;
+        const maxBound = Math.max(latBound, lonBound) * 100;
         const zoom = 11.5 - Math.log(maxBound);
 
         //plot data for plotly
@@ -87,6 +83,7 @@ export default class MapWidget extends Widget {
             autosize: false,
             hovermode: 'closest',
             mapbox: {
+                style: 'open-street-map',
                 center: {
                     lat: min[0] + (max[0] - min[0]) / 2,
                     lon: min[1] + (max[1] - min[1]) / 2
@@ -103,38 +100,9 @@ export default class MapWidget extends Widget {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            mapboxAccessToken: MapWidget.mapToken,
-            modeBarButtonsToRemove: [
-                'zoom2d',
-                'pan2d',
-                'select2d',
-                'lasso2d',
-                'zoomIn2d',
-                'zoomOut2d',
-                'autoScale2d',
-                'resetScale2d',
-                'hoverClosestCartesian',
-                'hoverCompareCartesian',
-                'zoom3d',
-                'pan3d',
-                'resetCameraDefault3d',
-                'resetCameraLastSave3d',
-                'hoverClosest3d',
-                'orbitRotation',
-                'tableRotation',
-                'zoomInGeo',
-                'zoomOutGeo',
-                'resetGeo',
-                'hoverClosestGeo',
-                'toImage',
-                'sendDataToCloud',
-                'hoverClosestGl2d',
-                'hoverClosestPie',
-                'toggleHover',
-                'resetViews',
-                'toggleSpikelines',
-                'resetViewMapbox'
-            ]
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove,
+            displaylogo: false,
+            responsive: true
         };
 
         return { plotData, plotLayout, plotConfig, min, max };
@@ -145,11 +113,5 @@ export default class MapWidget extends Widget {
     }
     public delete(): void {
         //throw new Error('Method not implemented.');
-    }
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
     }
 }

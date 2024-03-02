@@ -3,9 +3,7 @@ import { Query } from '../query/Query';
 import InputOption from './InputOption';
 import Panel from '../Panel';
 import Plot from 'react-plotly.js';
-import MapWidget from '../widgets/MapWidget';
 import { Attribute } from '../data/Data';
-import PageManager from '../PageManager';
 import RangeQuery from '../query/RangeQuery';
 import { v4 as uuidv4 } from 'uuid';
 import PositionMeta from '../queryMeta/PositionMeta';
@@ -15,7 +13,6 @@ export default class Geographic extends InputOption {
 
     private globalLatDiameter = 0;
     private globalLonDiameter = 0;
-    private renderedMap = false;
 
     private minLat = -Infinity;
     private maxLat = Infinity;
@@ -43,6 +40,7 @@ export default class Geographic extends InputOption {
     }
 
     public render(): JSX.Element {
+        console.log('Rerendering geo');
         const { plotData, plotLayout, plotConfig } = this.generatePlotlySettings();
 
         return (
@@ -56,10 +54,20 @@ export default class Geographic extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
+                            <strong
+                                style={{ color: this.minLat === -Infinity ? '' : 'chocolate' }}
+                                id={this.uuid.toString() + 'title'}
+                            >
+                                {this.name}
+                            </strong>
+                        </span>
+                    </Accordion.Header>
+                    <Accordion.Body>
+                        <div style={{ display: 'flex' }}>
                             <input
                                 style={{ marginLeft: '10px' }}
                                 key={uuidv4()}
+                                id={this.uuid + '-select-all'}
                                 onChange={(event) => {
                                     this.callback(
                                         event.currentTarget.checked
@@ -85,10 +93,21 @@ export default class Geographic extends InputOption {
                                 className='form-check-input'
                                 type='checkbox'
                             />
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <div id='panel-map-filter' style={{}}>
+                            <label
+                                className='form-check-label selectorLabel select-all-label fw-bold'
+                                htmlFor={this.uuid + '-select-all'}
+                            >
+                                Select All
+                            </label>
+                        </div>
+                        <div
+                            id='panel-map-filter'
+                            style={{
+                                height: plotLayout.height,
+                                width: plotLayout.width,
+                                overflowY: 'hidden'
+                            }}
+                        >
                             {/* If the accordion is closed, cheat and do not render */}
                             {this.accordionOpen ? (
                                 <Plot
@@ -107,6 +126,7 @@ export default class Geographic extends InputOption {
                             ) : (
                                 <></>
                             )}
+                            If you can see this, click the title twice to re-render the map.
                         </div>
                     </Accordion.Body>
                 </Accordion.Item>
@@ -155,6 +175,7 @@ export default class Geographic extends InputOption {
             autosize: false,
             hovermode: 'closest',
             mapbox: {
+                style: 'open-street-map',
                 center: {
                     lat:
                         this.posMeta().globalMin[0] +
@@ -175,7 +196,6 @@ export default class Geographic extends InputOption {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            mapboxAccessToken: MapWidget.mapToken,
             modeBarButtonsToRemove: ['toImage', 'lasso2d'] //Block lasso as I can't support points now
         };
 
@@ -207,10 +227,6 @@ export default class Geographic extends InputOption {
             this.minLat = newValue.bounds[1][1];
             this.maxLat = newValue.bounds[0][1];
         }
-
-        //If filter is active then indicate with title colour
-        document.getElementById(this.uuid.toString() + 'title').style.color =
-            newValue.pointCount === this.posMeta().uniquePositions.size ? '' : 'chocolate';
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);

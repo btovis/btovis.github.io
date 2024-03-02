@@ -6,7 +6,6 @@ import {
     readBytes
 } from '../../tests/utils.test';
 import { Attribute, Data } from './Data';
-import DataStats from './DataStats';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
 describe('DataStats', async () => {

@@ -3,30 +3,49 @@ import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
 import Modal from 'react-bootstrap/Modal';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
-import ExportFileType from './ExportFileType';
-import {
-    ContinuousMonthGrouping,
-    DayGrouping,
-    Grouping,
-    YGrouping,
-    YearGrouping
-} from './Grouping';
+import { Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
-import InputOption from '../options/InputOption';
 import ColorOption from '../options/ColorOption.js';
-import { getTouchRippleUtilityClass } from '@mui/material';
-import Selector from '../options/Selector.js';
-import { useState } from 'react';
 
 // Covers bar chart, line chart, stacked line chart.
 export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
     // This is declared here only because it isn't working when it's declared only in LineChart class
-    public colorOptions: Array<ColorOption> = [];
+    public colorOption: ColorOption;
+
+    static readonly buttonsToRemove = [
+        'zoom2d',
+        'pan2d',
+        'select2d',
+        'lasso2d',
+        'zoomIn2d',
+        'zoomOut2d',
+        'autoScale2d',
+        'hoverClosestCartesian',
+        'hoverCompareCartesian',
+        'zoom3d',
+        'pan3d',
+        'resetCameraDefault3d',
+        'resetCameraLastSave3d',
+        'hoverClosest3d',
+        'orbitRotation',
+        'tableRotation',
+        'zoomInGeo',
+        'zoomOutGeo',
+        'resetGeo',
+        'hoverClosestGeo',
+        'sendDataToCloud',
+        'hoverClosestGl2d',
+        'hoverClosestPie',
+        'toggleHover',
+        'resetViews',
+        'toggleSpikelines',
+        'resetViewMapbox'
+    ];
 
     // Subclasses implement these methods for specific chart types.
-    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }>;
+    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;
     public abstract chartType(): string;
     public abstract timeRangeGroupings();
     public abstract generateChartSpecificOptions(numTraces: number): void;
@@ -128,15 +147,12 @@ export default abstract class TimeChart extends Widget {
         );
     }
 
-    public render(width: number = 400, height: number = 210): JSX.Element {
+    public render(width: number = 500, height: number = 300): JSX.Element {
         const plotLayout = {
             width: width,
             height: height,
-            margin: {
-                l: 30,
-                r: 30,
-                b: 50,
-                t: 65
+            font: {
+                size: 16
             }
         };
         // Add specific layout to each chart.
@@ -145,7 +161,10 @@ export default abstract class TimeChart extends Widget {
             plotLayout
         );
         const plotConfig = {
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove,
+            editable: true,
+            staticplot: true,
+            displaylogo: false
         };
         let fullscreenDisplay = <></>;
         if (this.fullscreenModalShown) {
@@ -162,13 +181,6 @@ export default abstract class TimeChart extends Widget {
         );
     }
     public delete(): void {}
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
-    }
-
     public showFullscreen() {
         this.fullscreenModalShown = true;
         this.refresh();

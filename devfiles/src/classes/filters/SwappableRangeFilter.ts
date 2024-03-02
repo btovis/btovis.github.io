@@ -8,7 +8,7 @@ import { Filter, PredicateType } from './Filter.ts';
 export default class SwappableRangeFilter implements Filter {
     private l: number;
     private h: number;
-    private pred: [PredicateType, undefined | ((a) => boolean)] | any[] = new Array(2);
+    private pred: [PredicateType, undefined | ((a) => boolean)] | unknown[] = new Array(2);
     // Remember to use -Infinity or Infinity if using max range
     public constructor(low, high) {
         this.l = low;
@@ -56,7 +56,7 @@ export default class SwappableRangeFilter implements Filter {
         sr;
     }
 
-    public getPredicate(): [PredicateType, undefined | ((a) => boolean)] | any[] {
+    public getPredicate(): [PredicateType, undefined | ((a) => boolean)] | unknown[] {
         return this.pred;
     }
 }

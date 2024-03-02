@@ -1,7 +1,7 @@
 import { QueryType, SwappableRangeQueryT } from './Query';
 
 export default class SwappableRangeQuery {
-    colI: any;
+    colI: number;
     public constructor(columnIndex) {
         this.colI = columnIndex;
     }
