@@ -5,15 +5,12 @@ import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
 import WidgetComp from './WidgetComp.js';
-import Widget from '../classes/widgets/Widget.js';
 import BarChart from '../classes/widgets/BarChart.js';
 import MapWidget from '../classes/widgets/MapWidget.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
-import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
 import { CloseButton } from 'react-bootstrap';
 import generateHash from '../utils/generateHash.js';
-import Widget from '../classes/widgets/Widget.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
