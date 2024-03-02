@@ -17,7 +17,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const [snapDown, setSnapDown] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
     const refreshComponent = () => setSnapDown(Math.abs(snapDown) + 1);
-    const onResize = (event, { node, size, handle }) => {
+    const onResize = (eveiw_nt, { size }) => {
         setPanelHeight(Math.max(panel.minHeight, size.height));
     };
 

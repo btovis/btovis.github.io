@@ -1,10 +1,4 @@
-import {
-    ContinuousMonthGrouping,
-    DayGrouping,
-    Grouping,
-    YGrouping,
-    YearGrouping
-} from './Grouping.js';
+import { ContinuousMonthGrouping, DayGrouping, Grouping, YearGrouping } from './Grouping.js';
 import TimeChart from './TimeChart.js';
 import ColorOption from '../options/ColorOption.js';
 import Selector from '../options/Selector.js';
@@ -17,11 +11,11 @@ export default class LineChart extends TimeChart {
         // Bug in the way TypeScript calls constructor, so we need to call this here.
         this.initOptions();
     }
-    public chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }> {
-        const traceConfigs: Array<{ [key: string]: any }> = [];
+    public chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }> {
+        const traceConfigs: Array<{ [key: string]: unknown }> = [];
         const stacked = this.stackedSelector && this.stackedSelector.isEverythingSelected();
         for (let i = 0; i < numTraces; i++) {
-            const singleTraceConfig: { [key: string]: any } = {};
+            const singleTraceConfig: { [key: string]: unknown } = {};
             singleTraceConfig.type = 'scatter';
             if (stacked) {
                 singleTraceConfig.stackgroup = 'one';
@@ -30,6 +24,7 @@ export default class LineChart extends TimeChart {
 
             const lineConfig: { [key: string]: any } = {};
             lineConfig.color = this.colorOption.value()[i];
+          
             singleTraceConfig.line = lineConfig;
             traceConfigs.push(singleTraceConfig);
         }

@@ -1,5 +1,4 @@
 import ReferenceSet from '../classes/data/setutils/ReferenceSet.js';
-import SetElement from '../classes/data/setutils/SetElement.js';
 import { hasEmpty, rowComparator, unpack } from './DataUtils.js';
 
 describe('DataUtils', () => {
