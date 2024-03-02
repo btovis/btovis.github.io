@@ -1,10 +1,4 @@
-import {
-    ContinuousMonthGrouping,
-    DayGrouping,
-    Grouping,
-    YGrouping,
-    YearGrouping
-} from './Grouping.js';
+import { ContinuousMonthGrouping, DayGrouping, Grouping, YearGrouping } from './Grouping.js';
 import TimeChart from './TimeChart.js';
 import ColorOption from '../options/ColorOption.js';
 import Selector from '../options/Selector.js';

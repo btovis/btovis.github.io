@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import PageManager from '../../classes/PageManager';
-import Panel from '../../classes/Panel';
 import InputOption from '../../classes/options/InputOption';
 
 export default function InputOptionComp(params: { inputOption: InputOption }) {

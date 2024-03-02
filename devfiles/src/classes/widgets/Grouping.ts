@@ -1,8 +1,7 @@
 import SetElement from '../data/setutils/SetElement';
-import { Attribute, Data } from '../data/Data';
+import { Attribute } from '../data/Data';
 import Row from '../data/Row';
 import ReferenceSet from '../data/setutils/ReferenceSet';
-import { Filter } from '../filters/Filter';
 import DataFilterer from '../data/DataFilterer';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 

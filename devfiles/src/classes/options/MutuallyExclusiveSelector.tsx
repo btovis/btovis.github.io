@@ -1,6 +1,4 @@
 import Panel from '../Panel';
-import { Query } from '../query/Query';
-import InputOption from './InputOption';
 import Selector from './Selector';
 
 export default class MutuallyExclusiveSelector extends Selector {

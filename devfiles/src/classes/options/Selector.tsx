@@ -147,7 +147,7 @@ export default class Selector extends InputOption {
                         {searchBar}
                         {this.inputType() == 'checkbox' ? selectAll : <></>}
                         <div className='form-check'>
-                            {[...this.choices].map((item, itemIdx) => {
+                            {[...this.choices].map((item) => {
                                 return (
                                     <div
                                         key={uuidv4()}

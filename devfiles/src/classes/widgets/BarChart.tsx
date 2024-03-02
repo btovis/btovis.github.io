@@ -1,15 +1,12 @@
-import InputOption from '../options/InputOption.js';
 import ColorOption from '../options/ColorOption.js';
 import {
     BatchNameGrouping,
-    ContinuousMonthGrouping,
     DayGrouping,
     FilenameGrouping,
     Grouping,
     HourGrouping,
     MonthGrouping,
     ProjectNameGrouping,
-    YGrouping,
     YearGrouping
 } from './Grouping.js';
 import TimeChart from './TimeChart.js';
