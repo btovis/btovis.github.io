@@ -5,7 +5,8 @@ import {
     testDataFilename2 as filename2,
     testDataFilename3 as filename3,
     loadData,
-    readBytes
+    readBytes,
+    testDataFilename3
 } from '../../tests/utils.test';
 import SetElement from '../data/setutils/SetElement';
 import {
@@ -249,6 +250,16 @@ describe('Grouping', async () => {
                         ['01-08-23', 'vulnerable', 4],
                         ['01-08-23', 'least concern', 2],
                         ['02-08-23', 'least concern', 4]
+                    ]
+                },
+                {
+                    xGrouping: FilenameGrouping,
+                    yGrouping: YGrouping.Animal,
+                    expected: [
+                        [testDataFilename3, 'greater spotted eagle', 4],
+                        [testDataFilename3, 'mute swan', 2],
+                        [testDataFilename3, 'nocturnal bush cricket', 2],
+                        [testDataFilename3, 'bush cricket', 2]
                     ]
                 },
                 {

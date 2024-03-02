@@ -370,6 +370,7 @@ span {
   height: 85%;
   width: 100%;
   overflow-y: scroll;
+  transition: scrollTop 1s;
 }
 
 .add-widget-btns {
