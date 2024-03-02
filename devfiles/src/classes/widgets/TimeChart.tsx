@@ -16,6 +16,7 @@ import InputOption from '../options/InputOption';
 import ColorOption from '../options/ColorOption.js';
 import { getTouchRippleUtilityClass } from '@mui/material';
 import Selector from '../options/Selector.js';
+import { useState } from 'react';
 
 // Covers bar chart, line chart, stacked line chart.
 export default abstract class TimeChart extends Widget {
@@ -108,11 +109,26 @@ export default abstract class TimeChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
-    public render(
-        width: number = 400,
-        height: number = 210,
-        isFullscreen: boolean = false
-    ): JSX.Element {
+
+    public render_fullscreen() {
+        const scale = 0.9;
+        const { innerWidth: innerWidth, innerHeight: innerHeight } = window;
+        return (
+            <Modal
+                className='widget-fullscreen-modal'
+                onHide={() => this.hideFullscreen()}
+                show={true}
+                fullscreen={true}
+            >
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>
+                    {this.render(Math.floor(innerWidth * scale), Math.floor(innerHeight * scale))}
+                </Modal.Body>
+            </Modal>
+        );
+    }
+
+    public render(width: number = 400, height: number = 210): JSX.Element {
         const plotLayout = {
             width: width,
             height: height,
@@ -131,19 +147,13 @@ export default abstract class TimeChart extends Widget {
         const plotConfig = {
             modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
         };
-        const fullscreenDisplay = isFullscreen ? (
-            <></>
-        ) : (
-            <Modal
-                className='widget-fullscreen-modal'
-                show={this.fullscreenModalShown}
-                onHide={() => this.hideFullscreen()}
-                fullscreen={true}
-            >
-                <Modal.Header closeButton></Modal.Header>
-                <Modal.Body>{this.render(-1, -1, true)}</Modal.Body>
-            </Modal>
-        );
+        let fullscreenDisplay = <></>;
+        if (this.fullscreenModalShown) {
+            // Avoid re-rendering the fullscreen modal when it's already shown.
+            this.fullscreenModalShown = false;
+            fullscreenDisplay = this.render_fullscreen();
+            this.fullscreenModalShown = true;
+        }
         return (
             <div>
                 {fullscreenDisplay}
