@@ -31,7 +31,7 @@ export default class ColorOption extends InputOption {
         );
     }
 
-    public callback(newValue: any): void {
+    public callback(newValue): void {
         // Update Selected Color
         this.selectedColor = newValue;
         // Refresh the sidebar component of this option

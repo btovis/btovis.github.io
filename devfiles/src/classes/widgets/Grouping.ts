@@ -145,8 +145,8 @@ abstract class Grouping {
     }
     // Returns chart data and layout for plotly
     public getChart(
-        additionalTracesConfig: Array<{ [key: string]: any }>,
-        additionalLayoutConfig: { [key: string]: any }
+        additionalTracesConfig: Array<{ [key: string]: unknown }>,
+        additionalLayoutConfig: { [key: string]: unknown }
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
         const xIndexMap = this.xIndexMap();

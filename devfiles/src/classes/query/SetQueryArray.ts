@@ -1,7 +1,7 @@
 import { QueryType, SetAsArrayT } from './Query';
 
 export default class SetQueryArray {
-    colI: any;
+    colI: number;
     public constructor(columnIndex) {
         this.colI = columnIndex;
     }

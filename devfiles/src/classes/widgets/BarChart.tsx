@@ -13,14 +13,14 @@ import TimeChart from './TimeChart.js';
 
 export default class BarChart extends TimeChart {
     // Generate Specific Layout for BarChart from specific options
-    public chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }> {
-        const traceConfigs: Array<{ [key: string]: any }> = [];
+    public chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }> {
+        const traceConfigs: Array<{ [key: string]: unknown }> = [];
         // Modify the JS object for every trace
         for (let i = 0; i < numTraces; i++) {
-            const singleTraceConfig: { [key: string]: any } = {};
+            const singleTraceConfig: { [key: string]: unknown } = {};
             singleTraceConfig.type = 'bar';
 
-            const markerConfig: { [key: string]: any } = {};
+            const markerConfig: { [key: string]: unknown } = {};
             markerConfig.color = this.colorOptions[i].value();
             singleTraceConfig.marker = markerConfig;
             traceConfigs.push(singleTraceConfig);

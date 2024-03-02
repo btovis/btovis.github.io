@@ -14,7 +14,7 @@ export default abstract class TimeChart extends Widget {
     public colorOptions: Array<ColorOption> = [];
 
     // Subclasses implement these methods for specific chart types.
-    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }>;
+    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;
     public abstract chartType(): string;
     public abstract timeRangeGroupings();
     public abstract generateChartSpecificOptions(numTraces: number): void;

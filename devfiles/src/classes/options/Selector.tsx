@@ -199,7 +199,7 @@ export default class Selector extends InputOption {
      * @param newValue In this case, contains the "checked" status of
      * a tickbox and the string value of the item that was ticked
      */
-    public callback(newValue: any): void {
+    public callback(newValue): void {
         //If this is a boolean, that means this is a single change
         if (typeof newValue.checked === 'boolean') {
             if (newValue.checked) this.excluded.delete(newValue.item);
