@@ -32,7 +32,7 @@ describe('Grouping', async () => {
     });
     describe('selectByColumn', () => {
         it('should select values by column', () => {
-            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
+            const grouping = new BatchNameGrouping(filter, YGrouping.ScientificName);
             const columnIdx = filter.getColumnIndex(Attribute.csvName);
             const [dataSubset, _] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectByColumnIndex(row, columnIdx));
@@ -64,7 +64,7 @@ describe('Grouping', async () => {
             }
         ].forEach(({ grouping, attribute }) => {
             it(`should select values by ${attribute}`, () => {
-                const groupingInstance = new grouping(filter, YGrouping.Species);
+                const groupingInstance = new grouping(filter, YGrouping.ScientificName);
                 const [dataSubset, _] = filter.getData();
                 const values = dataSubset.map((row) => groupingInstance.selectX(row));
                 for (const v1 of values) {
@@ -112,7 +112,7 @@ describe('Grouping', async () => {
             }
         ].forEach(({ grouping, allowed }) => {
             it(`should select values using ${grouping}`, () => {
-                const groupingInstance = new grouping(filter, YGrouping.Species);
+                const groupingInstance = new grouping(filter, YGrouping.ScientificName);
                 const [dataSubset, _] = filter.getData();
                 const values = dataSubset.map((row) => groupingInstance.selectX(row));
                 const recordedValues = new Set();
@@ -133,7 +133,7 @@ describe('Grouping', async () => {
     });
     describe('selectY', () => {
         it('should select species column', () => {
-            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
+            const grouping = new BatchNameGrouping(filter, YGrouping.ScientificName);
             const [dataSubset, _] = filter.getData();
             const values = dataSubset.map((row) => grouping.selectY(row));
             for (const v1 of values) {
@@ -194,7 +194,7 @@ describe('Grouping', async () => {
     });
     describe('generatePairs', () => {
         it('should generate name, species pairs', () => {
-            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
+            const grouping = new BatchNameGrouping(filter, YGrouping.ScientificName);
             const pairs = grouping.generatePairs();
             for (const [x, y] of pairs) {
                 expect(x).toBeInstanceOf(SetElement);
@@ -214,7 +214,7 @@ describe('Grouping', async () => {
     });
     describe('aggregatePairs', () => {
         it('should aggregate pairs', () => {
-            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
+            const grouping = new BatchNameGrouping(filter, YGrouping.ScientificName);
             const aggregated = grouping.aggregatePairs();
             for (const [y, xMap] of aggregated) {
                 expect(y).toBeInstanceOf(SetElement);
@@ -235,7 +235,7 @@ describe('Grouping', async () => {
             [
                 {
                     xGrouping: BatchNameGrouping,
-                    yGrouping: YGrouping.Species,
+                    yGrouping: YGrouping.ScientificName,
                     expected: [
                         ['scotland pam', 'clanga clanga', 4],
                         ['scotland pam', 'cygnus olor', 2],
@@ -254,7 +254,7 @@ describe('Grouping', async () => {
                 },
                 {
                     xGrouping: FilenameGrouping,
-                    yGrouping: YGrouping.Animal,
+                    yGrouping: YGrouping.CommonName,
                     expected: [
                         [testDataFilename3, 'greater spotted eagle', 4],
                         [testDataFilename3, 'mute swan', 2],
@@ -330,7 +330,7 @@ describe('Grouping', async () => {
             }
         ].forEach(({ grouping, attribute }) => {
             it(`should map values for ${attribute} to unique integers`, () => {
-                const groupingInstance = new grouping(filter, YGrouping.Species);
+                const groupingInstance = new grouping(filter, YGrouping.ScientificName);
                 const pairs = groupingInstance.generatePairs();
                 const xValueMap = groupingInstance.xIndexMap();
                 const mappings = new Set();
@@ -353,7 +353,7 @@ describe('Grouping', async () => {
     });
     describe('getChart', () => {
         it('should get traces with selected properties', () => {
-            const grouping = new BatchNameGrouping(filter, YGrouping.Species);
+            const grouping = new BatchNameGrouping(filter, YGrouping.ScientificName);
             const { traces, layout } = grouping.getChart(
                 Array(grouping.numTraces()).fill({
                     type: 'bar'

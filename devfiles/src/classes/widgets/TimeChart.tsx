@@ -54,7 +54,7 @@ export default abstract class TimeChart extends Widget {
         const groupings = this.timeRangeGroupings()
             .filter((grouping) => {
                 // Manually filter groupings of x axis to prevent too many x values.
-                const groupingInstance = new grouping(filter, YGrouping.Species);
+                const groupingInstance = new grouping(filter, YGrouping.ScientificName);
                 const [data, length] = filter.getData();
                 const xValues = new Set();
                 for (let i = 0; i < length; i++) {

@@ -7,8 +7,8 @@ import DataFilterer from '../data/DataFilterer';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
 enum YGrouping {
-    Animal = 'Animal',
-    Species = 'Species',
+    CommonName = 'Common Name',
+    ScientificName = 'Scientific Name',
     SpeciesGroup = 'Species Group',
     VulnerabilityStatus = 'Vulnerability Status'
 }
@@ -32,11 +32,11 @@ abstract class Grouping {
         // Use an attribute to select the y values.
         let attribute: Attribute;
         switch (yGrouping) {
-            case YGrouping.Species:
+            case YGrouping.ScientificName:
             case YGrouping.VulnerabilityStatus:
                 attribute = Attribute.speciesLatinName;
                 break;
-            case YGrouping.Animal:
+            case YGrouping.CommonName:
                 attribute = Attribute.speciesEnglishName;
                 break;
             case YGrouping.SpeciesGroup:
