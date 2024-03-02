@@ -17,7 +17,7 @@ export default abstract class Widget {
     public constructor(panel: Panel) {
         this.panel = panel;
         this.options = [];
-        this.name = 'Widget ' + (panel.getWidgets().length + 1);
+        this.name = 'Widget ' + (panel.getLifetimeWidgetsCreated() + 1);
     }
 
     public displaySidebar() {}

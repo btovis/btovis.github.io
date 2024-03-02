@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from 'react';
 import Panel from './Panel';
 import GlobalSettings from './GlobalSettings';
 import { Data } from './data/Data';
@@ -16,6 +15,7 @@ export default class PageManager {
     public selectedPanel: number = -1;
     public selectedWidget: number = -1;
     public panels: Panel[];
+    public lifetimePanelCount: number = 0;
     public refreshEverything?: () => void;
     public refreshPanelOptions?: () => void;
     public refreshWidgetOptions?: () => void;
@@ -48,8 +48,13 @@ export default class PageManager {
         this.panels.forEach((p) => p.refresh());
     }
 
+    public getLifetimePanelsCreated() {
+        return this.lifetimePanelCount;
+    }
+
     public addPanel(panel: Panel) {
         this.panels.push(panel);
+        this.lifetimePanelCount++;
     }
 
     public deletePanel(panelIdx: number) {

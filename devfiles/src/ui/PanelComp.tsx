@@ -13,6 +13,7 @@ import DebugWidget from '../classes/widgets/DebugWidget.js';
 import { Resizable } from 'react-resizable';
 import { CloseButton } from 'react-bootstrap';
 import generateHash from '../utils/generateHash.js';
+import Widget from '../classes/widgets/Widget.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
