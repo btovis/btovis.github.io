@@ -5,6 +5,7 @@ import '../App.css';
 import PageManager from '../classes/PageManager.js';
 import LineChart from '../classes/widgets/LineChart.js';
 import WidgetComp from './WidgetComp.js';
+import Widget from '../classes/widgets/Widget.js';
 import BarChart from '../classes/widgets/BarChart.js';
 import MapWidget from '../classes/widgets/MapWidget.js';
 import StackedLineChart from '../classes/widgets/StackedLineChart.js';
@@ -16,9 +17,9 @@ import generateHash from '../utils/generateHash.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
-    const [snapRight, setSnapRight] = useState(1);
+    const [snapDown, setSnapDown] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
-    const refreshComponent = () => setSnapRight(Math.abs(snapRight) + 1);
+    const refreshComponent = () => setSnapDown(Math.abs(snapDown) + 1);
     const onResize = (event, { node, size, handle }) => {
         setPanelHeight(Math.max(panel.minHeight, size.height));
     };
@@ -103,15 +104,16 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     useEffect(() => {
         //This was the first panel
         if (params.pageManager.selectedPanel === -1) selectThisPanel();
-
-        if (snapRight <= 0 && widgetRowRef.current)
-            widgetRowRef.current.scrollLeft = widgetRowRef.current.scrollWidth;
     });
 
+    useEffect(() => {
+        if (snapDown <= 0 && widgetRowRef.current)
+            widgetRowRef.current.scrollTop = widgetRowRef.current.scrollHeight;
+    }, [snapDown]);
+
     function addwidget(widget) {
-        panel.addWidget(new widget(params.pageManager.panels[params.panelIdx]));
-        //If negative, scroll rightwards
-        setSnapRight(-Math.abs(snapRight) - 1);
+        panel.addWidget(new widget(panel));
+        setSnapDown(-Math.abs(snapDown) - 1);
     }
 
     return (
@@ -123,22 +125,23 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                     </Accordion.Header>
 
                     <Accordion.Body className='body'>
-                        <Resizable
-                            ref={widgetRowRef}
-                            onResize={onResize}
-                            width={0}
-                            height={panelHeight}
-                        >
+                        <Resizable onResize={onResize} width={0} height={panelHeight}>
                             <span>
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
                                     <div
                                         className='widget-row'
+                                        ref={widgetRowRef}
                                         style={{ height: panelHeight - iconSize + 'px' }}
                                     >
                                         {widgets}
                                     </div>
                                     <div className='add-widget-row'>
-                                        <div className='show-widget-icons'>
+                                        <div
+                                            className='show-widget-icons'
+                                            onClick={() => {
+                                                setSnapDown(snapDown - 1);
+                                            }}
+                                        >
                                             <Icon.PlusCircle
                                                 size={iconSize}
                                                 className='show-widget-icons'
@@ -201,7 +204,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             <div
                                                 className='widget-icon'
                                                 onClick={() => {
-                                                    addwidget(Map);
+                                                    addwidget(MapWidget);
                                                 }}
                                             >
                                                 <Icon.GeoAlt
