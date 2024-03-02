@@ -1,6 +1,5 @@
 import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
-import ExportFileType from './ExportFileType.js';
 import Selector from '../options/Selector.js';
 import Panel from '../Panel.js';
 import { Attribute } from '../data/Data.js';
@@ -160,7 +159,7 @@ export default class TableWidget extends Widget {
                 <datalist id={this.uuid.toString() + '-search'}>
                     {this.tableEntries
                         .filter(() => this.tableEntries.length <= this.searchMax)
-                        .map(([rowIdx, _freq]) => {
+                        .map(([rowIdx]) => {
                             const key = this.keyFromRow(rowIdx);
                             return <option key={key + '-option'} value={key} />;
                         })}
@@ -255,7 +254,7 @@ export default class TableWidget extends Widget {
                                   .map(([key, freq]) => {
                                       return (
                                           <tr key={this.keyFromRow(key)}>
-                                              {this.columns.map(([_colName, cIdx]) => (
+                                              {this.columns.map(([, cIdx]) => (
                                                   <td key={uuidv4()}>
                                                       {unpack(
                                                           this.panel.dataFilterer.getData()[0][key][
@@ -270,7 +269,7 @@ export default class TableWidget extends Widget {
                                   })
                             : this.tableEntries
                                   .filter(
-                                      ([key, _freq], idx) =>
+                                      ([key], idx) =>
                                           idx <= this.searchMax &&
                                           this.keyFromRow(key)
                                               .toLowerCase()
@@ -280,7 +279,7 @@ export default class TableWidget extends Widget {
                                       return (
                                           <tr
                                               key={this.columns
-                                                  .map(([_colName, cIdx]) =>
+                                                  .map(([, cIdx]) =>
                                                       unpack(
                                                           this.panel.dataFilterer.getData()[0][key][
                                                               cIdx
@@ -289,7 +288,7 @@ export default class TableWidget extends Widget {
                                                   )
                                                   .join('/')}
                                           >
-                                              {this.columns.map(([_colName, cIdx]) => (
+                                              {this.columns.map(([, cIdx]) => (
                                                   <td key={uuidv4()}>
                                                       {unpack(
                                                           this.panel.dataFilterer.getData()[0][key][
@@ -310,7 +309,7 @@ export default class TableWidget extends Widget {
 
     private keyFromRow(rowIdx: number) {
         return this.columns
-            .map(([_colName, cIdx]) => unpack(this.panel.dataFilterer.getData()[0][rowIdx][cIdx]))
+            .map(([, cIdx]) => unpack(this.panel.dataFilterer.getData()[0][rowIdx][cIdx]))
             .join('/');
     }
 
@@ -370,12 +369,6 @@ export default class TableWidget extends Widget {
 
     public delete(): void {
         //Nothing to do?
-    }
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
     }
     public updateTraceOptions(): void {}
 }

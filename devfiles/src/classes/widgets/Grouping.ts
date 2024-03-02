@@ -1,8 +1,7 @@
 import SetElement from '../data/setutils/SetElement';
-import { Attribute, Data } from '../data/Data';
+import { Attribute } from '../data/Data';
 import Row from '../data/Row';
 import ReferenceSet from '../data/setutils/ReferenceSet';
-import { Filter } from '../filters/Filter';
 import DataFilterer from '../data/DataFilterer';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
 
@@ -146,8 +145,8 @@ abstract class Grouping {
     }
     // Returns chart data and layout for plotly
     public getChart(
-        additionalTracesConfig: Array<{ [key: string]: any }>,
-        additionalLayoutConfig: { [key: string]: any }
+        additionalTracesConfig: Array<{ [key: string]: unknown }>,
+        additionalLayoutConfig: { [key: string]: unknown }
     ): { traces: any[]; layout: any } {
         const partialTraces = this.getPartialTraces();
         const xIndexMap = this.xIndexMap();

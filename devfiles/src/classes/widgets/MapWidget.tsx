@@ -1,12 +1,10 @@
 import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
-import ExportFileType from './ExportFileType.js';
 import Plot from 'react-plotly.js';
 import { Attribute } from '../data/Data.js';
 import Panel from '../Panel.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { unpack } from '../../utils/DataUtils.js';
-import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 
 export default class MapWidget extends Widget {
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
@@ -55,7 +53,7 @@ export default class MapWidget extends Widget {
         //map zoom settings
         const latBound = max[0] - min[0];
         const lonBound = max[0] - min[0];
-        const maxBound = Math.max(latBound, lonBound) * 600;
+        const maxBound = Math.max(latBound, lonBound) * 100;
         const zoom = 11.5 - Math.log(maxBound);
 
         //plot data for plotly
@@ -131,7 +129,8 @@ export default class MapWidget extends Widget {
                 'resetViews',
                 'toggleSpikelines',
                 'resetViewMapbox'
-            ]
+            ],
+            displaylogo: false
         };
 
         return { plotData, plotLayout, plotConfig, min, max };
@@ -142,11 +141,5 @@ export default class MapWidget extends Widget {
     }
     public delete(): void {
         //throw new Error('Method not implemented.');
-    }
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
     }
 }

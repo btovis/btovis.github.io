@@ -1,6 +1,4 @@
 import Panel from '../Panel';
-import { Query } from '../query/Query';
-import InputOption from './InputOption';
 import Selector from './Selector';
 
 export default class MutuallyExclusiveSelector extends Selector {
@@ -23,7 +21,7 @@ export default class MutuallyExclusiveSelector extends Selector {
     protected inputType(): string {
         return 'radio';
     }
-    public callback(newValue: any): void {
+    public callback(newValue): void {
         this.selected = newValue.item;
         this.excluded = new Set([...this.choices].filter((c) => c !== this.selected));
         super.callback(newValue);

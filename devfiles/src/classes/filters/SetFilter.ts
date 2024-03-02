@@ -10,9 +10,9 @@ export default class SetFilter implements Filter {
     private excluded: ReferenceSet;
     private entire: ReferenceSet;
 
-    private pred: [PredicateType, undefined | ((a) => boolean)] | any[] = new Array(2);
+    private pred: [PredicateType, undefined | ((a) => boolean)] | unknown[] = new Array(2);
     private mode: number; // 0: transparent 1: opaque, 2: "reject some" mode 3: "accept some" mode
-    private allowSet: Set<any>; /* Used in "accept some" mode, ie, mode = 3 */
+    private allowSet: Set<unknown>; /* Used in "accept some" mode, ie, mode = 3 */
     // filter in rejection mode. e.g. if, out of 300 species, reject 3... up to 150
     // more efficient to consider what to reject than to what to accept
     // whereas in "accept some" mode, check if equal to A, or B, or C, ... otherwise fails
@@ -145,7 +145,7 @@ export default class SetFilter implements Filter {
         this.recalculateAll();
     }
 
-    public getPredicate(): [PredicateType, undefined | ((a) => boolean)] | any[] {
+    public getPredicate(): [PredicateType, undefined | ((a) => boolean)] | unknown[] {
         return this.pred;
     }
 }

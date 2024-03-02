@@ -11,7 +11,7 @@ import ReferenceSet from '../data/setutils/ReferenceSet';
 abstract class Filter {
     // + Constructor: call with set and options
     public abstract updateSetReference(set: ReferenceSet);
-    public abstract getPredicate(): [PredicateType, undefined | ((a) => boolean)] | any[];
+    public abstract getPredicate(): [PredicateType, undefined | ((a) => boolean)] | unknown[];
 }
 
 enum PredicateType {

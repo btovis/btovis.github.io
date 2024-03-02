@@ -17,7 +17,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     const [snapDown, setSnapDown] = useState(1);
     const [highlighted, setHighlighted] = useState(false);
     const refreshComponent = () => setSnapDown(Math.abs(snapDown) + 1);
-    const onResize = (event, { node, size, handle }) => {
+    const onResize = (eveiw_nt, { size }) => {
         setPanelHeight(Math.max(panel.minHeight, size.height));
     };
 
@@ -153,8 +153,9 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                                 }}
                                             >
                                                 <Icon.BarChart
+                                                    color='#4ea0e4'
                                                     size={iconSize}
-                                                    className='widget-icon'
+                                                    className='widget-icon-inner'
                                                 />
                                                 <div className='tool-tip'>Barchart</div>
                                             </div>
@@ -166,8 +167,9 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                                 }}
                                             >
                                                 <Icon.GraphUp
+                                                    color='#4ea0e4'
                                                     size={iconSize}
-                                                    className='widget-icon'
+                                                    className='widget-icon-inner'
                                                 />
                                                 <div className='tool-tip'>Linechart</div>
                                             </div>
@@ -179,8 +181,9 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                                 }}
                                             >
                                                 <Icon.Table
+                                                    color='#4ea0e4'
                                                     size={iconSize}
-                                                    className='widget-icon'
+                                                    className='widget-icon-inner'
                                                 />
                                                 <div className='tool-tip'>Table</div>
                                             </div>
@@ -192,8 +195,9 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                                 }}
                                             >
                                                 <Icon.GeoAlt
+                                                    color='#4ea0e4'
                                                     size={iconSize}
-                                                    className='widget-icon'
+                                                    className='widget-icon-inner'
                                                 />
                                                 <div className='tool-tip'>Map</div>
                                             </div>

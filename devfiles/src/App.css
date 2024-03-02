@@ -336,6 +336,14 @@ span {
   width: 50px;
   position: relative
 }
+.widget-icon-inner {
+  background-color: var(--element-bg);
+  color: white;
+  height: 35px;
+  width: 35px;
+  position: relative;
+  margin-top: 7.5px;
+}
 
 .show-widget-icons:hover + .widget-icon-row {
   transform: translateX(0px);

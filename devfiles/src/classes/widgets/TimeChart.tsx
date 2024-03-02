@@ -2,29 +2,19 @@ import Panel from '../Panel';
 import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
-import ExportFileType from './ExportFileType';
-import {
-    ContinuousMonthGrouping,
-    DayGrouping,
-    Grouping,
-    YGrouping,
-    YearGrouping
-} from './Grouping';
+import { Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
-import InputOption from '../options/InputOption';
 import ColorOption from '../options/ColorOption.js';
-import { getTouchRippleUtilityClass } from '@mui/material';
-import Selector from '../options/Selector.js';
 
 // Covers bar chart, line chart, stacked line chart.
 export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
     // This is declared here only because it isn't working when it's declared only in LineChart class
-    public colorOptions: Array<ColorOption> = [];
+    public colorOption: ColorOption;
 
     // Subclasses implement these methods for specific chart types.
-    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: any }>;
+    public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;
     public abstract chartType(): string;
     public abstract timeRangeGroupings();
     public abstract generateChartSpecificOptions(numTraces: number): void;
@@ -122,15 +112,10 @@ export default abstract class TimeChart extends Widget {
             plotLayout
         );
         const plotConfig = {
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d']
+            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d'],
+            displaylogo: false
         };
         return <Plot data={traces} layout={layout} config={plotConfig} />;
     }
     public delete(): void {}
-    public clone(): Widget {
-        throw new Error('Method not implemented.');
-    }
-    public export(fileType: ExportFileType): void {
-        throw new Error('Method not implemented.');
-    }
 }

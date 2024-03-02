@@ -1,8 +1,6 @@
-import DataFilterer from '../data/DataFilterer.js';
 import InputOption from '../options/InputOption.js';
 import Panel from '../Panel.js';
 import Sidebar from '../Sidebar.js';
-import ExportFileType from './ExportFileType.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export default abstract class Widget {
@@ -34,8 +32,4 @@ export default abstract class Widget {
     public abstract render(): JSX.Element;
 
     public abstract delete(): void;
-
-    public abstract clone(): Widget;
-
-    public abstract export(fileType: ExportFileType): void;
 }

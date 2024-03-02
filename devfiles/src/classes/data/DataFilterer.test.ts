@@ -1,15 +1,8 @@
 import { it, expect, beforeEach, describe, afterAll } from 'vitest';
-import SetFilter from '../filters/SetFilter';
-import { RangeQueryT, SetElemQueryT, SetQueryT, QueryType, Query } from '../query/Query';
-import RangeFilter from '../filters/RangeFilter';
+import { QueryType, Query } from '../query/Query';
 import DataFilterer from './DataFilterer';
 import { Attribute, Data } from './Data';
-import {
-    testDataFilename as filename,
-    testDataFilename2 as filename2,
-    loadData,
-    readBytes
-} from '../../tests/utils.test';
+import { testDataFilename as filename, loadData } from '../../tests/utils.test';
 import SetQueryElement from '../query/SetQueryElement';
 import SetQueryArray from '../query/SetQueryArray';
 
