@@ -15,7 +15,6 @@ export default class Geographic extends InputOption {
 
     private globalLatDiameter = 0;
     private globalLonDiameter = 0;
-    private renderedMap = false;
 
     private minLat = -Infinity;
     private maxLat = Infinity;
@@ -56,7 +55,14 @@ export default class Geographic extends InputOption {
                 <Accordion.Item eventKey='0'>
                     <Accordion.Header>
                         <span>
-                            <strong id={this.uuid.toString() + 'title'}>{this.name}</strong>
+                            <span>
+                                <strong
+                                    style={{ color: this.minLat === -Infinity ? '' : 'chocolate' }}
+                                    id={this.uuid.toString() + 'title'}
+                                >
+                                    {this.name}
+                                </strong>
+                            </span>
                             <input
                                 style={{ marginLeft: '10px' }}
                                 key={uuidv4()}
@@ -207,10 +213,6 @@ export default class Geographic extends InputOption {
             this.minLat = newValue.bounds[1][1];
             this.maxLat = newValue.bounds[0][1];
         }
-
-        //If filter is active then indicate with title colour
-        document.getElementById(this.uuid.toString() + 'title').style.color =
-            newValue.pointCount === this.posMeta().uniquePositions.size ? '' : 'chocolate';
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);
