@@ -22,8 +22,7 @@ function integrateNewCSV(
     newColumnList: string[],
     oldDatabase,
     newDatabase,
-    oldSets: ReferenceSet[],
-    oldProcessors: any[]
+    oldSets: ReferenceSet[]
 ) {
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = newColumnList[i].toUpperCase();
@@ -167,12 +166,10 @@ function integrateNewCSV(
     // -2 means "duplicate column, drop it"
 
     // used for duplicate column detection in the newColumnList
-    const earliestColumnWithNameInNew = new Map<string, number>();
+    const earliestColumnWithNameInNew = new Map<string, number>([['_FILE', 0]]);
 
     for (let i = 1; i < newColumnList.length; i++) {
-        if (newColumnList[i] == '_FILE') {
-            permutes[i] = -2;
-        } else if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
+        if (earliestColumnWithNameInNew.get(newColumnList[i]) === undefined) {
             earliestColumnWithNameInNew.set(newColumnList[i], i);
             permutes[i] = titleToColumnIndex.get(newColumnList[i]);
         }
@@ -250,13 +247,15 @@ function integrateNewCSV(
     if (permutationNeeded) {
         for (let r = 0; r < newDBLen; r++) {
             const ro = newDatabase[r];
-            const ro2 = (oldDatabase[r + oldDBLen] = new Array(columnCount));
+            // fill can be optimised
+            const ro2 = (oldDatabase[r + oldDBLen] = new Array(columnCount)).fill('');
             for (let i = 0; i < columnCount; i++) ro2[permutes[i]] = ro[i];
         }
     } else {
         for (let r = 0; r < newDBLen; r++) {
             const ro = newDatabase[r];
-            const ro2 = (oldDatabase[r + oldDBLen] = new Array(columnCount));
+            // fill can be optimised
+            const ro2 = (oldDatabase[r + oldDBLen] = new Array(columnCount)).fill('');
             for (let i = 0; i < columnCount; i++) ro2[i] = ro[i];
         }
     }
@@ -265,39 +264,40 @@ function integrateNewCSV(
     newDatabase.length = 0;
     newColumnList.length = 0;
 
-    // Extend processors, process old data
-    // NOTE: NOT IMPLEMENTED: it isn't useful to extend old data with NaN, unknown dates, and SetElement("") and ""
-    // INCONSISTENCY: but we do process empty columns of the new rows (if the new data doesn't have some columns as the original)
-    // but this has good effect that we can replace processor with every new csv
-
-    // Extend processors, process new data with both old and new processors
-    // for this, extend set
-
     const newColumns = oldColumnList.slice(originalColumnCount);
     const newSets = newColumns.map((a) => (columnNeedsSet(a) ? new ReferenceSet() : undefined));
-    const newProcessors = newColumns.map((n, i) => getProcessorForColumn(n, newSets[i]));
     oldSets.push(...newSets);
-    oldProcessors.push(...newProcessors);
+    const newProcessors = oldColumnList.map((n, i) => getProcessorForColumn(n, oldSets[i]));
 
     // handle time: get index of actual ...
     // make processor, replace previous with it
 
     const dateCol = titleToColumnIndex.get(Attribute.actualDate);
-    processDates(oldDatabase, oldDBLen, dateCol);
+    processDates(oldDatabase, finalDBLen, dateCol);
 
     const surveyDateCol = titleToColumnIndex.get(Attribute.surveyDate);
-    processDates(oldDatabase, oldDBLen, surveyDateCol);
+    processDates(oldDatabase, finalDBLen, surveyDateCol);
 
     const timeCol = titleToColumnIndex.get(Attribute.time);
-    if (timeCol) {
-        processTimes(oldDatabase, oldDBLen, timeCol);
+    processTimes(oldDatabase, finalDBLen, timeCol);
+
+    // Go back to original data, extend with "", process them
+    if (oldDBLen != 0 && newDBLen != 0) {
+        const oldRowLength = oldDatabase[0].length;
+        const newRowLength = oldDatabase[oldDBLen].length;
+        if (newRowLength < oldRowLength) throw 'Internal error: new row shorter than old';
+        for (let i = 0; i < oldDBLen; i++) {
+            const r = oldDatabase[i];
+            r.length = newRowLength;
+            for (let x = oldRowLength; x < newRowLength; x++) r[x] = newProcessors[x]('');
+        }
     }
 
     for (let i = oldDBLen; i < finalDBLen; i++) {
         const r = oldDatabase[i];
         // Skip file identifier
         for (let z = 1; z < columnCount; z++) {
-            r[z] = oldProcessors[z](r[z]);
+            r[z] = newProcessors[z](r[z]);
         }
     }
 }
