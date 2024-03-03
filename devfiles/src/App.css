@@ -5,6 +5,18 @@
     --element-hover: #d6d6d6;
     --text-color: black;
     --file-box-color: #eeeeee;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 @media (prefers-color-scheme: dark) {
     :root {
@@ -13,6 +25,19 @@
         --element-hover: rgb(127, 149, 181);
         --text-color: white;
         --file-box-color: rgb(12, 30, 58);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        color: #213547;
+        background-color: #ffffff;
+    }
+    a:hover {
+        color: #747bff;
+    }
+    button {
+        background-color: #f9f9f9;
     }
 }
 
@@ -26,49 +51,10 @@ input[type='number'] {
     -moz-appearance: textfield;
 }
 
-/* .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-} */
-
 .font-italic {
     font-style: italic;
 }
 
-/**
-* SIDEBAR STYLES
-*/
 .sidebar {
     background-color: var(--element-bg);
     width: 25%;
@@ -116,9 +102,6 @@ input[type='number'] {
     width: 85%;
 }
 
-/**
-* Handles the styling on each row in the species filter UI
-*/
 .speciesRowLabel {
     width: 100%;
     background-color: var(--element-bg);
@@ -162,28 +145,12 @@ input[type='number'] {
     padding: 20px;
 }
 
-/**
-* PANER STYLES
-*/
-/* panel container */
 .paner {
     float: right;
     width: 75%;
     min-height: 100vh;
     background-color: var(--page-bg);
 }
-
-/* .panel {
-  border: solid;
-  border-color: var(--element-bg);
-  background-color: var(--element-bg);
-  margin: auto;
-  width: 80%;
-  border-radius: 16px;
-  padding: 16px;
-  margin-top: 16px;
-  margin-bottom: 16px;
-} */
 
 .panel {
     border: none;
@@ -292,7 +259,6 @@ span {
     z-index: 10;
     position: relative;
     transform: translateX(-250px);
-    /* visibility: hidden; */
 }
 
 .add-widget-row {
@@ -341,7 +307,6 @@ span {
     padding: 5px 0;
     border-radius: 6px;
 
-    /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
     width: 120px;
@@ -350,7 +315,15 @@ span {
     margin-left: -60px;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
+a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+}
+a:hover {
+    color: #535bf2;
+}
+
 .widget-icon:hover .tool-tip {
     visibility: visible;
 }
@@ -363,9 +336,8 @@ span {
     margin: auto;
     margin-top: 25px;
     margin-bottom: 25px;
-    /* position: relative; */
-    /* float: left; */
     border: solid;
+    overflow: auto;
     border-color: rgba(0, 0, 0, 0);
     border-radius: 10px;
 }
@@ -377,7 +349,12 @@ span {
 .widget-row {
     height: 85%;
     width: 100%;
-    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
     transition: scrollTop 1s;
 }
 
@@ -437,9 +414,6 @@ span {
     transform: rotate(45deg);
 }
 
-/**
-* General Widget styles
-*/
 .widgetTitle {
     font-weight: bold;
     margin-top: 10px;
@@ -451,8 +425,6 @@ span {
     margin: auto;
     margin-top: 25px;
     margin-bottom: 25px;
-    /* position: relative; */
-    /* float: left; */
     border: solid;
     border-color: rgba(0, 0, 0, 0);
     border-radius: 10px;
@@ -485,13 +457,34 @@ span {
     float: right;
 }
 
-/**
-* Table Widget styles
-*/
 .lr-button {
     margin: 5px;
 }
 
 * {
     font-family: 'Open Sans', sans-serif;
+}
+body {
+    margin: 0;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+}
+button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+button:hover {
+    border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
 }
