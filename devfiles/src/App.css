@@ -316,6 +316,7 @@ span {
     height: 50px;
     width: 50px;
     position: relative;
+    margin-left: 5px;
 }
 .widget-icon-inner {
     background-color: var(--element-bg);
@@ -326,14 +327,9 @@ span {
     margin-top: 7.5px;
 }
 
-.show-widget-icons:hover + .widget-icon-row {
+.add-widget-row:hover .widget-icon-row {
     transform: translateX(0px);
     visibility: visible;
-}
-
-.widget-icon-row:hover {
-    visibility: visible;
-    transform: translateX(0px);
 }
 
 .widget-icon .tool-tip {
