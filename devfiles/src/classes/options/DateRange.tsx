@@ -104,9 +104,25 @@ export default class TimeRange extends InputOption {
         this.refreshComponent();
     }
     public query(): Query {
+        let fromDate: string | number;
+        if (
+            !this.fromDate.isValid() ||
+            (this.minDate.isValid() && !this.fromDate.isAfter(this.minDate))
+        )
+            fromDate = -Infinity;
+        else fromDate = this.fromDate.format('YYYY-MM-DD');
+
+        let toDate: string | number;
+        if (
+            !this.toDate.isValid() ||
+            (this.maxDate.isValid() && !this.toDate.isBefore(this.maxDate))
+        )
+            toDate = Infinity;
+        else toDate = this.toDate.format('YYYY-MM-DD');
+
         return new RangeQuery(this.panel.dataFilterer.getColumnIndex(Attribute.actualDate)).query(
-            this.fromDate.format('YYYY-MM-DD'),
-            this.toDate.format('YYYY-MM-DD')
+            fromDate,
+            toDate
         );
     }
 }
