@@ -13,6 +13,36 @@ export default abstract class TimeChart extends Widget {
     // This is declared here only because it isn't working when it's declared only in LineChart class
     public colorOption: ColorOption;
 
+    static readonly buttonsToRemove = [
+        'zoom2d',
+        'pan2d',
+        'select2d',
+        'lasso2d',
+        'zoomIn2d',
+        'zoomOut2d',
+        'autoScale2d',
+        'hoverClosestCartesian',
+        'hoverCompareCartesian',
+        'zoom3d',
+        'pan3d',
+        'resetCameraDefault3d',
+        'resetCameraLastSave3d',
+        'hoverClosest3d',
+        'orbitRotation',
+        'tableRotation',
+        'zoomInGeo',
+        'zoomOutGeo',
+        'resetGeo',
+        'hoverClosestGeo',
+        'sendDataToCloud',
+        'hoverClosestGl2d',
+        'hoverClosestPie',
+        'toggleHover',
+        'resetViews',
+        'toggleSpikelines',
+        'resetViewMapbox'
+    ];
+
     // Subclasses implement these methods for specific chart types.
     public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;
     public abstract chartType(): string;
@@ -97,13 +127,10 @@ export default abstract class TimeChart extends Widget {
     }
     public render(): JSX.Element {
         const plotLayout = {
-            width: 400,
-            height: 210,
-            margin: {
-                l: 30,
-                r: 30,
-                b: 50,
-                t: 65
+            width: 500,
+            height: 300,
+            font: {
+                size: 16
             }
         };
         // Add specific layout to each chart.
@@ -112,7 +139,9 @@ export default abstract class TimeChart extends Widget {
             plotLayout
         );
         const plotConfig = {
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d'],
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove,
+            editable: true,
+            staticplot: true,
             displaylogo: false
         };
         return <Plot data={traces} layout={layout} config={plotConfig} />;

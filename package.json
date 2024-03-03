@@ -52,7 +52,7 @@
         "build": "tsc && vite build --emptyOutDir",
         "prepare": "husky install",
         "lint": "eslint --fix \"devfiles/src/**/*.{js,jsx,ts,tsx}\"",
-        "format": "prettier --write --ignore-unknown devfiles/src/**/*.{json,js,ts,jsx,tsx,html}",
+        "format": "prettier --write --ignore-unknown devfiles/src/**/*.{json,js,ts,jsx,tsx,html,css}",
         "preview": "vite preview",
         "test": "vitest",
         "coverage": "vitest run --coverage --coverage.reportOnFailure --coverage.reportsDirectory ../coverage --coverage.reporter text --coverage.reporter html --coverage.reporter clover --coverage.reporter json --coverage.reporter json-summary",
@@ -62,7 +62,7 @@
         "*.{js,jsx,ts,tsx}": [
             "eslint --quiet --fix"
         ],
-        "*.{json,js,ts,jsx,tsx,html}": [
+        "*.{json,js,ts,jsx,tsx,html,css}": [
             "prettier --write --ignore-unknown"
         ],
         "!*": [
