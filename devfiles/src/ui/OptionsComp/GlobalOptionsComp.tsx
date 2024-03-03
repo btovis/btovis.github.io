@@ -44,9 +44,11 @@ function GlobalOptionsComp(params: {
                 <button onClick={() => fileInputRef.current.click()}>Browse Files</button>
             </div>
             <sub
-                onClick={async () =>
-                    (document.getElementById('notice').innerText = await licensePlaintext())
-                }
+                onClick={async () => {
+                    const noticeElement = document.getElementById('notice');
+                    if (noticeElement.innerHTML) noticeElement.innerHTML = '';
+                    else noticeElement.innerText = await licensePlaintext();
+                }}
             >
                 Legal notices
             </sub>
