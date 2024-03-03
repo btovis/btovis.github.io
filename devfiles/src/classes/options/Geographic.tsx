@@ -6,6 +6,7 @@ import { Attribute } from '../data/Data';
 import RangeQuery from '../query/RangeQuery';
 import { v4 as uuidv4 } from 'uuid';
 import PositionMeta from '../queryMeta/PositionMeta';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 export default class Geographic extends InputOption {
     private globalLatDiameter = 0;
@@ -77,16 +78,22 @@ export default class Geographic extends InputOption {
                         Select All
                     </label>
                 </div>
-                <div
-                    id='panel-map-filter'
-                    style={{
-                        height: plotLayout.height,
-                        width: plotLayout.width,
-                        overflowY: 'hidden'
-                    }}
+                <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={(props) => (
+                        <Tooltip {...props}>Select locations to display with the Box Tool</Tooltip>
+                    )}
                 >
-                    {/* If the accordion is closed, cheat and do not render */}
-                    {this.accordionOpen ? (
+                    <div
+                        id='panel-map-filter'
+                        style={{
+                            height: plotLayout.height,
+                            width: plotLayout.width,
+                            overflowY: 'hidden'
+                        }}
+                    >
+                        {/* If the accordion is closed, cheat and do not render */}
                         <Plot
                             onSelected={(event) => {
                                 //#168, this variable is just undefined if you click
@@ -100,11 +107,9 @@ export default class Geographic extends InputOption {
                             layout={plotLayout}
                             config={plotConfig}
                         />
-                    ) : (
-                        <></>
-                    )}
-                    If you can see this, click the title twice to re-render the map.
-                </div>
+                        Map failed to refresh. Click Select All twice to force the map to refresh
+                    </div>
+                </OverlayTrigger>
             </>,
             false
         );
