@@ -19,7 +19,7 @@ export default class SpeciesSelector extends InputOption {
     //Use this to store current selections
     protected searchState: string = '';
     public unselected: Set<SetElement> = new Set<SetElement>(); //Set of latin names
-    public allowedEndangerment = new Set<EndangermentStatus>();
+    public unallowedEndangerment = new Set<EndangermentStatus>();
     public unallowedGroups = new Set<SetElement>();
     private choices: Set<SetElement>;
     private possibleGroups: Set<SetElement>;
@@ -54,9 +54,7 @@ export default class SpeciesSelector extends InputOption {
         ]);
         //Default all selected:
 
-        if (template === undefined) {
-            this.allowedEndangerment = new Set(endangermentValues);
-        } else {
+        if (template !== undefined) {
             //If a template Selector is available, copy its currently selected settings.
             //If the template has everything selected, just set everything to be selected.
             if (!template.isEverythingSelected()) {
@@ -69,7 +67,7 @@ export default class SpeciesSelector extends InputOption {
                     .forEach((g) => this.unallowedGroups.add(g));
             }
 
-            this.allowedEndangerment = template.allowedEndangerment;
+            this.unallowedEndangerment = template.unallowedEndangerment;
             this.accordionOpen = template.accordionOpen;
         }
     }
@@ -78,7 +76,7 @@ export default class SpeciesSelector extends InputOption {
         return (
             this.unselected.size == 0 &&
             this.unallowedGroups.size == 0 &&
-            this.allowedEndangerment.size == endangermentValues.length
+            this.unallowedEndangerment.size == 0
         );
     }
 
@@ -106,7 +104,9 @@ export default class SpeciesSelector extends InputOption {
                         onChange={(event) => {
                             //Add all values
                             if (event.currentTarget.checked) {
-                                endangermentValues.forEach((s) => this.allowedEndangerment.add(s));
+                                endangermentValues.forEach((s) =>
+                                    this.unallowedEndangerment.delete(s)
+                                );
                                 this.possibleGroups.forEach((s) => this.unallowedGroups.delete(s));
                             }
                             this.callback({
@@ -133,13 +133,13 @@ export default class SpeciesSelector extends InputOption {
                     style={{ marginLeft: '10px' }}
                     key={uuidv4()}
                     onChange={(event) => {
-                        if (event.currentTarget.checked)
-                            endangermentValues.forEach((s) => this.allowedEndangerment.add(s));
-                        else this.allowedEndangerment.clear();
+                        if (!event.currentTarget.checked)
+                            endangermentValues.forEach((s) => this.unallowedEndangerment.add(s));
+                        else this.unallowedEndangerment.clear();
                         //Refresh state
                         this.callback({ checked: false, item: new Set([]) });
                     }}
-                    checked={this.allowedEndangerment.size == endangermentValues.length}
+                    checked={this.unallowedEndangerment.size == 0}
                     className='form-check-input'
                     type='checkbox'
                 />
@@ -248,11 +248,12 @@ export default class SpeciesSelector extends InputOption {
                         id={uuidv4()}
                         type='checkbox'
                         variant={getEndangermentInfo(status).className.replace('btn-', 'outline-')}
-                        checked={this.allowedEndangerment.has(status)}
+                        checked={!this.unallowedEndangerment.has(status)}
                         value='1'
                         onChange={(event) => {
-                            if (event.currentTarget.checked) this.allowedEndangerment.add(status);
-                            else this.allowedEndangerment.delete(status);
+                            if (!event.currentTarget.checked)
+                                this.unallowedEndangerment.add(status);
+                            else this.unallowedEndangerment.delete(status);
 
                             //Trigger a callback to re-calculate filters and refresh
                             this.callback({ checked: false, item: new Set([]) });
@@ -350,7 +351,7 @@ export default class SpeciesSelector extends InputOption {
                 hidden={
                     //Hide the row if the endangerment status/group filters filter it off,
                     // or if the search bar contains a search term that isn't this
-                    !this.allowedEndangerment.has(this.speciesMeta.endStatus(latinName)) ||
+                    this.unallowedEndangerment.has(this.speciesMeta.endStatus(latinName)) ||
                     this.unallowedGroups.has(this.speciesMeta.speciesGroup(latinName)) ||
                     (this.searchState.length > 0 &&
                         !latinName.value
@@ -466,7 +467,7 @@ export default class SpeciesSelector extends InputOption {
                     return (
                         this.unselected.has(latinName) ||
                         this.unallowedGroups.has(this.speciesMeta.speciesGroup(latinName)) ||
-                        !this.allowedEndangerment.has(this.speciesMeta.endStatus(latinName))
+                        this.unallowedEndangerment.has(this.speciesMeta.endStatus(latinName))
                     );
                 })
                 .map((setElem) => setElem.value as string)
