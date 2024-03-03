@@ -10,7 +10,7 @@ function GlobalOptionsComp(params: {
 }) {
     const fileInputRef = useRef(null);
     const fileUploadTooltip = (
-        <div className='sidebarContainer'>
+        <div>
             <div className='sidebarFileBox rounded'>
                 <p>
                     <strong>Drag and drop files here</strong>
@@ -93,12 +93,12 @@ function GlobalOptionsComp(params: {
     });
 
     return (
-        <>
+        <div className='sidebarContainer'>
             <h3>Data Files</h3>
             {fileNameList}
             <hr />
             {fileUploadTooltip}
-        </>
+        </div>
     );
 }
 
