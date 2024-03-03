@@ -131,7 +131,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             <Accordion defaultActiveKey='0'>
                 <Accordion.Item eventKey='0' onClick={() => selectThisPanel()}>
                     <Accordion.Header className=''>
-                        <div className='title'>{panel.getName()}</div>
+                        <h3 className='title'>{panel.getName()}</h3>
                     </Accordion.Header>
 
                     <Accordion.Body className='body'>

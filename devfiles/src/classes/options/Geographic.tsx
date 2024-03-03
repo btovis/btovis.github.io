@@ -1,4 +1,3 @@
-import { Accordion } from 'react-bootstrap';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
 import Panel from '../Panel';
@@ -9,8 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import PositionMeta from '../queryMeta/PositionMeta';
 
 export default class Geographic extends InputOption {
-    private accordionOpen = false;
-
     private globalLatDiameter = 0;
     private globalLonDiameter = 0;
 
@@ -40,98 +37,81 @@ export default class Geographic extends InputOption {
     }
 
     public render(): JSX.Element {
-        console.log('Rerendering geo');
         const { plotData, plotLayout, plotConfig } = this.generatePlotlySettings();
-
-        return (
-            <Accordion
-                onSelect={(eventKey) => {
-                    this.accordionOpen = typeof eventKey === 'string';
-                    this.refreshComponent();
-                }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
-            >
-                <Accordion.Item eventKey='0'>
-                    <Accordion.Header>
-                        <span>
-                            <strong
-                                style={{ color: this.minLat === -Infinity ? '' : 'chocolate' }}
-                                id={this.uuid.toString() + 'title'}
-                            >
-                                {this.name}
-                            </strong>
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <div style={{ display: 'flex' }}>
-                            <input
-                                style={{ marginLeft: '10px' }}
-                                key={uuidv4()}
-                                id={this.uuid + '-select-all'}
-                                onChange={(event) => {
-                                    this.callback(
-                                        event.currentTarget.checked
-                                            ? {
-                                                  pointCount: this.posMeta().uniquePositions.size,
-                                                  bounds: [
-                                                      [0, 0],
-                                                      [0, 0]
-                                                  ]
-                                              }
-                                            : {
-                                                  pointCount: 0,
-                                                  bounds: [
-                                                      [-Infinity, -Infinity],
-                                                      [-Infinity, -Infinity]
-                                                  ]
-                                              }
-                                    );
-                                    this.refreshComponent();
-                                }}
-                                onClick={(event) => event.stopPropagation()}
-                                checked={this.maxLat === Infinity}
-                                className='form-check-input'
-                                type='checkbox'
-                            />
-                            <label
-                                className='form-check-label selectorLabel select-all-label fw-bold'
-                                htmlFor={this.uuid + '-select-all'}
-                            >
-                                Select All
-                            </label>
-                        </div>
-                        <div
-                            id='panel-map-filter'
-                            style={{
-                                height: plotLayout.height,
-                                width: plotLayout.width,
-                                overflowY: 'hidden'
+        return this.generateAccordion(
+            <>
+                <div style={{ display: 'flex' }}>
+                    <input
+                        style={{ marginLeft: '10px' }}
+                        key={uuidv4()}
+                        id={this.uuid + '-select-all'}
+                        onChange={(event) => {
+                            this.callback(
+                                event.currentTarget.checked
+                                    ? {
+                                          pointCount: this.posMeta().uniquePositions.size,
+                                          bounds: [
+                                              [0, 0],
+                                              [0, 0]
+                                          ]
+                                      }
+                                    : {
+                                          pointCount: 0,
+                                          bounds: [
+                                              [-Infinity, -Infinity],
+                                              [-Infinity, -Infinity]
+                                          ]
+                                      }
+                            );
+                            this.refreshComponent();
+                        }}
+                        onClick={(event) => event.stopPropagation()}
+                        checked={this.maxLat === Infinity}
+                        className='form-check-input'
+                        type='checkbox'
+                    />
+                    <label
+                        className='form-check-label selectorLabel select-all-label fw-bold'
+                        htmlFor={this.uuid + '-select-all'}
+                    >
+                        Select All
+                    </label>
+                </div>
+                <div
+                    id='panel-map-filter'
+                    style={{
+                        height: plotLayout.height,
+                        width: plotLayout.width,
+                        overflowY: 'hidden'
+                    }}
+                >
+                    {/* If the accordion is closed, cheat and do not render */}
+                    {this.accordionOpen ? (
+                        <Plot
+                            onSelected={(event) => {
+                                //#168, this variable is just undefined if you click
+                                if (event === undefined) return;
+                                this.callback({
+                                    pointCount: event.points.length,
+                                    bounds: event.range.mapbox
+                                });
                             }}
-                        >
-                            {/* If the accordion is closed, cheat and do not render */}
-                            {this.accordionOpen ? (
-                                <Plot
-                                    onSelected={(event) => {
-                                        //#168, this variable is just undefined if you click
-                                        if (event === undefined) return;
-                                        this.callback({
-                                            pointCount: event.points.length,
-                                            bounds: event.range.mapbox
-                                        });
-                                    }}
-                                    data={plotData}
-                                    layout={plotLayout}
-                                    config={plotConfig}
-                                />
-                            ) : (
-                                <></>
-                            )}
-                            If you can see this, click the title twice to re-render the map.
-                        </div>
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
+                            data={plotData}
+                            layout={plotLayout}
+                            config={plotConfig}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                    If you can see this, click the title twice to re-render the map.
+                </div>
+            </>,
+            false
         );
+    }
+
+    protected checkDefault(): boolean {
+        return this.minLat === -Infinity;
     }
 
     /**
@@ -196,7 +176,8 @@ export default class Geographic extends InputOption {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            modeBarButtonsToRemove: ['toImage', 'lasso2d'] //Block lasso as I can't support points now
+            modeBarButtonsToRemove: ['toImage', 'lasso2d'], //Block lasso as I can't support points now
+            displaylogo: false
         };
 
         return { plotData, plotLayout, plotConfig };

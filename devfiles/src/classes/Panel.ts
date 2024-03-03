@@ -59,7 +59,7 @@ export default class Panel {
 
         this.widgets = [];
         this.addWidget(new BarChart(this));
-        this.minHeight = 350; // panel body minimum height
+        this.minHeight = 400; // panel body minimum height
     }
 
     public getName(): string {

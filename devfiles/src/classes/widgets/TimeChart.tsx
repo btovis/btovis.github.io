@@ -12,7 +12,7 @@ export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
     // This is declared here only because it isn't working when it's declared only in LineChart class
-    public colorOption: ColorOption;
+    public colorOptions: Array<ColorOption> = [];
 
     static readonly buttonsToRemove = [
         'zoom2d',
@@ -43,6 +43,7 @@ export default abstract class TimeChart extends Widget {
         'toggleSpikelines',
         'resetViewMapbox'
     ];
+    public colorOption: ColorOption;
 
     // Subclasses implement these methods for specific chart types.
     public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;

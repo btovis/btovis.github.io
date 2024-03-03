@@ -1,4 +1,3 @@
-import { Accordion } from 'react-bootstrap';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
@@ -12,7 +11,6 @@ export default class Selector extends InputOption {
     protected searchState: string = '';
     public excluded: Set<string> = new Set();
     public readonly columnIndex;
-    private accordionOpen = false;
     public useSearchBar: boolean = true;
     public hideSelectAll: boolean = false;
 
@@ -125,67 +123,51 @@ export default class Selector extends InputOption {
                 </p>
             </div>
         );
-        return (
-            <Accordion
-                onSelect={(eventKey) => {
-                    this.accordionOpen = typeof eventKey === 'string';
-                }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
-            >
-                <Accordion.Item eventKey='0'>
-                    <Accordion.Header>
-                        <span>
-                            <strong
-                                style={{ color: this.isEverythingSelected() ? '' : 'chocolate' }}
-                                id={this.uuid.toString() + 'title'}
+        return this.generateAccordion(
+            <>
+                {searchBar}
+                {this.inputType() == 'checkbox' ? selectAll : <></>}
+                <div className='form-check'>
+                    {[...this.choices].map((item) => {
+                        return (
+                            <div
+                                key={uuidv4()}
+                                hidden={
+                                    this.searchState.length > 0 &&
+                                    !item.toLowerCase().startsWith(this.searchState.toLowerCase())
+                                }
                             >
-                                {this.name}
-                            </strong>
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        {searchBar}
-                        {this.inputType() == 'checkbox' ? selectAll : <></>}
-                        <div className='form-check'>
-                            {[...this.choices].map((item) => {
-                                return (
-                                    <div
-                                        key={uuidv4()}
-                                        hidden={
-                                            this.searchState.length > 0 &&
-                                            !item
-                                                .toLowerCase()
-                                                .startsWith(this.searchState.toLowerCase())
-                                        }
-                                    >
-                                        <input
-                                            key={uuidv4()}
-                                            onChange={(event) =>
-                                                this.callback({
-                                                    checked: event.currentTarget.checked,
-                                                    item: item
-                                                })
-                                            }
-                                            id={this.uuid.toString() + item}
-                                            checked={!this.excluded.has(item)}
-                                            className='form-check-input'
-                                            type={this.inputType()}
-                                            name={this.uuid.toString() + 'selector'}
-                                        />
-                                        <label
-                                            className='form-check-label selectorLabel'
-                                            htmlFor={this.uuid.toString() + item}
-                                        >
-                                            {item.trim() == '' ? 'None' : item}
-                                        </label>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
+                                <input
+                                    key={uuidv4()}
+                                    onChange={(event) =>
+                                        this.callback({
+                                            checked: event.currentTarget.checked,
+                                            item: item
+                                        })
+                                    }
+                                    id={this.uuid.toString() + item}
+                                    checked={!this.excluded.has(item)}
+                                    className='form-check-input'
+                                    type={this.inputType()}
+                                    name={this.uuid.toString() + 'selector'}
+                                />
+                                <label
+                                    className='form-check-label selectorLabel'
+                                    htmlFor={this.uuid.toString() + item}
+                                >
+                                    {item.trim() == '' ? 'None' : item}
+                                </label>
+                            </div>
+                        );
+                    })}
+                </div>
+            </>,
+            false
         );
+    }
+
+    protected checkDefault(): boolean {
+        return this.isEverythingSelected();
     }
 
     protected inputType() {

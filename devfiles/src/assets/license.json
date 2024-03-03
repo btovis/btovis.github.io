@@ -164,6 +164,13 @@
         "path": "/Users/zerf/Downloads/Github-repos/btovis.github.io/node_modules/@floating-ui/utils",
         "licenseFile": "/Users/zerf/Downloads/Github-repos/btovis.github.io/node_modules/@floating-ui/utils/LICENSE"
     },
+    "@fontsource/open-sans@5.0.24": {
+        "licenses": "OFL-1.1",
+        "repository": "https://github.com/fontsource/font-files",
+        "publisher": "Google Inc.",
+        "path": "/Users/zerf/Downloads/Github-repos/btovis.github.io/node_modules/@fontsource/open-sans",
+        "licenseFile": "/Users/zerf/Downloads/Github-repos/btovis.github.io/node_modules/@fontsource/open-sans/LICENSE"
+    },
     "@mapbox/geojson-rewind@0.5.2": {
         "licenses": "ISC",
         "repository": "https://github.com/mapbox/geojson-rewind",

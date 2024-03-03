@@ -29,6 +29,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         <div key={uuidv4()}>
             <button
                 className='delete-btn'
+                style={{ fontSize: 'larger' }}
                 onClick={() => {
                     setDeleteModalVisible(true);
                     refresh();

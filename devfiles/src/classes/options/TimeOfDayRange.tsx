@@ -1,4 +1,3 @@
-import { Accordion } from 'react-bootstrap';
 import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,7 +8,6 @@ import SwappableRangeQuery from '../query/SwappableRangeQuery';
 import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
-    private accordionOpen = false;
     public fromTime: Dayjs;
     public toTime: Dayjs;
 
@@ -28,64 +26,43 @@ export default class TimeRange extends InputOption {
     }
 
     public render(): JSX.Element {
-        return (
-            <Accordion
-                onSelect={(eventKey) => {
-                    this.accordionOpen = typeof eventKey === 'string';
-                }}
-                defaultActiveKey={this.accordionOpen ? '0' : []}
-            >
-                <Accordion.Item eventKey='0'>
-                    <Accordion.Header>
-                        <span>
-                            <strong
-                                style={{ color: this.isDefaultRange() ? '' : 'chocolate' }}
-                                id={this.uuid.toString() + 'title'}
-                            >
-                                {this.name}
-                            </strong>
-                        </span>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <div style={{ display: 'inline-block' }}>
-                                <div style={{ width: '50%', float: 'left' }}>
-                                    <TimePicker
-                                        ampm={false}
-                                        label='From'
-                                        format='HH:mm'
-                                        value={dayjs(this.fromTime, 'HH:mm')}
-                                        onChange={(value) =>
-                                            this.callback({
-                                                which: 0,
-                                                time: value
-                                            })
-                                        }
-                                    />
-                                </div>
-                                <div style={{ width: '50%', float: 'right' }}>
-                                    <TimePicker
-                                        ampm={false}
-                                        label='To'
-                                        format='HH:mm'
-                                        value={dayjs(this.toTime, 'HH:mm')}
-                                        onChange={(value) =>
-                                            this.callback({
-                                                which: 1,
-                                                time: value
-                                            })
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        </LocalizationProvider>
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
+        return this.generateAccordion(
+            <LocalizationProvider dateAdapter={AdapterDayjs} key={this.uuid}>
+                <div style={{ display: 'inline-block' }}>
+                    <div style={{ width: '50%', float: 'left' }}>
+                        <TimePicker
+                            ampm={false}
+                            label='From'
+                            format='HH:mm'
+                            value={dayjs(this.fromTime, 'HH:mm')}
+                            onChange={(value) =>
+                                this.callback({
+                                    which: 0,
+                                    time: value
+                                })
+                            }
+                        />
+                    </div>
+                    <div style={{ width: '50%', float: 'right' }}>
+                        <TimePicker
+                            ampm={false}
+                            label='To'
+                            format='HH:mm'
+                            value={dayjs(this.toTime, 'HH:mm')}
+                            onChange={(value) =>
+                                this.callback({
+                                    which: 1,
+                                    time: value
+                                })
+                            }
+                        />
+                    </div>
+                </div>
+            </LocalizationProvider>
         );
     }
 
-    private isDefaultRange() {
+    protected checkDefault() {
         const diff = this.fromTime.diff(this.toTime, 'm');
         return diff == 1 || diff == -1439; // 1440 minutes in a day
     }
