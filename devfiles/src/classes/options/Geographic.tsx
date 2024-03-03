@@ -37,7 +37,6 @@ export default class Geographic extends InputOption {
     }
 
     public render(): JSX.Element {
-        console.log('Rerendering geo');
         const { plotData, plotLayout, plotConfig } = this.generatePlotlySettings();
         return this.generateAccordion(
             <>
