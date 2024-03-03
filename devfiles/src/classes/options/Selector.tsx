@@ -210,6 +210,6 @@ export default class Selector extends InputOption {
      * @returns Query object to be applied by the panel in recalculateFilters(this)
      */
     public query(): Query {
-        return new SetQueryArrayReject(this.columnIndex).query([...this.excluded]);
+        return new SetQueryArrayReject(this.columnIndex).query(this.excluded, false);
     }
 }

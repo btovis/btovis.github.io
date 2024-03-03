@@ -446,11 +446,9 @@ export default class SpeciesSelector extends InputOption {
         return {
             compound: true,
             queries: [
-                new SetQueryArrayReject(latinIndex).query([...this.unselected].map((a) => a.value)),
-                new SetQueryArrayReject(groups).query(
-                    [...this.unallowedGroups].map((a) => a.value)
-                ),
-                new SetQueryArrayReject(endangerment).query([...this.unallowedEndangerment])
+                new SetQueryArrayReject(latinIndex).query(this.unselected, true),
+                new SetQueryArrayReject(groups).query(this.unallowedGroups, true),
+                new SetQueryArrayReject(endangerment).query(this.unallowedEndangerment, false)
             ]
         };
     }

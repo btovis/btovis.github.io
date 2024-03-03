@@ -62,7 +62,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select non-null warnings', () => {
                 const query = new SetQueryArrayReject(columnIdx);
-                filterer.processQuery(query.query(['[none]']));
+                filterer.processQuery(query.query(new Set(['[none]']), false));
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -74,7 +74,7 @@ describe('DataFilterer', async () => {
                 const query = new SetQueryArrayReject(columnIdx);
                 const allVals = new Set([...data.sets[columnIdx].refs].map((a) => a.value));
                 filterer.processQuery(
-                    query.query([...setDifference(allVals, new Set(['[none]']))])
+                    query.query(setDifference(allVals, new Set(['[none]'])), false)
                 );
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);

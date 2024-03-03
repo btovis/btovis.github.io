@@ -7,6 +7,7 @@ import { Query, QueryType } from '../query/Query';
 import RangeFilter from '../filters/RangeFilter';
 import SwappableRangeFilter from '../filters/SwappableRangeFilter';
 import { v4 as uuidv4 } from 'uuid';
+import SetElement from './setutils/SetElement';
 
 // call filterUpdate, this will call recalculateFilteredData
 // if original file changed, call dataUpdated, this will call recalculateFilteredData
@@ -128,13 +129,23 @@ export default class DataFilterer {
                 break;
             case QueryType.SetAsArrayForReject:
                 {
-                    const excludes = new ReferenceSet();
-                    for (const e of q[2]) {
-                        const ref = this.data.sets[q[0]].getRef(e);
-                        if (!ref) continue;
-                        excludes.addRef(ref);
+                    if (q[3]) {
+                        this.replaceFilter(
+                            q[0],
+                            new SetFilter(
+                                ReferenceSet.fromSet(q[2] as Set<SetElement>),
+                                this.data.sets[q[0]]
+                            )
+                        );
+                    } else {
+                        const excludes = new ReferenceSet();
+                        for (const e of q[2]) {
+                            const ref = this.data.sets[q[0]].getRef(e as string);
+                            if (!ref) continue;
+                            excludes.addRef(ref);
+                        }
+                        this.replaceFilter(q[0], new SetFilter(excludes, this.data.sets[q[0]]));
                     }
-                    this.replaceFilter(q[0], new SetFilter(excludes, this.data.sets[q[0]]));
                 }
                 return;
         }

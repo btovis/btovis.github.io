@@ -1,3 +1,5 @@
+import SetElement from '../data/setutils/SetElement';
+
 // Query: [columnIndex, QueryTypes.xxx, ...]
 export enum QueryType {
     Range = 0,
@@ -18,6 +20,11 @@ export type SwappableRangeQueryT = [
     high: number | string
 ];
 
-export type SetAsArrayForRejectT = [colI: number, QueryType.SetAsArrayForReject, array: string[]];
+export type SetAsArrayForRejectT = [
+    colI: number,
+    QueryType.SetAsArrayForReject,
+    array: Set<string | SetElement>,
+    isSetElement: boolean
+];
 
 export type Query = RangeQueryT | SwappableRangeQueryT | SetAsArrayForRejectT;
