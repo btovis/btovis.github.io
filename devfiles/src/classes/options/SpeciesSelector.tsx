@@ -1,7 +1,7 @@
 import { OverlayTrigger, Popover, ToggleButton, Tooltip } from 'react-bootstrap';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
-import SetQueryArray from '../query/SetQueryArray';
+//import SetQueryArray from '../query/SetQueryArray';
 import InputOption from './InputOption';
 import { v4 as uuidv4 } from 'uuid';
 import SpeciesMeta from '../queryMeta/SpeciesMeta';
@@ -12,12 +12,13 @@ import {
     endangermentValues,
     getEndangermentInfo
 } from '../../utils/speciesVulnerability';
+import SetQueryArrayReject from '../query/SetQueryArrayReject';
 
 export default class SpeciesSelector extends InputOption {
     //Internal state unique to every option class.
     //Use this to store current selections
     protected searchState: string = '';
-    public selected: Set<SetElement> = new Set<SetElement>(); //Set of latin names
+    public unselected: Set<SetElement> = new Set<SetElement>(); //Set of latin names
     public allowedEndangerment = new Set<EndangermentStatus>();
     public allowedGroups = new Set<SetElement>();
     private choices: Set<SetElement>;
@@ -54,31 +55,21 @@ export default class SpeciesSelector extends InputOption {
         //Default all selected:
 
         if (template === undefined) {
-            this.choices.forEach((elem) => this.selected.add(elem));
             this.allowedEndangerment = new Set(endangermentValues);
             this.possibleGroups.forEach((group) => this.allowedGroups.add(group));
         } else {
             //If a template Selector is available, copy its currently selected settings.
             //If the template has everything selected, just set everything to be selected.
             if (template.isEverythingSelected()) {
-                this.choices.forEach((elem) => this.selected.add(elem));
                 this.possibleGroups.forEach((group) => this.allowedGroups.add(group));
             } else {
                 //Filter for removed groups
-                [...template.selected]
+                [...template.unselected]
                     .filter((sel) => this.choices.has(sel))
-                    .forEach((e) => this.selected.add(e));
+                    .forEach((e) => this.unselected.add(e));
                 [...template.allowedGroups]
                     .filter((group) => this.possibleGroups.has(group))
                     .forEach((g) => this.allowedGroups.add(g));
-                //Not simple to invert this.selected into this.excluded as SpeciesSelector
-                // filters by scientific name, group and endangerment status
-                //Add the new items here.
-                [...this.choices].forEach((elem) => {
-                    if (!template.choices.has(elem)) {
-                        this.selected.add(elem);
-                    }
-                });
                 [...this.possibleGroups]
                     .filter((group) => !template.possibleGroups.has(group))
                     .forEach((elem) => this.allowedGroups.add(elem));
@@ -91,7 +82,7 @@ export default class SpeciesSelector extends InputOption {
 
     public isEverythingSelected(): boolean {
         return (
-            this.selected.size == this.choices.size &&
+            this.unselected.size == 0 &&
             this.allowedGroups.size == this.possibleGroups.size &&
             this.allowedEndangerment.size == endangermentValues.length
         );
@@ -219,9 +210,9 @@ export default class SpeciesSelector extends InputOption {
                                     type='button'
                                     onClick={() => {
                                         [...this.speciesMeta.groupByGroup.get(group)].map((s) => {
-                                            this.selected.has(s)
-                                                ? this.selected.delete(s)
-                                                : this.selected.add(s);
+                                            this.unselected.has(s)
+                                                ? this.unselected.delete(s)
+                                                : this.unselected.add(s);
                                         });
                                         this.callback({
                                             checked: false,
@@ -386,7 +377,7 @@ export default class SpeciesSelector extends InputOption {
                         })
                     }
                     id={this.uuid.toString() + latinName.value}
-                    checked={this.selected.has(latinName)}
+                    checked={!this.unselected.has(latinName)}
                     className='form-check-input'
                     type='checkbox'
                 />
@@ -431,8 +422,8 @@ export default class SpeciesSelector extends InputOption {
      */
     public callback(newValue: { checked: boolean; item: Set<SetElement> }): void {
         clearTimeout(this.debouncerTimer);
-        if (newValue.checked) newValue.item.forEach((elem) => this.selected.add(elem));
-        else newValue.item.forEach((elem) => this.selected.delete(elem));
+        if (newValue.checked) newValue.item.forEach((elem) => this.unselected.delete(elem));
+        else newValue.item.forEach((elem) => this.unselected.add(elem));
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);
@@ -454,15 +445,16 @@ export default class SpeciesSelector extends InputOption {
      * @returns Query object to be applied by the panel in recalculateFilters(this)
      */
     public query(): Query {
-        return new SetQueryArray(
+        return new SetQueryArrayReject(
             this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName)
         ).query(
-            [...this.selected]
+            [...this.choices]
                 .filter((latinName) => {
                     //Filter group and endangerment
                     return (
-                        this.allowedGroups.has(this.speciesMeta.speciesGroup(latinName)) &&
-                        this.allowedEndangerment.has(this.speciesMeta.endStatus(latinName))
+                        this.unselected.has(latinName) ||
+                        !this.allowedGroups.has(this.speciesMeta.speciesGroup(latinName)) ||
+                        !this.allowedEndangerment.has(this.speciesMeta.endStatus(latinName))
                     );
                 })
                 .map((setElem) => setElem.value as string)
