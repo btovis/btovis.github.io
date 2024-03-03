@@ -22,6 +22,7 @@ function SidebarComp(params: { renderFileProcess: (FileList) => void; pageManage
     return (
         <Tabs activeKey={key} onSelect={(k) => setKey(k)} id='sidebar-tab-handler' justify>
             <Tab
+                className='sidebarTab'
                 eventKey='widgetTab'
                 title='Widget Options'
                 disabled={
@@ -31,13 +32,14 @@ function SidebarComp(params: { renderFileProcess: (FileList) => void; pageManage
                 <WidgetOptionsComp pageManager={params.pageManager} />
             </Tab>
             <Tab
+                className='sidebarTab'
                 eventKey='panelTab'
                 title='Panel Filters'
                 disabled={params.pageManager.selectedPanel < 0}
             >
                 <PanelOptionsComp pageManager={params.pageManager} />
             </Tab>
-            <Tab className='sidebarContainer' eventKey='globalTab' title='Global'>
+            <Tab className='sidebarTab' eventKey='globalTab' title='Global'>
                 <GlobalOptionsComp
                     renderFileProcess={params.renderFileProcess}
                     pageManager={params.pageManager}

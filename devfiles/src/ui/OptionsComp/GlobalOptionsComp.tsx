@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
 import { v4 as uuidv4 } from 'uuid';
-import licensePlaintext from '../../utils/license.js';
+import { Button } from 'react-bootstrap';
 
 function GlobalOptionsComp(params: {
     renderFileProcess: (FileList) => void;
@@ -10,7 +10,7 @@ function GlobalOptionsComp(params: {
 }) {
     const fileInputRef = useRef(null);
     const fileUploadTooltip = (
-        <>
+        <div className='sidebarContainer'>
             <div className='sidebarFileBox rounded'>
                 <p>
                     <strong>Drag and drop files here</strong>
@@ -41,22 +41,26 @@ function GlobalOptionsComp(params: {
                     multiple
                     hidden
                 />
-                <button onClick={() => fileInputRef.current.click()}>Browse Files</button>
+                <button
+                    type='button'
+                    className='btn btn-secondary'
+                    onClick={() => fileInputRef.current.click()}
+                >
+                    Browse Files
+                </button>
             </div>
-            <sub
-                onClick={async () => {
-                    const noticeElement = document.getElementById('notice');
-                    if (noticeElement.innerHTML) noticeElement.innerHTML = '';
-                    else noticeElement.innerText = await licensePlaintext();
+            {/* For displaying the License */}
+            <Button
+                style={{ float: 'left', margin: '5px' }}
+                type='button'
+                className='btn btn-secondary btm-sm'
+                onClick={() => {
+                    window.open('/src/assets/license.txt', '_blank').focus();
                 }}
             >
-                Legal notices
-            </sub>
-            <div
-                id='notice'
-                onClick={() => (document.getElementById('notice').innerHTML = '')}
-            ></div>
-        </>
+                Legal Notices
+            </Button>
+        </div>
     );
 
     //Check file names from the dataset
@@ -78,7 +82,7 @@ function GlobalOptionsComp(params: {
                     type='button'
                     style={{ width: '10%' }}
                     id={checkboxId}
-                    className='form-check-input btn-close'
+                    className='btn-close btn form-check-input'
                     onClick={() => {
                         params.pageManager.removeCSV(key);
                         params.pageManager.refreshEverything();

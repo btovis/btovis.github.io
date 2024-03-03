@@ -28,14 +28,15 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     const deleteButton = (
         <div key={uuidv4()}>
             <button
-                className='delete-btn'
+                type='button'
+                className='btn btn-danger'
                 style={{ fontSize: 'larger' }}
                 onClick={() => {
                     setDeleteModalVisible(true);
                     refresh();
                 }}
             >
-                Delete panel
+                Delete Panel
             </button>
         </div>
     );
@@ -47,7 +48,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
                 <p>Are you sure you want to delete this panel?</p>
                 <p>{params.pageManager.getSelectedPanel().getName()}</p>
                 <button
-                    className='modal-btn modal-cancel-btn'
+                    className='btn btn-secondary modal-btn'
                     onClick={() => {
                         setDeleteModalVisible(false);
                     }}
@@ -56,7 +57,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
                 </button>
                 <button
                     id='delete_modal_btn'
-                    className='modal-btn delete-btn'
+                    className='btn btn-danger modal-btn'
                     onClick={() => {
                         params.pageManager.deletePanel(params.pageManager.selectedPanel);
                         params.pageManager.unselectPanel();

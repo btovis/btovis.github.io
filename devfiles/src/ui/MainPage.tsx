@@ -17,7 +17,8 @@ function MainPage(params: { pageManager: PageManager }) {
             >
                 <span>
                     <button
-                        className='add-panel-button'
+                        type='button'
+                        className='btn btn-secondary add-panel-button'
                         id='add-panel-button'
                         key={uuidv4()}
                         disabled={params.pageManager.data.isEmpty() ? true : false}
@@ -26,7 +27,7 @@ function MainPage(params: { pageManager: PageManager }) {
                             params.pageManager.refreshEverything();
                         }}
                     >
-                        Add New Panel...
+                        Add New Panel
                     </button>
                 </span>
             </Tooltip>
