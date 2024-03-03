@@ -1,6 +1,5 @@
 import { Data } from './Data';
 import { Filter, PredicateType } from '../filters/Filter';
-import SetElement from './setutils/SetElement';
 import SetFilter from '../filters/SetFilter';
 import ReferenceSet from './setutils/ReferenceSet';
 import { Attribute } from './Data';
@@ -88,57 +87,6 @@ export default class DataFilterer {
         this.recalculateFilteredData();
     }
 
-    // The caller needs to ensure that filters[columnIndex] is a set filter and not a range filter
-    public updateSetFilter(columnIndex, e: SetElement, filterAwayFromNowOn: boolean) {
-        this.filterState = uuidv4(); //Filters changed
-        let c: SetFilter = this.filtersClasses[columnIndex] as SetFilter;
-        if (!c) {
-            c = this.filtersClasses[columnIndex] = new SetFilter(
-                new ReferenceSet(),
-                this.data.sets[columnIndex]
-            );
-        }
-        if (filterAwayFromNowOn) {
-            c.filterAway(e);
-        } else {
-            c.accept(e);
-            // Not needed: this.opaqueFilters.delete(columnIndex);
-        }
-        const [status, pred] = this.filtersClasses[columnIndex].getPredicate();
-        if (status == PredicateType.Opaque) {
-            this.opaqueFilters.add(columnIndex);
-        } else {
-            this.opaqueFilters.delete(columnIndex);
-        }
-        this.filterPredsForData[columnIndex] = pred;
-        this.recalculateFilteredData();
-    }
-
-    // The caller needs to ensure that filters[columnIndex] is a set filter and not a range filter
-    public invertSetFilter(columnIndex) {
-        this.filterState = uuidv4(); //Filters changed
-        let c: SetFilter = this.filtersClasses[columnIndex] as SetFilter;
-        if (!c) {
-            c = this.filtersClasses[columnIndex] = new SetFilter(
-                this.data.sets[columnIndex],
-                this.data.sets[columnIndex]
-            );
-            this.opaqueFilters.add(columnIndex);
-            this.filterPredsForData[columnIndex] = undefined;
-            this.recalculateFilteredData();
-            return;
-        }
-        c.invertExcludesSet();
-        const [status, pred] = this.filtersClasses[columnIndex].getPredicate();
-        if (status == PredicateType.Opaque) {
-            this.opaqueFilters.add(columnIndex);
-        } else {
-            this.opaqueFilters.delete(columnIndex);
-        }
-        this.filterPredsForData[columnIndex] = pred;
-        this.recalculateFilteredData();
-    }
-
     public recalculateFilteredData() {
         if (this.opaqueFilters.size) {
             this.filteredDataArrLen = 0;
@@ -178,48 +126,6 @@ export default class DataFilterer {
             case QueryType.SwappableRange:
                 this.replaceFilter(q[0], new SwappableRangeFilter(q[2], q[3]));
                 break;
-            case QueryType.SetElem:
-                this.updateSetFilter(q[0], q[2], !q[3]);
-                break;
-            case QueryType.Set:
-                if (!q[2]) {
-                    // reject all
-                    this.filtersClasses[q[0]] = new SetFilter(
-                        this.data.sets[q[0]],
-                        this.data.sets[q[0]]
-                    );
-                    this.opaqueFilters.add(q[0]);
-                    this.filterPredsForData[q[0]] = undefined;
-                } else if (q[2] == 2) {
-                    // invert
-                    (this.filtersClasses[q[0]] as SetFilter).invertExcludesSet();
-                    const [status, pred] = this.filtersClasses[q[0]].getPredicate();
-                    if (status == PredicateType.Opaque) {
-                        this.opaqueFilters.add(q[0]);
-                    } else {
-                        this.opaqueFilters.delete(q[0]);
-                    }
-                    this.filterPredsForData[q[0]] = pred;
-                } else {
-                    // accept all
-                    (this.filtersClasses[q[0]] as SetFilter).setExcludesSet(new ReferenceSet());
-                    this.opaqueFilters.delete(q[0]);
-                    this.filterPredsForData[q[0]] = undefined;
-                }
-                break;
-            case QueryType.SetAsArray:
-                {
-                    const excludes = new ReferenceSet();
-                    for (const e of q[2]) {
-                        const ref = this.data.sets[q[0]].getRef(e);
-                        if (!ref) continue;
-                        excludes.addRef(ref);
-                    }
-                    this.filtersClasses[q[0]] = new SetFilter(excludes, this.data.sets[q[0]]);
-                    (this.filtersClasses[q[0]] as SetFilter).invertExcludesSet();
-                    this.replaceFilter(q[0], this.filtersClasses[q[0]]);
-                }
-                return;
             case QueryType.SetAsArrayForReject:
                 {
                     const excludes = new ReferenceSet();
