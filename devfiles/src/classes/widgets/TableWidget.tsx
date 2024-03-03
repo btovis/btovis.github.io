@@ -22,7 +22,6 @@ export default class TableWidget extends Widget {
     private searchState = '';
     private bouncySearchState = '';
     private pageState = 0;
-    private rowHeight;
     private readonly searchMax = 5000;
 
     //Hold uuids from DataFilterer
