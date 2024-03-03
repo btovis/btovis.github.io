@@ -13,6 +13,9 @@ export default class DebugWidget extends Widget {
             </>
         );
     }
+    public renderFullscreen(): JSX.Element {
+        throw new Error('Method not implemented.');
+    }
     public delete(): void {
         //throw new Error('Method not implemented.');
     }

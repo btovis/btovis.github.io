@@ -7,7 +7,7 @@ import SetElement from '../data/setutils/SetElement.js';
 import { v4 as uuidv4 } from 'uuid';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector.js';
 import { hasEmpty, rowComparator, unpack } from '../../utils/DataUtils.js';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 /**
  * This will take in a set of input columns, then
@@ -22,7 +22,6 @@ export default class TableWidget extends Widget {
     private searchState = '';
     private bouncySearchState = '';
     private pageState = 0;
-    private pageSize = 10;
     private readonly searchMax = 5000;
 
     //Hold uuids from DataFilterer
@@ -32,6 +31,8 @@ export default class TableWidget extends Widget {
     //Options
     private selectorOption: Selector;
     private cullEmpty: MutuallyExclusiveSelector;
+
+    private fullscreenModalShown: boolean = false;
 
     /**
      * Initiatise all options here in private variables. These options will persist
@@ -96,17 +97,59 @@ export default class TableWidget extends Widget {
         return new Sidebar(this.options);
     }
 
-    public render(): JSX.Element {
+    public renderFullscreen(): JSX.Element {
+        const rowHeight = document.getElementById(
+            this.uuid.toString() + '-header-row'
+        ).offsetHeight;
+        const controlHeight = document.getElementById(
+            this.uuid.toString() + '-control'
+        ).offsetHeight;
+        console.log(rowHeight);
+        const rowsToDisplay = (window.innerHeight - 5 * rowHeight - controlHeight) / rowHeight;
+        return (
+            <Modal
+                className='widget-fullscreen-modal'
+                onHide={() => this.hideFullscreen()}
+                show={true}
+                fullscreen={true}
+            >
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>{this.render(rowsToDisplay)}</Modal.Body>
+            </Modal>
+        );
+    }
+
+    public showFullscreen() {
+        this.fullscreenModalShown = true;
+        this.refresh();
+    }
+
+    private hideFullscreen() {
+        this.fullscreenModalShown = false;
+        this.refresh();
+    }
+
+    public render(rowCountPerPage: number = 8): JSX.Element {
+        let fullscreenDisplay = <></>;
+        if (this.fullscreenModalShown) {
+            // Avoid re-rendering the fullscreen modal when it's already shown.
+            this.fullscreenModalShown = false;
+            fullscreenDisplay = this.renderFullscreen();
+            this.fullscreenModalShown = true;
+        }
         //If nothing is selected, render an empty table
         if (this.selectorOption.excluded.size === this.selectorOption.choices.size) {
             return (
-                <table className='table'>
-                    <thead>
-                        <tr>
-                            <td>No Columns Selected</td>
-                        </tr>
-                    </thead>
-                </table>
+                <div>
+                    {fullscreenDisplay}
+                    <table className='table'>
+                        <thead>
+                            <tr>
+                                <td>No Columns Selected</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             );
         }
 
@@ -170,8 +213,12 @@ export default class TableWidget extends Widget {
         //Return the actual sorted table
         return (
             <div>
+                {fullscreenDisplay}
                 {/* Control div */}
-                <div style={{ width: '100%', float: 'left', margin: '5px', display: 'inline' }}>
+                <div
+                    id={this.uuid.toString() + '-control'}
+                    style={{ width: '100%', float: 'left', margin: '5px', display: 'inline' }}
+                >
                     <br />
                     {/* PgLeft Button */}
                     <button
@@ -191,7 +238,7 @@ export default class TableWidget extends Widget {
                             ? this.pageState +
                               1 +
                               '/' +
-                              Math.ceil(this.tableEntries.length / this.pageSize)
+                              Math.ceil(this.tableEntries.length / rowCountPerPage)
                             : '-/-'}
                     </span>
                     {/* PgRight Button */}
@@ -199,10 +246,10 @@ export default class TableWidget extends Widget {
                         className='btn btn-primary lr-button'
                         disabled={
                             this.searchState.trim() !== '' ||
-                            (this.pageState + 1) * this.pageSize >= this.tableEntries.length
+                            (this.pageState + 1) * rowCountPerPage >= this.tableEntries.length
                         }
                         onClick={() => {
-                            if ((this.pageState + 1) * this.pageSize >= this.tableEntries.length)
+                            if ((this.pageState + 1) * rowCountPerPage >= this.tableEntries.length)
                                 return;
                             this.pageState += 1;
                             this.refresh();
@@ -231,7 +278,7 @@ export default class TableWidget extends Widget {
                 {/* Actual table */}
                 <table className='table'>
                     <thead>
-                        <tr>
+                        <tr id={this.uuid.toString() + '-header-row'}>
                             {this.columns.map((col) => (
                                 <td key={uuidv4()}>
                                     <strong>{col[0]}</strong>
@@ -249,7 +296,7 @@ export default class TableWidget extends Widget {
                             ? this.tableEntries
                                   .filter(
                                       (_rowFreq, idx) =>
-                                          Math.floor(idx / this.pageSize) === this.pageState
+                                          Math.floor(idx / rowCountPerPage) === this.pageState
                                   )
                                   .map(([key, freq]) => {
                                       return (

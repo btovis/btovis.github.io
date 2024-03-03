@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
 import { v4 as uuidv4 } from 'uuid';
+import licensePlaintext from '../../utils/license.js';
 
 function GlobalOptionsComp(params: {
     renderFileProcess: (FileList) => void;
@@ -42,6 +43,19 @@ function GlobalOptionsComp(params: {
                 />
                 <button onClick={() => fileInputRef.current.click()}>Browse Files</button>
             </div>
+            <sub
+                onClick={async () => {
+                    const noticeElement = document.getElementById('notice');
+                    if (noticeElement.innerHTML) noticeElement.innerHTML = '';
+                    else noticeElement.innerText = await licensePlaintext();
+                }}
+            >
+                Legal notices
+            </sub>
+            <div
+                id='notice'
+                onClick={() => (document.getElementById('notice').innerHTML = '')}
+            ></div>
         </>
     );
 

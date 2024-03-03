@@ -140,29 +140,6 @@ function App() {
                     </table>
                 </div>
             </Fade>
-            <div id='delete_panel_modal' className='modal'>
-                <div className='modal-box' style={{ fontSize: 'larger' }}>
-                    <p>Are you sure you want to delete this panel?</p>
-                    <p>
-                        <i id='delete_modal_name'></i>
-                    </p>
-                    <button
-                        className='modal-btn modal-cancel-btn'
-                        onClick={() =>
-                            (document.getElementById('delete_panel_modal').style.display = 'none')
-                        }
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        id='delete_modal_btn'
-                        className='modal-btn delete-btn'
-                        onClick={() => {}}
-                    >
-                        Delete
-                    </button>
-                </div>
-            </div>
             {/* This leads to the rest of the UI components*/}
             <div className='sidebar'>
                 <SidebarComp
