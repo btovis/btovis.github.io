@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
 import { v4 as uuidv4 } from 'uuid';
+import { Modal } from 'react-bootstrap';
 import InputOptionComp from './InputOptionComp.js';
 
 /**
@@ -13,6 +14,8 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     const refresh = () => dud(r + 1);
     params.pageManager.refreshPanelOptions = refresh;
 
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
     //No options to display
     if (params.pageManager.selectedPanel <= -1) return <></>;
 
@@ -22,17 +25,39 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
         .generateSidebar()
         .options.map((option) => <InputOptionComp key={option.uuid} inputOption={option} />);
 
-    // TODO: Display panel name to be deleted
     const deleteButton = (
         <div key={uuidv4()}>
             <button
                 className='delete-btn'
+                style={{ fontSize: 'larger' }}
                 onClick={() => {
-                    document.getElementById('delete_panel_modal').style.display = 'block';
-                    document.getElementById('delete_modal_name').innerText = params.pageManager
-                        .getSelectedPanel()
-                        .getName();
-                    document.getElementById('delete_modal_btn').onclick = () => {
+                    setDeleteModalVisible(true);
+                    refresh();
+                }}
+            >
+                Delete panel
+            </button>
+        </div>
+    );
+
+    const deleteModal = (
+        <Modal show={deleteModalVisible} onHide={() => setDeleteModalVisible(false)}>
+            <Modal.Header closeButton>Delete panel</Modal.Header>
+            <Modal.Body>
+                <p>Are you sure you want to delete this panel?</p>
+                <p>{params.pageManager.getSelectedPanel().getName()}</p>
+                <button
+                    className='modal-btn modal-cancel-btn'
+                    onClick={() => {
+                        setDeleteModalVisible(false);
+                    }}
+                >
+                    Cancel
+                </button>
+                <button
+                    id='delete_modal_btn'
+                    className='modal-btn delete-btn'
+                    onClick={() => {
                         params.pageManager.deletePanel(params.pageManager.selectedPanel);
                         params.pageManager.unselectPanel();
                         params.pageManager.selectedPanel = -1;
@@ -41,13 +66,14 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
                         // Consider bundling with PageManager.unselectPanel()
                         params.pageManager.setSidebarTab('globalTab');
                         params.pageManager.refreshEverything();
-                        document.getElementById('delete_panel_modal').style.display = 'none';
-                    };
-                }}
-            >
-                Delete panel
-            </button>
-        </div>
+                        setDeleteModalVisible(false);
+                        refresh();
+                    }}
+                >
+                    Delete
+                </button>
+            </Modal.Body>
+        </Modal>
     );
 
     return (
@@ -56,6 +82,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
             <br />
             {deleteButton}
             <br />
+            {deleteModal}
         </div>
     );
 }

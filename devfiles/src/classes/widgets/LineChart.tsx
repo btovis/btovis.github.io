@@ -3,6 +3,7 @@ import TimeChart from './TimeChart.js';
 import ColorOption from '../options/ColorOption.js';
 import Selector from '../options/Selector.js';
 import Panel from '../Panel.js';
+import BinarySelector from '../options/BinarySelector.js';
 
 export default class LineChart extends TimeChart {
     stackedSelector: Selector;
@@ -24,7 +25,7 @@ export default class LineChart extends TimeChart {
 
             const lineConfig: { [key: string]: any } = {};
             lineConfig.color = this.colorOption.value()[i];
-          
+
             singleTraceConfig.line = lineConfig;
             traceConfigs.push(singleTraceConfig);
         }
@@ -32,14 +33,12 @@ export default class LineChart extends TimeChart {
     }
     public async initOptions(): Promise<void> {
         // Selector for determining whether the chart is stacked or not.
-        this.stackedSelector = new Selector(
+        this.stackedSelector = new BinarySelector(
             this.panel,
             'Stack Line Chart',
-            ['Stack Lines'],
-            false,
-            []
+            'Stack Lines',
+            false
         );
-        this.stackedSelector.hideSelectAll = true;
         this.stackedSelector.extendedCallbacks.push(() => this.optionsCallback());
         super.initOptions();
     }

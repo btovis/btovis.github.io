@@ -19,20 +19,36 @@ export default function ErrorOverlay(props: {
             in={props.visible}
         >
             <div
-                style={{ width: '100%', height: '100%' }}
-                onClick={(event) => event.stopPropagation()}
-                onDragOver={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: props.visible ? 'all' : 'none'
                 }}
-                onDragLeave={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }}
-                onDrop={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }}
+                onClick={props.visible ? (event) => event.stopPropagation() : undefined}
+                onDragOver={
+                    props.visible
+                        ? (event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                          }
+                        : undefined
+                }
+                onDragLeave={
+                    props.visible
+                        ? (event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                          }
+                        : undefined
+                }
+                onDrop={
+                    props.visible
+                        ? (event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                          }
+                        : undefined
+                }
             >
                 <div className='fileUploadWarn rounded'>
                     <h4>Only CSV files exported from the BTO pipeline can be processed</h4>

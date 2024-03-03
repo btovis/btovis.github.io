@@ -5,16 +5,60 @@ import { Attribute } from '../data/Data.js';
 import Panel from '../Panel.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { unpack } from '../../utils/DataUtils.js';
+import TimeChart from './TimeChart.js';
+import { Modal } from 'react-bootstrap';
 
 export default class MapWidget extends Widget {
+    private fullscreenModalShown: boolean = false;
+
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
     public updateTraceOptions(): void {}
 
-    public render(): JSX.Element {
+    public render(scale: number = 0.4): JSX.Element {
         //fake data to implement map scaling
+        let fullscreenDisplay = <></>;
+        if (this.fullscreenModalShown) {
+            // Avoid re-rendering the fullscreen modal when it's already shown.
+            this.fullscreenModalShown = false;
+            fullscreenDisplay = this.renderFullscreen();
+            this.fullscreenModalShown = true;
+        }
 
         const { plotData, plotLayout, plotConfig } = MapWidget.generatePlotlySettings(this.panel);
-        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
+        const plotLayoutScaled = plotLayout;
+        plotLayoutScaled.width = innerWidth * scale;
+        plotLayoutScaled.height = innerHeight * scale;
+        return (
+            <div>
+                {fullscreenDisplay}
+                <Plot data={plotData} layout={plotLayoutScaled} config={plotConfig} />
+            </div>
+        );
+    }
+
+    public renderFullscreen(): JSX.Element {
+        const scale = 0.9;
+        return (
+            <Modal
+                className='widget-fullscreen-modal'
+                onHide={() => this.hideFullscreen()}
+                show={true}
+                fullscreen={true}
+            >
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>{this.render(scale)}</Modal.Body>
+            </Modal>
+        );
+    }
+
+    public showFullscreen() {
+        this.fullscreenModalShown = true;
+        this.refresh();
+    }
+
+    private hideFullscreen() {
+        this.fullscreenModalShown = false;
+        this.refresh();
     }
 
     /**
@@ -77,10 +121,10 @@ export default class MapWidget extends Widget {
 
         //plot layout for plotly
         const plotLayout = {
-            width: window.innerWidth * 0.4,
-            height: window.innerHeight * 0.5,
             autosize: false,
             hovermode: 'closest',
+            width: innerWidth * 0.4,
+            height: innerHeight * 0.4,
             mapbox: {
                 style: 'open-street-map',
                 center: {
@@ -99,38 +143,9 @@ export default class MapWidget extends Widget {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            modeBarButtonsToRemove: [
-                'zoom2d',
-                'pan2d',
-                'select2d',
-                'lasso2d',
-                'zoomIn2d',
-                'zoomOut2d',
-                'autoScale2d',
-                'resetScale2d',
-                'hoverClosestCartesian',
-                'hoverCompareCartesian',
-                'zoom3d',
-                'pan3d',
-                'resetCameraDefault3d',
-                'resetCameraLastSave3d',
-                'hoverClosest3d',
-                'orbitRotation',
-                'tableRotation',
-                'zoomInGeo',
-                'zoomOutGeo',
-                'resetGeo',
-                'hoverClosestGeo',
-                'toImage',
-                'sendDataToCloud',
-                'hoverClosestGl2d',
-                'hoverClosestPie',
-                'toggleHover',
-                'resetViews',
-                'toggleSpikelines',
-                'resetViewMapbox'
-            ],
-            displaylogo: false
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove,
+            displaylogo: false,
+            responsive: true
         };
 
         return { plotData, plotLayout, plotConfig, min, max };

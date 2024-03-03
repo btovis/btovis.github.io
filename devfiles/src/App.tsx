@@ -8,6 +8,7 @@ import { Spinner } from 'react-bootstrap';
 import Panel from './classes/Panel.ts';
 import ErrorOverlay from './ui/ErrorOverlay.tsx';
 import SuccessOverlay from './ui/SuccessOverlay.tsx';
+import '@fontsource/open-sans/500.css';
 
 // https://caniuse.com/?search=es2020 "Feature support list"
 // We target ES2020, 95% of browsers
@@ -131,29 +132,6 @@ function App() {
                 visible={warningVisible}
                 autoFades={false}
             />
-            <div id='delete_panel_modal' className='modal'>
-                <div className='modal-box'>
-                    <p>Are you sure you want to delete this panel?</p>
-                    <p>
-                        <i id='delete_modal_name'></i>
-                    </p>
-                    <button
-                        className='modal-btn modal-cancel-btn'
-                        onClick={() =>
-                            (document.getElementById('delete_panel_modal').style.display = 'none')
-                        }
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        id='delete_modal_btn'
-                        className='modal-btn delete-btn'
-                        onClick={() => {}}
-                    >
-                        Delete
-                    </button>
-                </div>
-            </div>
             {/* This leads to the rest of the UI components*/}
             <div className='sidebar'>
                 <SidebarComp

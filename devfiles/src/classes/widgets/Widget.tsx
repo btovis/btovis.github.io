@@ -31,5 +31,7 @@ export default abstract class Widget {
      */
     public abstract render(): JSX.Element;
 
+    public abstract renderFullscreen(): JSX.Element;
+
     public abstract delete(): void;
 }

@@ -11,6 +11,7 @@ import TableWidget from '../classes/widgets/TableWidget.js';
 import { Resizable } from 'react-resizable';
 import { CloseButton } from 'react-bootstrap';
 import generateHash from '../utils/generateHash.js';
+import TimeChart from '../classes/widgets/TimeChart.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
@@ -38,6 +39,17 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             //Force sidebar to refresh by setting the tab
             params.pageManager.setSidebarTab('widgetTab');
         }
+
+        const fullscreenButton = (
+            <Icon.ArrowsFullscreen
+                className='fullscreen-widget'
+                onClick={(event) => {
+                    event.stopPropagation();
+                    (w as TimeChart).showFullscreen();
+                }}
+            ></Icon.ArrowsFullscreen>
+        );
+
         return (
             <div
                 key={generateHash(panel.uuid, w.uuid)}
@@ -62,6 +74,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         panel.refresh();
                     }}
                 />
+                {fullscreenButton}
                 <p className='widgetTitle'>{w.name}</p>
                 <WidgetComp
                     key={w.uuid}
@@ -118,7 +131,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
             <Accordion defaultActiveKey='0'>
                 <Accordion.Item eventKey='0' onClick={() => selectThisPanel()}>
                     <Accordion.Header className=''>
-                        <div className='title'>{panel.getName()}</div>
+                        <h3 className='title'>{panel.getName()}</h3>
                     </Accordion.Header>
 
                     <Accordion.Body className='body'>

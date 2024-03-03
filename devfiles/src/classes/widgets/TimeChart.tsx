@@ -1,6 +1,7 @@
 import Panel from '../Panel';
 import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
+import Modal from 'react-bootstrap/Modal';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
 import { Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
@@ -11,6 +12,37 @@ export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
     // This is declared here only because it isn't working when it's declared only in LineChart class
+    public colorOptions: Array<ColorOption> = [];
+
+    static readonly buttonsToRemove = [
+        'zoom2d',
+        'pan2d',
+        'select2d',
+        'lasso2d',
+        'zoomIn2d',
+        'zoomOut2d',
+        'autoScale2d',
+        'hoverClosestCartesian',
+        'hoverCompareCartesian',
+        'zoom3d',
+        'pan3d',
+        'resetCameraDefault3d',
+        'resetCameraLastSave3d',
+        'hoverClosest3d',
+        'orbitRotation',
+        'tableRotation',
+        'zoomInGeo',
+        'zoomOutGeo',
+        'resetGeo',
+        'hoverClosestGeo',
+        'sendDataToCloud',
+        'hoverClosestGl2d',
+        'hoverClosestPie',
+        'toggleHover',
+        'resetViews',
+        'toggleSpikelines',
+        'resetViewMapbox'
+    ];
     public colorOption: ColorOption;
 
     // Subclasses implement these methods for specific chart types.
@@ -22,6 +54,8 @@ export default abstract class TimeChart extends Widget {
 
     // Initialize grouping
     public grouping: Grouping;
+
+    private fullscreenModalShown: boolean = false;
 
     public constructor(panel: Panel) {
         super(panel);
@@ -39,7 +73,7 @@ export default abstract class TimeChart extends Widget {
         this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
     }
     public async initOptions(): Promise<void> {
-        // The filteringn is slow so this is made async to reduce user wait time.
+        // The filtering is slow so this is made async to reduce user wait time.
         const filter = this.panel.dataFilterer;
         const groupings = this.timeRangeGroupings()
             .filter((grouping) => {
@@ -95,15 +129,31 @@ export default abstract class TimeChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
-    public render(): JSX.Element {
+
+    public renderFullscreen(): JSX.Element {
+        const scale = 0.9;
+        const { innerWidth: innerWidth, innerHeight: innerHeight } = window;
+        return (
+            <Modal
+                className='widget-fullscreen-modal'
+                onHide={() => this.hideFullscreen()}
+                show={true}
+                fullscreen={true}
+            >
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>
+                    {this.render(Math.floor(innerWidth * scale), Math.floor(innerHeight * scale))}
+                </Modal.Body>
+            </Modal>
+        );
+    }
+
+    public render(width: number = 500, height: number = 300): JSX.Element {
         const plotLayout = {
-            width: 400,
-            height: 210,
-            margin: {
-                l: 30,
-                r: 30,
-                b: 50,
-                t: 65
+            width: width,
+            height: height,
+            font: {
+                size: 16
             }
         };
         // Add specific layout to each chart.
@@ -112,10 +162,33 @@ export default abstract class TimeChart extends Widget {
             plotLayout
         );
         const plotConfig = {
-            modeBarButtonsToRemove: ['zoomIn2d', 'zoomOut2d'],
+            modeBarButtonsToRemove: TimeChart.buttonsToRemove,
+            editable: true,
+            staticplot: true,
             displaylogo: false
         };
-        return <Plot data={traces} layout={layout} config={plotConfig} />;
+        let fullscreenDisplay = <></>;
+        if (this.fullscreenModalShown) {
+            // Avoid re-rendering the fullscreen modal when it's already shown.
+            this.fullscreenModalShown = false;
+            fullscreenDisplay = this.renderFullscreen();
+            this.fullscreenModalShown = true;
+        }
+        return (
+            <div>
+                {fullscreenDisplay}
+                <Plot data={traces} layout={layout} config={plotConfig} />
+            </div>
+        );
     }
     public delete(): void {}
+    public showFullscreen() {
+        this.fullscreenModalShown = true;
+        this.refresh();
+    }
+
+    private hideFullscreen() {
+        this.fullscreenModalShown = false;
+        this.refresh();
+    }
 }
