@@ -55,6 +55,16 @@ input[type='number'] {
     font-style: italic;
 }
 
+#sidebar-tab-handler {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-item {
+    width: 33%;
+    display: flex;
+}
+
 .sidebar {
     background-color: var(--element-bg);
     width: 25%;
@@ -67,6 +77,7 @@ input[type='number'] {
 .sidebar strong {
     color: #052c65;
 }
+
 .sidebar strong query-active {
     color: orange;
 }
@@ -74,6 +85,15 @@ input[type='number'] {
 .sidebarContainer {
     padding: 20px;
     text-align: left;
+}
+
+.legal-text {
+    float: left;
+    width: 100%;
+    font-size: 15px;
+    text-align: left;
+    text-wrap: balance;
+    margin: 10px;
 }
 
 .inputOption {
@@ -245,10 +265,6 @@ input[type='number'] {
     margin-right: 16px;
 }
 
-.modal-cancel-btn {
-    background-color: #aaa;
-}
-
 span {
     width: 100%;
 }
@@ -389,6 +405,7 @@ a:hover {
 
 .add-panel-button {
     margin-top: 16px;
+    margin-bottom: 16px;
     background-color: #ddd;
 }
 
@@ -477,7 +494,6 @@ button {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #1a1a1a;
     cursor: pointer;
     transition: border-color 0.25s;
 }
