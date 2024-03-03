@@ -1,6 +1,7 @@
 import Panel from '../Panel';
 import Plot from 'react-plotly.js';
 import Sidebar from '../Sidebar';
+import Modal from 'react-bootstrap/Modal';
 import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
 import { Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
@@ -53,6 +54,8 @@ export default abstract class TimeChart extends Widget {
     // Initialize grouping
     public grouping: Grouping;
 
+    private fullscreenModalShown: boolean = false;
+
     public constructor(panel: Panel) {
         super(panel);
         this.initOptions();
@@ -69,7 +72,7 @@ export default abstract class TimeChart extends Widget {
         this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
     }
     public async initOptions(): Promise<void> {
-        // The filteringn is slow so this is made async to reduce user wait time.
+        // The filtering is slow so this is made async to reduce user wait time.
         const filter = this.panel.dataFilterer;
         const groupings = this.timeRangeGroupings()
             .filter((grouping) => {
@@ -125,10 +128,29 @@ export default abstract class TimeChart extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar(this.options);
     }
-    public render(): JSX.Element {
+
+    public renderFullscreen(): JSX.Element {
+        const scale = 0.9;
+        const { innerWidth: innerWidth, innerHeight: innerHeight } = window;
+        return (
+            <Modal
+                className='widget-fullscreen-modal'
+                onHide={() => this.hideFullscreen()}
+                show={true}
+                fullscreen={true}
+            >
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>
+                    {this.render(Math.floor(innerWidth * scale), Math.floor(innerHeight * scale))}
+                </Modal.Body>
+            </Modal>
+        );
+    }
+
+    public render(width: number = 500, height: number = 300): JSX.Element {
         const plotLayout = {
-            width: 500,
-            height: 300,
+            width: width,
+            height: height,
             font: {
                 size: 16
             }
@@ -144,7 +166,28 @@ export default abstract class TimeChart extends Widget {
             staticplot: true,
             displaylogo: false
         };
-        return <Plot data={traces} layout={layout} config={plotConfig} />;
+        let fullscreenDisplay = <></>;
+        if (this.fullscreenModalShown) {
+            // Avoid re-rendering the fullscreen modal when it's already shown.
+            this.fullscreenModalShown = false;
+            fullscreenDisplay = this.renderFullscreen();
+            this.fullscreenModalShown = true;
+        }
+        return (
+            <div>
+                {fullscreenDisplay}
+                <Plot data={traces} layout={layout} config={plotConfig} />
+            </div>
+        );
     }
     public delete(): void {}
+    public showFullscreen() {
+        this.fullscreenModalShown = true;
+        this.refresh();
+    }
+
+    private hideFullscreen() {
+        this.fullscreenModalShown = false;
+        this.refresh();
+    }
 }

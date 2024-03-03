@@ -6,16 +6,59 @@ import Panel from '../Panel.js';
 import SetElement from '../data/setutils/SetElement.js';
 import { unpack } from '../../utils/DataUtils.js';
 import TimeChart from './TimeChart.js';
+import { Modal } from 'react-bootstrap';
 
 export default class MapWidget extends Widget {
+    private fullscreenModalShown: boolean = false;
+
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
     public updateTraceOptions(): void {}
 
-    public render(): JSX.Element {
+    public render(scale: number = 0.4): JSX.Element {
         //fake data to implement map scaling
+        let fullscreenDisplay = <></>;
+        if (this.fullscreenModalShown) {
+            // Avoid re-rendering the fullscreen modal when it's already shown.
+            this.fullscreenModalShown = false;
+            fullscreenDisplay = this.renderFullscreen();
+            this.fullscreenModalShown = true;
+        }
 
         const { plotData, plotLayout, plotConfig } = MapWidget.generatePlotlySettings(this.panel);
-        return <Plot data={plotData} layout={plotLayout} config={plotConfig} />;
+        const plotLayoutScaled = plotLayout;
+        plotLayoutScaled.width = innerWidth * scale;
+        plotLayoutScaled.height = innerHeight * scale;
+        return (
+            <div>
+                {fullscreenDisplay}
+                <Plot data={plotData} layout={plotLayoutScaled} config={plotConfig} />
+            </div>
+        );
+    }
+
+    public renderFullscreen(): JSX.Element {
+        const scale = 0.9;
+        return (
+            <Modal
+                className='widget-fullscreen-modal'
+                onHide={() => this.hideFullscreen()}
+                show={true}
+                fullscreen={true}
+            >
+                <Modal.Header closeButton></Modal.Header>
+                <Modal.Body>{this.render(scale)}</Modal.Body>
+            </Modal>
+        );
+    }
+
+    public showFullscreen() {
+        this.fullscreenModalShown = true;
+        this.refresh();
+    }
+
+    private hideFullscreen() {
+        this.fullscreenModalShown = false;
+        this.refresh();
     }
 
     /**
@@ -78,10 +121,10 @@ export default class MapWidget extends Widget {
 
         //plot layout for plotly
         const plotLayout = {
-            width: window.innerWidth * 0.4,
-            height: window.innerHeight * 0.5,
             autosize: false,
             hovermode: 'closest',
+            width: innerWidth * 0.4,
+            height: innerHeight * 0.4,
             mapbox: {
                 style: 'open-street-map',
                 center: {
