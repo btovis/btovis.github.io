@@ -273,13 +273,13 @@ function integrateNewCSV(
     // make processor, replace previous with it
 
     const dateCol = titleToColumnIndex.get(Attribute.actualDate);
-    processDates(oldDatabase, finalDBLen, dateCol);
+    processDates(oldDatabase, oldDBLen, dateCol);
 
     const surveyDateCol = titleToColumnIndex.get(Attribute.surveyDate);
-    processDates(oldDatabase, finalDBLen, surveyDateCol);
+    processDates(oldDatabase, oldDBLen, surveyDateCol);
 
     const timeCol = titleToColumnIndex.get(Attribute.time);
-    processTimes(oldDatabase, finalDBLen, timeCol);
+    processTimes(oldDatabase, oldDBLen, timeCol);
 
     // Go back to original data, extend with "", process them
     if (oldDBLen != 0 && newDBLen != 0) {
