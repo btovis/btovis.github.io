@@ -30,7 +30,6 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
             <button
                 className='delete-btn'
                 onClick={() => {
-                    console.log('asf');
                     setDeleteModalVisible(true);
                     refresh();
                 }}
