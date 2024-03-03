@@ -27,8 +27,8 @@ export default class TimeRange extends InputOption {
 
     public render(): JSX.Element {
         return this.generateAccordion(
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div style={{ display: 'inline-block' }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs} key={this.uuid}>
+                <div style={{ display: 'inline-block' }} onBlur={() => this.panel.refreshWidgets()}>
                     <div style={{ width: '50%', float: 'left' }}>
                         <TimePicker
                             ampm={false}

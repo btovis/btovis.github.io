@@ -56,7 +56,6 @@ export default abstract class TraceOption extends InputOption {
     // Callback only refresh render
     public callback(newValue): void {
         this.refreshComponent();
-        console.log('called');
         this.extendedCallbacks.forEach((f) => f(newValue));
     }
     public query(): Query {

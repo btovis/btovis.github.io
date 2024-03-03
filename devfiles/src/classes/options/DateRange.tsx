@@ -44,34 +44,36 @@ export default class TimeRange extends InputOption {
     public render(): JSX.Element {
         return this.generateAccordion(
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                    label='From'
-                    format='YYYY/MM/DD'
-                    value={this.fromDate}
-                    minDate={this.minDate}
-                    maxDate={this.toDate}
-                    onChange={(value) =>
-                        this.callback({
-                            which: 0,
-                            datetime: value
-                        })
-                    }
-                />
-                <p></p>
-                <DatePicker
-                    label='To'
-                    format='YYYY/MM/DD'
-                    value={this.toDate}
-                    minDate={this.fromDate}
-                    maxDate={this.maxDate}
-                    onChange={(value) =>
-                        this.callback({
-                            which: 1,
-                            datetime: value
-                        })
-                    }
-                />
-                <p className='text-warning' id='warning-if-time-range-zero'></p>
+                <div onBlur={() => this.panel.refreshWidgets()}>
+                    <DatePicker
+                        label='From'
+                        format='YYYY/MM/DD'
+                        value={this.fromDate}
+                        minDate={this.minDate}
+                        maxDate={this.toDate}
+                        onChange={(value) =>
+                            this.callback({
+                                which: 0,
+                                datetime: value
+                            })
+                        }
+                    />
+                    <p></p>
+                    <DatePicker
+                        label='To'
+                        format='YYYY/MM/DD'
+                        value={this.toDate}
+                        minDate={this.fromDate}
+                        maxDate={this.maxDate}
+                        onChange={(value) =>
+                            this.callback({
+                                which: 1,
+                                datetime: value
+                            })
+                        }
+                    />
+                    <p className='text-warning' id='warning-if-time-range-zero'></p>
+                </div>
             </LocalizationProvider>
         );
     }

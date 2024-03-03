@@ -26,9 +26,10 @@ export default abstract class InputOption {
                     this.accordionOpen = typeof eventKey === 'string';
                 }}
                 defaultActiveKey={this.accordionOpen ? '0' : []}
+                key={this.uuid}
             >
                 <Accordion.Item eventKey='0'>
-                    <Accordion.Header>
+                    <Accordion.Header key={this.uuid.toString() + '-header'}>
                         <span
                             style={{
                                 color: this.checkDefault() ? '' : 'chocolate',
@@ -39,7 +40,7 @@ export default abstract class InputOption {
                             {this.name}
                         </span>
                     </Accordion.Header>
-                    <Accordion.Body>{body}</Accordion.Body>
+                    <Accordion.Body key={this.uuid.toString() + '-body'}>{body}</Accordion.Body>
                 </Accordion.Item>
             </Accordion>
         );
