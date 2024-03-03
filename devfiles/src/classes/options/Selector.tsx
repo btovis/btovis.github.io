@@ -161,7 +161,8 @@ export default class Selector extends InputOption {
                         );
                     })}
                 </div>
-            </>
+            </>,
+            false
         );
     }
 

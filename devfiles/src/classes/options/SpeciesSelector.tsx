@@ -238,7 +238,8 @@ export default class SpeciesSelector extends InputOption {
                         </div>
                     ))}
                 </div>
-            </>
+            </>,
+            false
         );
     }
 

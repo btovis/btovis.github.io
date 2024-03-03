@@ -105,7 +105,8 @@ export default class Geographic extends InputOption {
                     )}
                     If you can see this, click the title twice to re-render the map.
                 </div>
-            </>
+            </>,
+            false
         );
     }
 
@@ -175,7 +176,8 @@ export default class Geographic extends InputOption {
 
         //plot config for plotly includes mapbox token *
         const plotConfig = {
-            modeBarButtonsToRemove: ['toImage', 'lasso2d'] //Block lasso as I can't support points now
+            modeBarButtonsToRemove: ['toImage', 'lasso2d'], //Block lasso as I can't support points now
+            displaylogo: false
         };
 
         return { plotData, plotLayout, plotConfig };

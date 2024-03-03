@@ -95,7 +95,6 @@ export default class NumericInput extends InputOption {
         this.value = newValue;
         // this.panel.refreshComponent();
         this.panel.recalculateFilters(this);
-        this.panel.refreshWidgets();
         //Refresh this inputoption
         this.refreshComponent();
     }

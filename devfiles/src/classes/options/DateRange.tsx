@@ -44,7 +44,7 @@ export default class TimeRange extends InputOption {
     public render(): JSX.Element {
         return this.generateAccordion(
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div onBlur={() => this.panel.refreshWidgets()}>
+                <div>
                     <DatePicker
                         label='From'
                         format='YYYY/MM/DD'
