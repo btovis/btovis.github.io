@@ -61,10 +61,14 @@ export default class DataStats {
 
             //PositionMeta processing
             uniquePositions.add(row[latCol].toString() + '\0' + row[lonCol].toString());
-            globalMin[0] = Math.min(globalMin[0], row[latCol] as number);
-            globalMin[1] = Math.min(globalMin[1], row[lonCol] as number);
-            globalMax[0] = Math.max(globalMax[0], row[latCol] as number);
-            globalMax[1] = Math.max(globalMax[1], row[lonCol] as number);
+            if (isFinite(row[latCol] as number)) {
+                globalMin[0] = Math.min(globalMin[0], row[latCol] as number);
+                globalMax[0] = Math.max(globalMax[0], row[latCol] as number);
+            }
+            if (isFinite(row[lonCol] as number)) {
+                globalMin[1] = Math.min(globalMin[1], row[lonCol] as number);
+                globalMin[1] = Math.min(globalMin[1], row[lonCol] as number);
+            }
         }
 
         //TimeMeta Post-Processing
