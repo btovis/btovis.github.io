@@ -19,6 +19,7 @@ import LineChart from './widgets/LineChart.tsx';
 import TableWidget from './widgets/TableWidget.tsx';
 import MapWidget from './widgets/MapWidget.tsx';
 import { YGrouping } from './widgets/Grouping.ts';
+import BinarySelector from './options/BinarySelector.tsx';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -29,6 +30,7 @@ export default class Panel {
     public pageManager: PageManager;
 
     private readonly nameInput: PanelNameInput;
+    private automaticRefresh: BinarySelector;
     private fileSelector: Selector;
     private geographic: Geographic;
     private dateRange: DateRange;
@@ -87,6 +89,13 @@ export default class Panel {
             [],
             this.fileSelector,
             true
+        );
+        this.automaticRefresh = new BinarySelector(
+            this,
+            'Refresh Automatically',
+            'automatically',
+            true,
+            this.automaticRefresh
         );
         this.geographic = new Geographic(this, 'Location', this.geographic, true);
         this.dateRange = new DateRange(this, 'Date Range', this.dateRange, true);
@@ -185,10 +194,13 @@ export default class Panel {
             else queryArr.push(query as Query);
         }
 
-        queryArr.forEach((q, i, arr) => this.dataFilterer.processQuery(q, i != arr.length - 1));
+        const later = !this.automaticRefresh.isEverythingSelected();
+        queryArr.forEach((q, i, arr) =>
+            this.dataFilterer.processQuery(q, i != arr.length - 1 || later)
+        );
 
         //For the row/filtered count
-        this.nameInput.refreshComponent();
+        if (!later) this.nameInput.refreshComponent();
     }
 
     /**
@@ -205,10 +217,11 @@ export default class Panel {
 
         //Refresh after internal class state is updated
         this.refreshComponent();
-        this.refreshWidgets();
+        this.refreshWidgets(false);
     }
     // Refresh Widgets, Trace Related Options, and Sidebar
-    public refreshWidgets(): void {
+    public refreshWidgets(delayable: boolean = true): void {
+        if (delayable && !this.automaticRefresh.isEverythingSelected()) return;
         this.widgets.forEach((w) => {
             if (w instanceof TimeChart) w.updateGrouping();
         });
@@ -232,6 +245,7 @@ export default class Panel {
         //Panels need their own sidebar, as they hold filters.
         const baseSidebar = new Sidebar([
             this.nameInput, //Panel name. Identity filter
+            this.automaticRefresh,
             this.fileSelector,
             this.geographic, //Positional filter
             this.dateRange,
