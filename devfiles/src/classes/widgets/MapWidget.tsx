@@ -95,8 +95,8 @@ export default class MapWidget extends Widget {
         }
 
         //map zoom settings
-        const latBound = max[0] - min[0];
-        const lonBound = max[0] - min[0];
+        const latBound = max[0] - min[0] + 1e-2;
+        const lonBound = max[0] - min[0] + 1e-2;
         const maxBound = Math.max(latBound, lonBound) * 100;
         const zoom = 11.5 - Math.log(maxBound);
 
@@ -154,7 +154,5 @@ export default class MapWidget extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar([]);
     }
-    public delete(): void {
-        //throw new Error('Method not implemented.');
-    }
+    public delete(): void {}
 }
