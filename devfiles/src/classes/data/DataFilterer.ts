@@ -54,7 +54,7 @@ export default class DataFilterer {
     // columnIndex 0 is file
     // columnIndex can't be larger than the number of total columns
     // filterClass needs to be correct type, won't be checked here
-    public replaceFilter(columnIndex, filterClass: Filter) {
+    private replaceFilter(columnIndex, filterClass: Filter, processLater: boolean) {
         this.filterState = uuidv4(); //Filters changed
         this.filtersClasses[columnIndex] = filterClass;
         const [status, pred] = filterClass.getPredicate();
@@ -65,7 +65,7 @@ export default class DataFilterer {
             return;
         }
         this.opaqueFilters.delete(columnIndex);
-        this.recalculateFilteredData();
+        if (!processLater) this.recalculateFilteredData();
     }
 
     public dataUpdated() {
@@ -88,7 +88,7 @@ export default class DataFilterer {
         this.recalculateFilteredData();
     }
 
-    public recalculateFilteredData() {
+    private recalculateFilteredData() {
         if (this.opaqueFilters.size) {
             this.filteredDataArrLen = 0;
             return;
@@ -119,13 +119,13 @@ export default class DataFilterer {
     }
 
     // recalculates data
-    public processQuery(q: Query) {
+    public processQuery(q: Query, processLater: boolean) {
         switch (q[1]) {
             case QueryType.Range:
-                this.replaceFilter(q[0], new RangeFilter(q[2], q[3]));
+                this.replaceFilter(q[0], new RangeFilter(q[2], q[3]), processLater);
                 break;
             case QueryType.SwappableRange:
-                this.replaceFilter(q[0], new SwappableRangeFilter(q[2], q[3]));
+                this.replaceFilter(q[0], new SwappableRangeFilter(q[2], q[3]), processLater);
                 break;
             case QueryType.SetAsArrayForReject:
                 {
@@ -135,7 +135,8 @@ export default class DataFilterer {
                             new SetFilter(
                                 ReferenceSet.fromSet(q[2] as Set<SetElement>),
                                 this.data.sets[q[0]]
-                            )
+                            ),
+                            processLater
                         );
                     } else {
                         const excludes = new ReferenceSet();
@@ -144,12 +145,15 @@ export default class DataFilterer {
                             if (!ref) continue;
                             excludes.addRef(ref);
                         }
-                        this.replaceFilter(q[0], new SetFilter(excludes, this.data.sets[q[0]]));
+                        this.replaceFilter(
+                            q[0],
+                            new SetFilter(excludes, this.data.sets[q[0]]),
+                            processLater
+                        );
                     }
                 }
                 return;
         }
-        this.recalculateFilteredData();
     }
 
     // This gives you an array of full size, but one shouldn't access it beyond the first dataArrLen elements.

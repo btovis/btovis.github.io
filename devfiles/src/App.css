@@ -452,3 +452,22 @@ button {
     fill: var(--bs-white);
     background-color: var(--bs-secondary);
 }
+
+.widget:has(div table.table) {
+    width: 90%;
+}
+
+.color-input {
+    background-color: #e7e7e7;
+    height: 19px;
+    width: 24px;
+    margin-right: 5px;
+    padding-top: 0;
+    border: none;
+}
+
+.color-nametag {
+    position: relative;
+    left: 5px;
+    top: -3.5px;
+}

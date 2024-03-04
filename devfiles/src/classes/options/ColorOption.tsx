@@ -5,49 +5,50 @@ import TraceOption from './TraceOption';
 export default class ColorOption extends TraceOption {
     public constructor(
         panel: Panel,
+        traceNames: string[],
         name: string,
         numTraces: number,
         traceTypeName: string,
         template?: ColorOption
     ) {
-        super(panel, name, numTraces, traceTypeName, template);
+        super(panel, traceNames, name, numTraces, traceTypeName, template);
         if (template == undefined) {
             this.traceValList = [
-                '#039cad',
+                '#0dbfd3',
                 '#ce4458',
                 '#d69c46',
                 '#5d7def',
-                '#70ce29',
+                '#b351d6',
                 '#fc7a2f',
                 '#2c48ba',
-                '#ce2b43',
-                '#ea4ba2',
+                '#ce2c6d',
+                '#ea4d74',
                 '#5dbc29',
-                '#f26f52',
+                '#f06647',
                 '#b7852d',
                 '#ea1932',
-                '#0ed80a',
-                '#46c60f',
+                '#85d60a',
+                '#0fc771',
                 '#dd5db2',
                 '#222e96',
                 '#ba0088',
                 '#fcf016',
                 '#930524',
-                '#d30684',
+                '#7807d5',
                 '#36d1ac',
                 '#f2dc15',
                 '#14706e',
                 '#092268',
                 '#1ab4ba',
-                '#aed33d',
+                '#b93c8b',
                 '#adef51',
                 '#471687',
-                '#270799',
-                '#bc6ef4',
+                '#079739',
+                '#8b4cb8',
                 '#87c627',
                 '#f72ec1',
                 '#0345a3',
-                '#20137c',
+                '#75137c',
                 '#e35ee5',
                 '#990f3f',
                 '#8af74f',
@@ -66,9 +67,9 @@ export default class ColorOption extends TraceOption {
 
     // ColorOptions implementation of getTraceComponent
     public getTraceComponent(traceValue: any, index: number): JSX.Element {
-        const textField = <input type='text' value={traceValue} readOnly={true} />;
         const colorField = (
             <input
+                className='color-input'
                 type='color'
                 value={traceValue}
                 onBlur={(e) => {
@@ -80,12 +81,12 @@ export default class ColorOption extends TraceOption {
 
         return (
             <div className='colorPicker' key={uuidv4()}>
-                <span>
-                    Colour of {this.traceTypeName} {index}:{' '}
-                </span>
                 {colorField}
-                {textField}
+                <span className='color-nametag'>{' ' + this.text[index]}</span>
             </div>
         );
+    }
+    public updateTraceNames(traceNames: string[]): void {
+        this.text = traceNames;
     }
 }
