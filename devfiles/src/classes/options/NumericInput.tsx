@@ -98,8 +98,8 @@ export default class NumericInput extends InputOption {
     public callback(newValue: number): void {
         this.value = newValue;
         this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
-        // this.panel.refreshComponent();
         this.panel.recalculateFilters(this);
+        this.panel.refreshWidgets();
         //Refresh this inputoption
         this.refreshComponent();
     }

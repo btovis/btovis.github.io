@@ -118,8 +118,7 @@ export default class Geographic extends InputOption {
                         Map failed to refresh. Click Select All twice to force the map to refresh
                     </div>
                 </OverlayTrigger>
-            </>,
-            false
+            </>
         );
     }
 
