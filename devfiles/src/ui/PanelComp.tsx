@@ -75,7 +75,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                     }}
                 />
                 {fullscreenButton}
-                <p className='widgetTitle'>{w.name}</p>
+                <h3 className='widgetTitle mb-1'>{w.name}</h3>
                 <WidgetComp
                     key={w.uuid}
                     panelIdx={params.panelIdx}
