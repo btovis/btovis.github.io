@@ -64,9 +64,6 @@ class Data {
 
     // see the method below to access it
     private titleToColumnIndex = new Map<string, number>([['_FILE', 0]]);
-    // Note: cellProcessors does not need to be kept and it introduces complexity. We can remake them as needed
-    // with sets[] so removing these will increase flexibility of code.
-    private cellProcessors = [(a) => this.sets[0].addRawOrGet(a)];
 
     // Throws an error message (such as: malformed CSV) to be appended to filename to become "abc.csv: malformed CSV"
     /* eslint no-var: off */
@@ -84,6 +81,10 @@ class Data {
             window.alert('Warning: the file ' + CSVName + ' contains no data');
         }
 
+        for (const set of this.sets) {
+            if (!set) continue;
+            set.changeValue('[none]', '');
+        }
         try {
             integrateNewCSV(
                 this.columnList,
@@ -91,8 +92,7 @@ class Data {
                 columnNames,
                 this.sortedDatabase,
                 content,
-                this.sets,
-                this.cellProcessors
+                this.sets
             );
         } catch (e) {
             this.sets[0].removeRef(CSVIdentifier);

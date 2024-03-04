@@ -1,3 +1,4 @@
+import SetElement from '../data/setutils/SetElement';
 import { QueryType, SetAsArrayForRejectT } from './Query';
 
 export default class SetQueryArrayReject {
@@ -5,7 +6,10 @@ export default class SetQueryArrayReject {
     public constructor(columnIndex) {
         this.colI = columnIndex;
     }
-    public query(stringArrayOfReject: string[]): SetAsArrayForRejectT {
-        return [this.colI, QueryType.SetAsArrayForReject, stringArrayOfReject];
+    public query(
+        stringArrayOfReject: Set<string | SetElement>,
+        isSetElement
+    ): SetAsArrayForRejectT {
+        return [this.colI, QueryType.SetAsArrayForReject, stringArrayOfReject, isSetElement];
     }
 }

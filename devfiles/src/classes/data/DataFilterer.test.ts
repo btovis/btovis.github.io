@@ -3,8 +3,8 @@ import { QueryType, Query } from '../query/Query';
 import DataFilterer from './DataFilterer';
 import { Attribute, Data } from './Data';
 import { testDataFilename as filename, loadData } from '../../tests/utils.test';
-import SetQueryElement from '../query/SetQueryElement';
-import SetQueryArray from '../query/SetQueryArray';
+import SetQueryArrayReject from '../query/SetQueryArrayReject';
+import { setDifference } from './setutils/setDifference';
 
 describe('DataFilterer', async () => {
     let data: Data, filterer: DataFilterer;
@@ -61,8 +61,8 @@ describe('DataFilterer', async () => {
                 columnIdx = filterer.getColumnIndex(Attribute.warnings);
             });
             it('it should select non-null warnings', () => {
-                const query = new SetQueryElement(columnIdx, data.sets[columnIdx].getRef('[none]'));
-                filterer.processQuery(query.query(false));
+                const query = new SetQueryArrayReject(columnIdx);
+                filterer.processQuery(query.query(new Set(['[none]']), false));
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -71,8 +71,11 @@ describe('DataFilterer', async () => {
                 }
             });
             it('it should select empty warnings', () => {
-                const query = new SetQueryArray(columnIdx);
-                filterer.processQuery(query.query(['[none]']));
+                const query = new SetQueryArrayReject(columnIdx);
+                const allVals = new Set([...data.sets[columnIdx].refs].map((a) => a.value));
+                filterer.processQuery(
+                    query.query(setDifference(allVals, new Set(['[none]'])), false)
+                );
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
