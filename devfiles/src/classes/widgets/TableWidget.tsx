@@ -217,7 +217,7 @@ export default class TableWidget extends Widget {
                 {/* Control div */}
                 <div
                     id={this.uuid.toString() + '-control'}
-                    style={{ width: '100%', float: 'left', margin: '5px', display: 'inline' }}
+                    style={{ width: '100%', float: 'left', marginTop: '5px', display: 'inline' }}
                 >
                     <br />
                     {/* PgLeft Button */}
