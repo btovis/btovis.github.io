@@ -419,11 +419,10 @@ export default class SpeciesSelector extends InputOption {
         if (newValue.checked) newValue.item.forEach((elem) => this.unselected.delete(elem));
         else newValue.item.forEach((elem) => this.unselected.add(elem));
 
-        //Ask the panel to re-calculate its filters
-        this.panel.recalculateFilters(this);
-
         //Half a second debounce
         this.debouncerTimer = setTimeout(() => {
+            //Ask the panel to re-calculate its filters
+            this.panel.recalculateFilters(this);
             //Refresh to update the associated widget/panel (Selectors are used for Tables
             // as well as filters)
             //Potential to optimise here
