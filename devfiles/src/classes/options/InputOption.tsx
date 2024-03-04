@@ -32,7 +32,6 @@ export default abstract class InputOption {
                     <Accordion.Header key={this.uuid.toString() + '-header'}>
                         <span
                             style={{
-                                color: this.checkDefault() ? '' : 'chocolate',
                                 fontSize: 'larger'
                             }}
                             id={this.uuid.toString() + 'title'}
