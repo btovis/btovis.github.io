@@ -99,7 +99,6 @@ export default class Panel {
             isDefaultPanel ? 0.5 : 0,
             this.minimumProbability
         );
-        if (isDefaultPanel) this.recalculateFilters(this.minimumProbability);
 
         this.speciesSelector = new SpeciesSelector(
             this,
@@ -107,7 +106,7 @@ export default class Panel {
             isDefaultPanel,
             this.speciesSelector
         );
-        if (isDefaultPanel) this.recalculateFilters(this.speciesSelector);
+        if (isDefaultPanel) this.recalculateFilters(this.speciesSelector, this.minimumProbability);
 
         this.warningsSelector = new Selector(
             this,
@@ -165,17 +164,19 @@ export default class Panel {
      *
      * Does not refresh the panel's sidebar or the panel's react component.
      */
-    public recalculateFilters(changedOption: InputOption): void {
-        //Remove null guard once all the filters are implemented
-        //we can just call changedOption.query.
-        const query = changedOption.query();
+    public recalculateFilters(...changedOption: InputOption[]): void {
+        const queryArr: Query[] = [];
 
-        if (query === null) return;
-        if ('compound' in query)
-            (query.queries as Query[]).forEach((q, i, arr) =>
-                this.dataFilterer.processQuery(q, i != arr.length - 1)
-            );
-        else this.dataFilterer.processQuery(query as Query, false);
+        for (const option of changedOption) {
+            //Remove null guard once all the filters are implemented
+            //we can just call changedOption.query.
+            const query = option.query();
+            if (query == null) return;
+            if ('compound' in query) queryArr.push(...(query.queries as Query[]));
+            else queryArr.push(query as Query);
+        }
+
+        queryArr.forEach((q, i, arr) => this.dataFilterer.processQuery(q, i != arr.length - 1));
 
         //For the row/filtered count
         this.nameInput.refreshComponent();
