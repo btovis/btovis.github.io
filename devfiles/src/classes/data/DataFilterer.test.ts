@@ -21,7 +21,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select values less than 0.5', () => {
                 const query = [columnIdx, QueryType.Range, -Infinity, 0.5];
-                filterer.processQuery(query as unknown as Query);
+                filterer.processQuery(query as unknown as Query, false);
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -31,7 +31,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select values between 0.5 and 0.9', () => {
                 const query = [columnIdx, QueryType.Range, 0.5, 0.9];
-                filterer.processQuery(query as unknown as Query);
+                filterer.processQuery(query as unknown as Query, false);
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -42,7 +42,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select values greater than 0.9', () => {
                 const query = [columnIdx, QueryType.Range, 0.9, Infinity];
-                filterer.processQuery(query as unknown as Query);
+                filterer.processQuery(query as unknown as Query, false);
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -62,7 +62,7 @@ describe('DataFilterer', async () => {
             });
             it('it should select non-null warnings', () => {
                 const query = new SetQueryArrayReject(columnIdx);
-                filterer.processQuery(query.query(new Set(['[none]']), false));
+                filterer.processQuery(query.query(new Set(['[none]']), false), false);
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
                 totalMatched += length;
@@ -74,7 +74,8 @@ describe('DataFilterer', async () => {
                 const query = new SetQueryArrayReject(columnIdx);
                 const allVals = new Set([...data.sets[columnIdx].refs].map((a) => a.value));
                 filterer.processQuery(
-                    query.query(setDifference(allVals, new Set(['[none]'])), false)
+                    query.query(setDifference(allVals, new Set(['[none]'])), false),
+                    false
                 );
                 const [dataSubset, length] = filterer.getData();
                 expect(length).toBeLessThanOrEqual(dataSubset.length);
