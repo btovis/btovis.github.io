@@ -40,7 +40,7 @@ export default class BarChart extends TimeChart {
             this.colorOption = new ColorOption(
                 this.panel,
                 traceNames,
-                'BarGroup Colors',
+                'BarGroup Colours',
                 numTraces,
                 'Bar'
             );
@@ -52,8 +52,8 @@ export default class BarChart extends TimeChart {
     public updateTraceOptions(): void {
         // Calculate number of traces and call child method to generate, then bind to options in-line
         this.updateChartSpecificOptions(this.grouping.numTraces());
+        // Get Trace Names to supply to sidebar option
         const traceNames = this.grouping.getPartialTraces().map((x) => x.name);
-        console.log('reached');
         this.colorOption.updateTraceNames(traceNames);
         this.bindOptions();
         this.refresh();
