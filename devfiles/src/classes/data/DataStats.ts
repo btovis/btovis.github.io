@@ -67,7 +67,7 @@ export default class DataStats {
             }
             if (isFinite(row[lonCol] as number)) {
                 globalMin[1] = Math.min(globalMin[1], row[lonCol] as number);
-                globalMin[1] = Math.min(globalMin[1], row[lonCol] as number);
+                globalMax[1] = Math.min(globalMax[1], row[lonCol] as number);
             }
         }
 
