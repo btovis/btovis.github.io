@@ -150,8 +150,10 @@ export default class Panel {
 
         if (query === null) return;
         if ('compound' in query)
-            (query.queries as Query[]).forEach((q) => this.dataFilterer.processQuery(q));
-        else this.dataFilterer.processQuery(query as Query);
+            (query.queries as Query[]).forEach((q, i, arr) =>
+                this.dataFilterer.processQuery(q, i != arr.length - 1)
+            );
+        else this.dataFilterer.processQuery(query as Query, false);
 
         //For the row/filtered count
         this.nameInput.refreshComponent();
