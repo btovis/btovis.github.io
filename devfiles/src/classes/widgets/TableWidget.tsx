@@ -130,7 +130,7 @@ export default class TableWidget extends Widget {
         this.refresh();
     }
 
-    public render(rowCountPerPage: number = 4): JSX.Element {
+    public render(rowCountPerPage: number = 8): JSX.Element {
         let fullscreenDisplay = <></>;
         if (this.fullscreenModalShown) {
             // Avoid re-rendering the fullscreen modal when it's already shown.
