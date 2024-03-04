@@ -3,6 +3,7 @@ import '../../App.css';
 import PageManager from '../../classes/PageManager.js';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from 'react-bootstrap';
+import license from '../../assets/license.txt?url';
 
 function GlobalOptionsComp(params: {
     renderFileProcess: (FileList) => void;
@@ -55,7 +56,7 @@ function GlobalOptionsComp(params: {
                 type='button'
                 className='btn btn-secondary btm-sm'
                 onClick={() => {
-                    window.open('/src/assets/license.txt', '_blank').focus();
+                    window.open(license, '_blank').focus();
                 }}
             >
                 Legal Notices
