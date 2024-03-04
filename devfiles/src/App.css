@@ -247,7 +247,7 @@ span {
 
 .show-widget-icons {
     background-color: var(--bs-white);
-    color: var(--element-bg);
+    color: var(--bs-secondary);
     height: 50px;
     width: 50px;
     border-radius: 0% 50% 50% 0%;
@@ -257,7 +257,7 @@ span {
 
 .widget-icon {
     border-radius: 50%;
-    background-color: var(--element-bg);
+    background-color: var(--bs-secondary);
     color: var(--bs-white);
     height: 50px;
     width: 50px;
@@ -445,4 +445,9 @@ button {
 
 .nav-link {
     color: var(--bs-nav-tabs-link-active-color) !important;
+}
+
+.widget-icon svg {
+    fill: var(--bs-white);
+    background-color: var(--bs-secondary);
 }
