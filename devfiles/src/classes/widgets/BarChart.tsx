@@ -36,7 +36,14 @@ export default class BarChart extends TimeChart {
 
     public generateChartSpecificOptions(numTraces: number): void {
         if (this.colorOption == undefined) {
-            this.colorOption = new ColorOption(this.panel, 'BarGroup Colors', numTraces, 'Bar');
+            const traceNames = this.grouping.getPartialTraces().map((x) => x.name);
+            this.colorOption = new ColorOption(
+                this.panel,
+                traceNames,
+                'BarGroup Colors',
+                numTraces,
+                'Bar'
+            );
             this.colorOption.extendedCallbacks.push(() => this.refresh());
         }
     }
@@ -45,6 +52,9 @@ export default class BarChart extends TimeChart {
     public updateTraceOptions(): void {
         // Calculate number of traces and call child method to generate, then bind to options in-line
         this.updateChartSpecificOptions(this.grouping.numTraces());
+        const traceNames = this.grouping.getPartialTraces().map((x) => x.name);
+        console.log('reached');
+        this.colorOption.updateTraceNames(traceNames);
         this.bindOptions();
         this.refresh();
         this.panel.pageManager.refreshPanelOptions();

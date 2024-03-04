@@ -5,12 +5,13 @@ import TraceOption from './TraceOption';
 export default class ColorOption extends TraceOption {
     public constructor(
         panel: Panel,
+        traceNames: string[],
         name: string,
         numTraces: number,
         traceTypeName: string,
         template?: ColorOption
     ) {
-        super(panel, name, numTraces, traceTypeName, template);
+        super(panel, traceNames, name, numTraces, traceTypeName, template);
         if (template == undefined) {
             this.traceValList = [
                 '#039cad',
@@ -66,9 +67,9 @@ export default class ColorOption extends TraceOption {
 
     // ColorOptions implementation of getTraceComponent
     public getTraceComponent(traceValue: any, index: number): JSX.Element {
-        const textField = <input type='text' value={traceValue} readOnly={true} />;
         const colorField = (
             <input
+                className='color-input'
                 type='color'
                 value={traceValue}
                 onBlur={(e) => {
@@ -80,12 +81,12 @@ export default class ColorOption extends TraceOption {
 
         return (
             <div className='colorPicker' key={uuidv4()}>
-                <span>
-                    Colour of {this.traceTypeName} {index}:{' '}
-                </span>
                 {colorField}
-                {textField}
+                <span className='color-nametag'>{' ' + this.text[index]}</span>
             </div>
         );
+    }
+    public updateTraceNames(traceNames: string[]): void {
+        this.text = traceNames;
     }
 }
