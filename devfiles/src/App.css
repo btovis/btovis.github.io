@@ -81,6 +81,8 @@ input[type='number'] {
 .accordion-button {
     color: var(--text-color) !important;
     background-color: var(--element-bg) !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
 }
 
 .selectorLabel {
