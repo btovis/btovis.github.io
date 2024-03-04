@@ -8,7 +8,7 @@ import { Spinner } from 'react-bootstrap';
 import Panel from './classes/Panel.ts';
 import ErrorOverlay from './ui/ErrorOverlay.tsx';
 import SuccessOverlay from './ui/SuccessOverlay.tsx';
-import '@fontsource/open-sans/500.css';
+import '@fontsource/open-sans/latin-ext-500.css';
 
 // https://caniuse.com/?search=es2020 "Feature support list"
 // We target ES2020, 95% of browsers

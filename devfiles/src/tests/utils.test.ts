@@ -6,6 +6,8 @@ import { describe, it, expect } from 'vitest';
 const testDataFilename = 'devfiles/src/tests/testdata.csv';
 const testDataFilename2 = 'devfiles/src/tests/testdata2.csv';
 const testDataFilename3 = 'devfiles/src/tests/testdata3.csv';
+const testDataFilename4 = 'devfiles/src/tests/testdata4.csv';
+const testDataFilename5 = 'devfiles/src/tests/testdata5.csv';
 
 async function loadData(filename = testDataFilename) {
     const data = new Data();
@@ -46,4 +48,12 @@ describe('loadData', () => {
     });
 });
 
-export { loadData, readBytes, testDataFilename, testDataFilename2, testDataFilename3 };
+export {
+    loadData,
+    readBytes,
+    testDataFilename,
+    testDataFilename2,
+    testDataFilename3,
+    testDataFilename4,
+    testDataFilename5
+};
