@@ -14,7 +14,7 @@ export default class MapWidget extends Widget {
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
     public updateTraceOptions(): void {}
 
-    public render(scale: number = 0.4): JSX.Element {
+    public render(scale: number = 0.25): JSX.Element {
         //fake data to implement map scaling
         let fullscreenDisplay = <></>;
         if (this.fullscreenModalShown) {
