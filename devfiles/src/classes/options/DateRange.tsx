@@ -8,13 +8,22 @@ import RangeQuery from '../query/RangeQuery';
 import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
+    private feedbackOnChanged: boolean;
+
     private minDate: Dayjs;
     private maxDate: Dayjs;
     public fromDate: Dayjs;
     public toDate: Dayjs;
 
-    public constructor(panel: Panel, name: string, template?: TimeRange) {
+    public constructor(
+        panel: Panel,
+        name: string,
+        template?: TimeRange,
+        feedbackOnChanged: boolean = false
+    ) {
         super(panel, name);
+        this.feedbackOnChanged = feedbackOnChanged;
+
         const timeMeta = panel.dataFilterer.getDataStats().getTimeMeta();
         this.minDate = dayjs(new Date(timeMeta.low()));
         this.maxDate = dayjs(new Date(timeMeta.up()));
@@ -97,6 +106,7 @@ export default class TimeRange extends InputOption {
             this.toDate = newValue.datetime;
         }
 
+        this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
         this.panel.recalculateFilters(this);
         //Refresh to update the associated panel and its widgets
         this.panel.refreshComponent();

@@ -73,27 +73,30 @@ export default class Panel {
             0, //Column Index 0 is file name
             true,
             [],
-            this.fileSelector
+            this.fileSelector,
+            true
         );
-        this.geographic = new Geographic(this, 'Location', this.geographic);
-        this.dateRange = new DateRange(this, 'Date Range', this.dateRange);
-        this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay);
+        this.geographic = new Geographic(this, 'Location', this.geographic, true);
+        this.dateRange = new DateRange(this, 'Date Range', this.dateRange, true);
+        this.timeOfDay = new TimeOfDayRange(this, 'Time of Day', this.timeOfDay, true);
         this.minimumProbability = new NumericInput(
             this,
             'Minimum Probability',
             0,
             1,
             0.01,
-            this.minimumProbability
+            this.minimumProbability,
+            true
         );
-        this.speciesSelector = new SpeciesSelector(this, 'Species', this.speciesSelector);
+        this.speciesSelector = new SpeciesSelector(this, 'Species', this.speciesSelector, true);
         this.warningsSelector = new Selector(
             this,
             'Warnings',
             this.dataFilterer.getColumnIndex(Attribute.warnings),
             true,
             [],
-            this.warningsSelector
+            this.warningsSelector,
+            true
         );
         this.calltypeSelector = new Selector(
             this,
@@ -101,7 +104,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.callType),
             true,
             [],
-            this.calltypeSelector
+            this.calltypeSelector,
+            true
         );
         this.projectSelector = new Selector(
             this,
@@ -109,7 +113,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.projectName),
             true,
             [],
-            this.projectSelector
+            this.projectSelector,
+            true
         );
         this.classifierSelector = new Selector(
             this,
@@ -117,7 +122,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.classifierName),
             true,
             [],
-            this.classifierSelector
+            this.classifierSelector,
+            true
         );
         this.batchnameSelector = new Selector(
             this,
@@ -125,7 +131,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.batchName),
             true,
             [],
-            this.batchnameSelector
+            this.batchnameSelector,
+            true
         );
         this.useridSelector = new Selector(
             this,
@@ -133,7 +140,8 @@ export default class Panel {
             this.dataFilterer.getColumnIndex(Attribute.userID),
             true,
             [],
-            this.useridSelector
+            this.useridSelector,
+            true
         );
     }
 
