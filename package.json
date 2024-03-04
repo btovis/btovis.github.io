@@ -59,7 +59,7 @@
         "test": "vitest",
         "coverage": "vitest run --coverage --coverage.reportOnFailure --coverage.reportsDirectory ../coverage --coverage.reporter text --coverage.reporter html --coverage.reporter clover --coverage.reporter json --coverage.reporter json-summary",
         "check-staged": "npm run build && npm run format && npm run lint",
-        "license": "license-checker-rseidelsohn --production --json --out devfiles/src/assets/license.json && node scripts/license.js devfiles/src/assets/license.json devfiles/src/assets/license.txt"
+        "license": "license-checker-rseidelsohn --production --json --out devfiles/src/assets/license.json && node scripts/license.js devfiles/src/assets/license.json devfiles/src/assets/license.txt && rm devfiles/src/assets/license.json"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx}": [
