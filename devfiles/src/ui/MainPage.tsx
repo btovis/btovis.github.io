@@ -18,7 +18,7 @@ function MainPage(params: { pageManager: PageManager }) {
                 <span>
                     <button
                         type='button'
-                        className='btn btn-secondary add-panel-button'
+                        className='btn btn-primary add-panel-button'
                         id='add-panel-button'
                         key={uuidv4()}
                         disabled={params.pageManager.data.isEmpty() ? true : false}

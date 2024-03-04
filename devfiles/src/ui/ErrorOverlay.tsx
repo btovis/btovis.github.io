@@ -51,9 +51,11 @@ export default function ErrorOverlay(props: {
                 }
             >
                 <div className='fileUploadWarn rounded'>
-                    <h4>Only CSV files exported from the BTO pipeline can be processed</h4>
+                    <h3 className='my-4'>
+                        Only CSV files exported from the BTO pipeline can be processed
+                    </h3>
                     <div style={{ display: 'flex' }}>
-                        <table className='table table-danger'>
+                        <table className='table table-warning my-5'>
                             <thead>
                                 <tr>
                                     <td>
@@ -81,7 +83,7 @@ export default function ErrorOverlay(props: {
                     {!props.autoFades ? (
                         <button
                             type='button'
-                            className='btn btn-danger'
+                            className='btn btn-danger btn-lg'
                             onClick={() => props.setVisible(false)}
                         >
                             Okay

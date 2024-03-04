@@ -148,7 +148,7 @@ export default abstract class TimeChart extends Widget {
         );
     }
 
-    public render(width: number = 500, height: number = 300): JSX.Element {
+    public render(width: number = 550, height: number = 280): JSX.Element {
         const plotLayout = {
             width: width,
             height: height,

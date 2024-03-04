@@ -46,7 +46,7 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
             <Modal.Header closeButton>Delete panel</Modal.Header>
             <Modal.Body>
                 <p>Are you sure you want to delete this panel?</p>
-                <p>{params.pageManager.getSelectedPanel().getName()}</p>
+                <p className='fst-italic'>{params.pageManager.getSelectedPanel().getName()}</p>
                 <button
                     className='btn btn-secondary modal-btn'
                     onClick={() => {

@@ -75,7 +75,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                     }}
                 />
                 {fullscreenButton}
-                <p className='widgetTitle'>{w.name}</p>
+                <h3 className='widgetTitle mb-1'>{w.name}</h3>
                 <WidgetComp
                     key={w.uuid}
                     panelIdx={params.panelIdx}
@@ -134,14 +134,14 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                         <h3 className='title'>{panel.getName()}</h3>
                     </Accordion.Header>
 
-                    <Accordion.Body className='body'>
+                    <Accordion.Body className='body p-0'>
                         <Resizable onResize={onResize} width={0} height={panelHeight}>
                             <span>
                                 <div className='panel-body' style={{ height: panelHeight + 'px' }}>
                                     <div
                                         className='widget-row'
                                         ref={widgetRowRef}
-                                        style={{ height: panelHeight - iconSize + 'px' }}
+                                        style={{ height: panelHeight }}
                                     >
                                         {widgets}
                                     </div>
