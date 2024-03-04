@@ -19,7 +19,7 @@ export default abstract class InputOption {
     public abstract query(): Query | { compound: boolean; queries: Query[] };
     public abstract render(): JSX.Element;
     public abstract callback(newValue);
-    public generateAccordion(body: JSX.Element, updateOnExit: boolean = true): JSX.Element {
+    public generateAccordion(body: JSX.Element): JSX.Element {
         return (
             <Accordion
                 onSelect={(eventKey) => {
@@ -39,13 +39,7 @@ export default abstract class InputOption {
                             {this.name}
                         </span>
                     </Accordion.Header>
-                    <Accordion.Body
-                        onBlur={() => {
-                            if (updateOnExit) this.panel.refreshWidgets();
-                        }}
-                    >
-                        {body}
-                    </Accordion.Body>
+                    <Accordion.Body>{body}</Accordion.Body>
                 </Accordion.Item>
             </Accordion>
         );

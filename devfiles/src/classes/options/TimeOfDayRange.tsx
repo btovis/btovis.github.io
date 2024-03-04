@@ -76,6 +76,7 @@ export default class TimeRange extends InputOption {
         this.panel.recalculateFilters(this);
         //Refresh to update the associated panel and its widgets
         this.panel.refreshComponent();
+        this.panel.refreshWidgets();
         //Refresh this inputoption
         this.refreshComponent();
     }

@@ -12,7 +12,14 @@ function PanelOptionsComp(params: { pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
     const [r, dud] = useState(0);
     const refresh = () => dud(r + 1);
-    params.pageManager.refreshPanelOptions = refresh;
+    params.pageManager.refreshPanelOptions = () => {
+        try {
+            throw new Error();
+        } catch (e) {
+            console.log(e);
+        }
+        refresh();
+    };
 
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
