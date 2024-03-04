@@ -69,6 +69,7 @@ input[type='number'] {
     background-color: var(--element-bg);
     text-align: left;
 }
+
 .inputOption .accordion {
     --bs-accordion-bg: var(--element-bg);
     --bs-accordion-active-bg: var(--element-bg);
@@ -224,6 +225,7 @@ input[type='number'] {
 
 .panel-body {
     overflow: hidden;
+    position: relative;
 }
 
 .modal-btn {
@@ -244,6 +246,8 @@ span {
 }
 
 .add-widget-row {
+    position: absolute;
+    bottom: 10px;
     display: flex;
 }
 
@@ -255,6 +259,8 @@ span {
     border-radius: 0% 50% 50% 0%;
     position: relative;
     z-index: 100;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .widget-icon {
@@ -339,10 +345,6 @@ a:hover {
     margin-top: 16px;
     margin-bottom: 16px;
     background-color: #ddd;
-}
-
-.text-warning {
-    color: red;
 }
 
 .react-resizable {
