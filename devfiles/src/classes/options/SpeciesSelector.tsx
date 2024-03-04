@@ -15,6 +15,7 @@ import {
 import SetQueryArrayReject from '../query/SetQueryArrayReject';
 
 export default class SpeciesSelector extends InputOption {
+    private feedbackOnChanged: boolean;
     //Internal state unique to every option class.
     //Use this to store current selections
     protected searchState: string = '';
@@ -36,8 +37,15 @@ export default class SpeciesSelector extends InputOption {
      * @param defaults If allSelected is false, the default selected items will be this.
      * @param template This is the template Selector to "copy" selected options from.
      */
-    public constructor(panel: Panel, name: string, template: SpeciesSelector = undefined) {
+    public constructor(
+        panel: Panel,
+        name: string,
+        template: SpeciesSelector = undefined,
+        feedbackOnChanged: boolean = false
+    ) {
         super(panel, name);
+        this.feedbackOnChanged = feedbackOnChanged;
+
         this.speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
 
         //Copy values to enforce changes
@@ -419,6 +427,7 @@ export default class SpeciesSelector extends InputOption {
         if (newValue.checked) newValue.item.forEach((elem) => this.unselected.delete(elem));
         else newValue.item.forEach((elem) => this.unselected.add(elem));
 
+        this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
         //Half a second debounce
         this.debouncerTimer = setTimeout(() => {
             //Ask the panel to re-calculate its filters

@@ -45,18 +45,16 @@ export default class LineChart extends TimeChart {
 
     // bind Chart specific options to Timechart Options
     public bindOptions(): void {
-        this.options = [
-            this.xAxisSelector,
-            this.yAxisSelector,
-            this.stackedSelector,
-            this.colorOption
-        ];
+        this.options = [this.xAxisSelector, this.yAxisSelector, this.stackedSelector];
     }
 
     // Update Trace Options for Linechart
     public updateTraceOptions(): void {
         // Calculate number of traces and call child method to generate, then bind to options in-line
         this.updateChartSpecificOptions(this.grouping.numTraces());
+        // Get Trace Names to supply to sidebar option
+        const traceNames = this.grouping.getPartialTraces().map((x) => x.name);
+        this.colorOption.updateTraceNames(traceNames);
         this.bindOptions();
         this.refresh();
         this.panel.pageManager.refreshPanelOptions();
@@ -65,7 +63,14 @@ export default class LineChart extends TimeChart {
     // Change internal states of object: widget specific options.
     public generateChartSpecificOptions(numTraces: number): void {
         if (this.colorOption == undefined) {
-            this.colorOption = new ColorOption(this.panel, 'Line Colors', numTraces, 'Line');
+            const traceNames = this.grouping.getPartialTraces().map((x) => x.name);
+            this.colorOption = new ColorOption(
+                this.panel,
+                traceNames,
+                'Line Colours',
+                numTraces,
+                'Line'
+            );
             this.colorOption.extendedCallbacks.push(() => this.refresh());
         }
     }
