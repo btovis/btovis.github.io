@@ -14,7 +14,7 @@ export default class MapWidget extends Widget {
     // If this is really not useful here in future, change this to an abstract method in Timechart and update Panel.ts refresh method.
     public updateTraceOptions(): void {}
 
-    public render(scale: number = 0.4): JSX.Element {
+    public render(scale: number = 0.25): JSX.Element {
         //fake data to implement map scaling
         let fullscreenDisplay = <></>;
         if (this.fullscreenModalShown) {
@@ -95,10 +95,10 @@ export default class MapWidget extends Widget {
         }
 
         //map zoom settings
-        const latBound = max[0] - min[0];
-        const lonBound = max[0] - min[0];
-        const maxBound = Math.max(latBound, lonBound) * 100;
-        const zoom = 11.5 - Math.log(maxBound);
+        const latBound = max[0] - min[0] + 1e-2;
+        const lonBound = max[0] - min[0] + 1e-2;
+        const maxBound = Math.max(latBound, lonBound);
+        const zoom = 4.5 - Math.log(maxBound);
 
         //plot data for plotly
         const plotData = [
@@ -154,7 +154,5 @@ export default class MapWidget extends Widget {
     public generateSidebar(): Sidebar {
         return new Sidebar([]);
     }
-    public delete(): void {
-        //throw new Error('Method not implemented.');
-    }
+    public delete(): void {}
 }

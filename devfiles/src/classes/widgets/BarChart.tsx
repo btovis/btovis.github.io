@@ -31,7 +31,7 @@ export default class BarChart extends TimeChart {
 
     // bind Chart specific options to Timechart Options
     public bindOptions(): void {
-        this.options = [this.xAxisSelector, this.yAxisSelector, this.colorOption];
+        this.options = [this.xAxisSelector, this.yAxisSelector];
     }
 
     public generateChartSpecificOptions(numTraces: number): void {
