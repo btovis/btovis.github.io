@@ -29,10 +29,10 @@ function integrateNewCSV(
             alert(
                 'The database is going to have more than 67M rows. This web app might not work. Continuing at your own risk'
             );
-        // @ts-expect-error: check for chrome
     } else if (
         newDatabase.length + oldDatabase.length > 16000000 &&
         oldDatabase.length <= 16000000 &&
+        // @ts-expect-error: check for chrome
         window.chrome
     ) {
         if (alert)
