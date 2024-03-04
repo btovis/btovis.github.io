@@ -15,6 +15,10 @@ import SpeciesSelector from './options/SpeciesSelector';
 import TimeOfDayRange from './options/TimeOfDayRange';
 import { Query } from './query/Query';
 import TimeChart from './widgets/TimeChart.tsx';
+import LineChart from './widgets/LineChart.tsx';
+import TableWidget from './widgets/TableWidget.tsx';
+import MapWidget from './widgets/MapWidget.tsx';
+import { YGrouping } from './widgets/Grouping.ts';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -41,32 +45,40 @@ export default class Panel {
     public dataFilterer: DataFilterer;
     public readonly uuid: number;
     public minHeight: number;
-    public lifetimeWidgetCount: number;
+    public lifetimeWidgetCount: Map<string, number> = new Map();
 
-    public constructor(pageManager: PageManager) {
+    public constructor(pageManager: PageManager, isDefaultPanel: boolean = false) {
         this.uuid = uuidv4();
         this.pageManager = pageManager;
         this.dataFilterer = new DataFilterer(pageManager.getData());
-        this.lifetimeWidgetCount = 0;
 
-        //Initialise panel filter inputoptions
-        this.nameInput = new PanelNameInput(
-            this,
-            'Panel Name',
-            'Panel ' + (this.pageManager.getLifetimePanelsCreated() + 1)
-        );
-        this.updateInputOptions();
+        let newName = isDefaultPanel
+            ? 'Default Panel'
+            : 'Panel ' + (this.pageManager.getLifetimePanelsCreated() + 1);
 
-        this.widgets = [];
-        this.addWidget(new BarChart(this));
+        this.nameInput = new PanelNameInput(this, 'Panel Name', newName);
+
+        //This boolean only needs to be passed at the start. Later iterations will
+        //take the current values from the current option
+        this.updateInputOptions(isDefaultPanel);
         this.minHeight = 400; // panel body minimum height
+
+        //Initialise widgets only after filters were initiated with default options
+        if (isDefaultPanel) {
+            //Default Filters are handled in updateInputOptions
+            newName = 'Default Panel';
+            this.addWidget(new BarChart(this, 'Month', YGrouping.VulnerabilityStatus));
+            this.addWidget(new LineChart(this, 'Date', YGrouping.SpeciesGroup));
+            this.addWidget(new TableWidget(this));
+            this.addWidget(new MapWidget(this));
+        }
     }
 
     public getName(): string {
         return this.nameInput.value();
     }
 
-    private updateInputOptions(): void {
+    private updateInputOptions(isDefaultPanel: boolean = false): void {
         this.fileSelector = new Selector(
             this,
             'Active Files',
@@ -85,10 +97,20 @@ export default class Panel {
             0,
             1,
             0.01,
+            isDefaultPanel ? 0.5 : 0,
             this.minimumProbability,
             true
         );
-        this.speciesSelector = new SpeciesSelector(this, 'Species', this.speciesSelector, true);
+
+        this.speciesSelector = new SpeciesSelector(
+            this,
+            'Species',
+            isDefaultPanel,
+            this.speciesSelector,
+            true
+        );
+        if (isDefaultPanel) this.recalculateFilters(this.speciesSelector, this.minimumProbability);
+
         this.warningsSelector = new Selector(
             this,
             'Warnings',
@@ -151,17 +173,19 @@ export default class Panel {
      *
      * Does not refresh the panel's sidebar or the panel's react component.
      */
-    public recalculateFilters(changedOption: InputOption): void {
-        //Remove null guard once all the filters are implemented
-        //we can just call changedOption.query.
-        const query = changedOption.query();
+    public recalculateFilters(...changedOption: InputOption[]): void {
+        const queryArr: Query[] = [];
 
-        if (query === null) return;
-        if ('compound' in query)
-            (query.queries as Query[]).forEach((q, i, arr) =>
-                this.dataFilterer.processQuery(q, i != arr.length - 1)
-            );
-        else this.dataFilterer.processQuery(query as Query, false);
+        for (const option of changedOption) {
+            //Remove null guard once all the filters are implemented
+            //we can just call changedOption.query.
+            const query = option.query();
+            if (query == null) return;
+            if ('compound' in query) queryArr.push(...(query.queries as Query[]));
+            else queryArr.push(query as Query);
+        }
+
+        queryArr.forEach((q, i, arr) => this.dataFilterer.processQuery(q, i != arr.length - 1));
 
         //For the row/filtered count
         this.nameInput.refreshComponent();
@@ -229,7 +253,12 @@ export default class Panel {
 
     public addWidget(widget: Widget): void {
         this.widgets.push(widget);
-        this.lifetimeWidgetCount++;
+        this.lifetimeWidgetCount.set(
+            widget.constructor.name,
+            this.lifetimeWidgetCount.has(widget.constructor.name)
+                ? this.lifetimeWidgetCount.get(widget.constructor.name) + 1
+                : 1
+        );
     }
 
     public removeWidget(widgetIdx: number) {
@@ -255,7 +284,9 @@ export default class Panel {
         return this.widgets[widgetIdx];
     }
 
-    public getLifetimeWidgetsCreated(): number {
-        return this.lifetimeWidgetCount;
+    public getLifetimeWidgetsCreated(widgetClassName: string): number {
+        return this.lifetimeWidgetCount.has(widgetClassName)
+            ? this.lifetimeWidgetCount.get(widgetClassName)
+            : 0;
     }
 }

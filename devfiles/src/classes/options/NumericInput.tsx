@@ -21,12 +21,13 @@ export default class NumericInput extends InputOption {
         min: number,
         max: number,
         step: number,
+        startingValue: number,
         template?: NumericInput,
         feedbackOnChanged: boolean = false
     ) {
         super(panel, name);
+        this.value = startingValue; //let template override it
         this.feedbackOnChanged = feedbackOnChanged;
-        this.value = 0; //default
         this.min = min;
         this.max = max;
         this.step = step;

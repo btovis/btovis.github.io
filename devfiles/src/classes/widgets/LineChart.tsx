@@ -1,4 +1,10 @@
-import { ContinuousMonthGrouping, DayGrouping, Grouping, YearGrouping } from './Grouping.js';
+import {
+    ContinuousMonthGrouping,
+    DayGrouping,
+    Grouping,
+    YGrouping,
+    YearGrouping
+} from './Grouping.js';
 import TimeChart from './TimeChart.js';
 import ColorOption from '../options/ColorOption.js';
 import Selector from '../options/Selector.js';
@@ -7,10 +13,10 @@ import BinarySelector from '../options/BinarySelector.js';
 
 export default class LineChart extends TimeChart {
     stackedSelector: Selector;
-    public constructor(panel: Panel) {
-        super(panel);
+    public constructor(panel: Panel, defaultXGrouping?: string, defaultYGrouping?: YGrouping) {
+        super(panel, defaultXGrouping, defaultYGrouping);
         // Bug in the way TypeScript calls constructor, so we need to call this here.
-        this.initOptions();
+        this.initOptions(defaultXGrouping, defaultYGrouping);
     }
     public chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }> {
         const traceConfigs: Array<{ [key: string]: unknown }> = [];
@@ -31,7 +37,10 @@ export default class LineChart extends TimeChart {
         }
         return traceConfigs;
     }
-    public async initOptions(): Promise<void> {
+    public async initOptions(
+        defaultXGrouping?: string,
+        defaultYGrouping: YGrouping = YGrouping.Species
+    ): Promise<void> {
         // Selector for determining whether the chart is stacked or not.
         this.stackedSelector = new BinarySelector(
             this.panel,
@@ -40,7 +49,7 @@ export default class LineChart extends TimeChart {
             false
         );
         this.stackedSelector.extendedCallbacks.push(() => this.optionsCallback());
-        super.initOptions();
+        super.initOptions(defaultXGrouping, defaultYGrouping);
     }
 
     // bind Chart specific options to Timechart Options

@@ -143,6 +143,11 @@ abstract class Grouping {
     public numTraces() {
         return this.aggregatePairs().size;
     }
+
+    public getChartTitle(): string {
+        return `${this.getXRate()} ${this.getYName()} Counts`;
+    }
+
     // Returns chart data and layout for plotly
     public getChart(
         additionalTracesConfig: Array<{ [key: string]: unknown }>,
@@ -177,7 +182,6 @@ abstract class Grouping {
                         size: 12
                     }
                 },
-                title: `${this.getXRate()} ${this.getYName()} Counts`,
                 ...additionalLayoutConfig
             }
         };
