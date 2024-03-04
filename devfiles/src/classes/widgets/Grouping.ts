@@ -172,7 +172,10 @@ abstract class Grouping {
                     title: this.getYLabel()
                 },
                 legend: {
-                    visible: true
+                    visible: true,
+                    font: {
+                        size: 12
+                    }
                 },
                 title: `${this.getXRate()} ${this.getYName()} Counts`,
                 ...additionalLayoutConfig
