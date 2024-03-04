@@ -9,6 +9,8 @@ import PositionMeta from '../queryMeta/PositionMeta';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 export default class Geographic extends InputOption {
+    private feedbackOnChanged: boolean;
+
     private globalLatDiameter = 0;
     private globalLonDiameter = 0;
 
@@ -17,8 +19,14 @@ export default class Geographic extends InputOption {
     private minLon = -Infinity;
     private maxLon = Infinity;
 
-    public constructor(panel: Panel, name: string, template: Geographic = undefined) {
+    public constructor(
+        panel: Panel,
+        name: string,
+        template: Geographic = undefined,
+        feedbackOnChanged: boolean = false
+    ) {
         super(panel, name);
+        this.feedbackOnChanged = feedbackOnChanged;
 
         //map zoom settings
         this.globalLatDiameter = this.posMeta().globalMax[0] - this.posMeta().globalMin[0];
@@ -110,13 +118,12 @@ export default class Geographic extends InputOption {
                         Map failed to refresh. Click Select All twice to force the map to refresh
                     </div>
                 </OverlayTrigger>
-            </>,
-            false
+            </>
         );
     }
 
     protected checkDefault(): boolean {
-        return this.minLat === -Infinity;
+        return this.minLat === -Infinity && this.maxLat === Infinity;
     }
 
     /**
@@ -216,6 +223,8 @@ export default class Geographic extends InputOption {
 
         //Ask the panel to re-calculate its filters
         this.panel.recalculateFilters(this);
+
+        this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
 
         //Refresh to update the associated widget/panel
         //Potential to optimise here

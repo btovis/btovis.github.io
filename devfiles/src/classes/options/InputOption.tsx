@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 export default abstract class InputOption {
     //Needs to be individually defined in each option's callback function.
     protected accordionOpen: boolean = false;
+    protected titleItalics: boolean = false;
     public extendedCallbacks: ((any) => void)[] = [];
     public readonly uuid: number;
     public readonly name: string;
@@ -19,7 +20,7 @@ export default abstract class InputOption {
     public abstract query(): Query | { compound: boolean; queries: Query[] };
     public abstract render(): JSX.Element;
     public abstract callback(newValue);
-    public generateAccordion(body: JSX.Element, updateOnExit: boolean = true): JSX.Element {
+    public generateAccordion(body: JSX.Element): JSX.Element {
         return (
             <Accordion
                 onSelect={(eventKey) => {
@@ -32,20 +33,15 @@ export default abstract class InputOption {
                     <Accordion.Header key={this.uuid.toString() + '-header'}>
                         <span
                             style={{
-                                fontSize: 'larger'
+                                fontSize: 'larger',
+                                fontStyle: this.titleItalics ? 'italic' : ''
                             }}
                             id={this.uuid.toString() + 'title'}
                         >
                             {this.name}
                         </span>
                     </Accordion.Header>
-                    <Accordion.Body
-                        onBlur={() => {
-                            if (updateOnExit) this.panel.refreshWidgets();
-                        }}
-                    >
-                        {body}
-                    </Accordion.Body>
+                    <Accordion.Body>{body}</Accordion.Body>
                 </Accordion.Item>
             </Accordion>
         );

@@ -6,6 +6,8 @@ import RangeQuery from '../query/RangeQuery';
 import { Attribute } from '../data/Data';
 
 export default class NumericInput extends InputOption {
+    private feedbackOnChanged: boolean;
+
     private value: number;
     private bouncyValue: number;
     private timer: NodeJS.Timeout;
@@ -20,10 +22,12 @@ export default class NumericInput extends InputOption {
         max: number,
         step: number,
         startingValue: number,
-        template?: NumericInput
+        template?: NumericInput,
+        feedbackOnChanged: boolean = false
     ) {
         super(panel, name);
         this.value = startingValue; //let template override it
+        this.feedbackOnChanged = feedbackOnChanged;
         this.min = min;
         this.max = max;
         this.step = step;
@@ -94,8 +98,9 @@ export default class NumericInput extends InputOption {
 
     public callback(newValue: number): void {
         this.value = newValue;
-        // this.panel.refreshComponent();
+        this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
         this.panel.recalculateFilters(this);
+        this.panel.refreshWidgets();
         //Refresh this inputoption
         this.refreshComponent();
     }

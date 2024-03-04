@@ -15,6 +15,7 @@ import {
 import SetQueryArrayReject from '../query/SetQueryArrayReject';
 
 export default class SpeciesSelector extends InputOption {
+    private feedbackOnChanged: boolean;
     //Internal state unique to every option class.
     //Use this to store current selections
     protected searchState: string = '';
@@ -37,9 +38,12 @@ export default class SpeciesSelector extends InputOption {
         panel: Panel,
         name: string,
         deselectNone: boolean,
-        template: SpeciesSelector = undefined
+        template: SpeciesSelector = undefined,
+        feedbackOnChanged: boolean = false
     ) {
         super(panel, name);
+        this.feedbackOnChanged = feedbackOnChanged;
+
         this.speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
 
         //Used by the default panel to filter [none] by default
@@ -233,8 +237,7 @@ export default class SpeciesSelector extends InputOption {
                         </div>
                     ))}
                 </div>
-            </>,
-            false
+            </>
         );
     }
 
@@ -431,6 +434,7 @@ export default class SpeciesSelector extends InputOption {
         if (newValue.checked) newValue.item.forEach((elem) => this.unselected.delete(elem));
         else newValue.item.forEach((elem) => this.unselected.add(elem));
 
+        this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
         //Half a second debounce
         this.debouncerTimer = setTimeout(() => {
             //Ask the panel to re-calculate its filters
