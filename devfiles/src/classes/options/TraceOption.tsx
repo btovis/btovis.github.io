@@ -6,12 +6,14 @@ export default abstract class TraceOption extends InputOption {
     // States that TraceOptions hold
     // Number of Traces
     public numTraces: number;
+    public text = [];
     // Attribute each trace holds, careful the any type
     public traceValList: Array<any>;
     public traceTypeName: string;
 
     public constructor(
         panel: Panel,
+        traceNames: string[],
         name: string,
         numTraces: number,
         traceTypeName: string,
@@ -19,6 +21,7 @@ export default abstract class TraceOption extends InputOption {
     ) {
         super(panel, name);
         this.numTraces = numTraces;
+        this.text = traceNames;
         this.accordionOpen = false;
         this.traceTypeName = traceTypeName;
         if (template != undefined) {
