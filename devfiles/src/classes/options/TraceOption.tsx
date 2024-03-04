@@ -1,13 +1,11 @@
 import Panel from '../Panel';
 import { Query } from '../query/Query';
-import TimeChart from '../widgets/TimeChart';
 import InputOption from './InputOption';
 
 export default abstract class TraceOption extends InputOption {
     // States that TraceOptions hold
     // Number of Traces
     public numTraces: number;
-    public widget: TimeChart;
     public text = [];
     // Attribute each trace holds, careful the any type
     public traceValList: Array<any>;
