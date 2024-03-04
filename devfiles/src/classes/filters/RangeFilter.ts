@@ -13,16 +13,6 @@ export default class RangeFilter implements Filter {
         this.updatePred(low, high);
     }
 
-    public update(low, high) {
-        if (low) {
-            this.l = low;
-        }
-        if (high) {
-            this.h = high;
-        }
-        this.updatePred(this.l, this.h);
-    }
-
     private updatePred(l, h) {
         if (l == -Infinity && h == +Infinity) {
             this.pred[0] = PredicateType.Transparent;
