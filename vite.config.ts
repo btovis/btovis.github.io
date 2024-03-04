@@ -9,7 +9,7 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 // relative path is from src
-                { from: './assets/favicon.ico', to: './' }
+                { src: './assets/favicon.ico', dest: './' }
             ]
         })
     ],
