@@ -8,11 +8,18 @@ import SwappableRangeQuery from '../query/SwappableRangeQuery';
 import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
+    private feedbackOnChanged: boolean;
     public fromTime: Dayjs;
     public toTime: Dayjs;
 
-    public constructor(panel: Panel, name: string, template?: TimeRange) {
+    public constructor(
+        panel: Panel,
+        name: string,
+        template?: TimeRange,
+        feedbackOnChanged: boolean = false
+    ) {
         super(panel, name);
+        this.feedbackOnChanged = feedbackOnChanged;
 
         //Copy the current state from the old template
         if (template === undefined) {
@@ -73,6 +80,8 @@ export default class TimeRange extends InputOption {
         } else {
             this.toTime = newValue.time;
         }
+        this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
+
         this.panel.recalculateFilters(this);
         //Refresh to update the associated panel and its widgets
         this.panel.refreshComponent();

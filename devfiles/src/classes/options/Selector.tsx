@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import SetQueryArrayReject from '../query/SetQueryArrayReject';
 
 export default class Selector extends InputOption {
+    private feedbackOnChanged: boolean;
     //Internal state unique to every option class.
     //Use this to store current selections
     public choices: Set<string>;
@@ -29,9 +30,11 @@ export default class Selector extends InputOption {
         choices: string[] | number,
         allSelected: boolean = true,
         defaults?: string[],
-        template: Selector = undefined
+        template: Selector = undefined,
+        feedbackOnChanged: boolean = false
     ) {
         super(panel, name);
+        this.feedbackOnChanged = feedbackOnChanged;
         //If a column index is provided, set choices to the unique column values
         if (typeof choices === 'number') {
             this.columnIndex = choices;
@@ -190,6 +193,8 @@ export default class Selector extends InputOption {
         else {
             this.excluded = new Set<string>(newValue as string[]);
         }
+
+        this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
         //Ask the panel to re-calculate its filters ONLY if the
         //column index is defined. Some selectors do not use
         //columns (i.e. tablewidget)

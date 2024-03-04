@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 export default abstract class InputOption {
     //Needs to be individually defined in each option's callback function.
     protected accordionOpen: boolean = false;
+    protected titleItalics: boolean = false;
     public extendedCallbacks: ((any) => void)[] = [];
     public readonly uuid: number;
     public readonly name: string;
@@ -32,7 +33,8 @@ export default abstract class InputOption {
                     <Accordion.Header key={this.uuid.toString() + '-header'}>
                         <span
                             style={{
-                                fontSize: 'larger'
+                                fontSize: 'larger',
+                                fontStyle: this.titleItalics ? 'italic' : ''
                             }}
                             id={this.uuid.toString() + 'title'}
                         >
