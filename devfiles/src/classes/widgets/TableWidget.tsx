@@ -50,7 +50,12 @@ export default class TableWidget extends Widget {
             'Table Columns',
             panel.dataFilterer.getColumns(),
             false,
-            [Attribute.speciesEnglishName, Attribute.warnings]
+            [
+                Attribute.speciesLatinName,
+                Attribute.speciesEnglishName,
+                Attribute.speciesGroup,
+                Attribute.warnings
+            ]
         );
         //This refreshes the widget everytime the selector is called.
         this.selectorOption.extendedCallbacks.push(() => this.onSelectorChange());

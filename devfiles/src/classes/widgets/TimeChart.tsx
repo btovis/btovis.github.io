@@ -48,8 +48,9 @@ export default abstract class TimeChart extends Widget {
     // Subclasses implement these methods for specific chart types.
     public abstract chartSpecificLayout(numTraces: number): Array<{ [key: string]: unknown }>;
     public abstract chartType(): string;
-    public abstract timeRangeGroupings();
+    public abstract timeRangeGroupings(): any;
     public abstract generateChartSpecificOptions(numTraces: number): void;
+    public abstract updateChartSpecificOptions(numTraces: number): void;
     public abstract bindOptions(): void;
 
     // Initialize grouping
@@ -57,9 +58,10 @@ export default abstract class TimeChart extends Widget {
 
     private fullscreenModalShown: boolean = false;
 
-    public constructor(panel: Panel) {
+    public constructor(panel: Panel, defaultXGrouping?: string, defaultYGrouping?: YGrouping) {
         super(panel);
-        this.initOptions();
+        this.initOptions(defaultXGrouping, defaultYGrouping);
+        this.name = this.grouping.getChartTitle();
     }
 
     // Initialize & Update the 'grouping' field of Timechart
@@ -72,13 +74,17 @@ export default abstract class TimeChart extends Widget {
         // Change Value for 'grouping'
         this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
     }
-    public async initOptions(): Promise<void> {
+    public async initOptions(
+        defaultXGrouping?: string,
+        defaultYGrouping: YGrouping = YGrouping.Species
+    ): Promise<void> {
         // The filtering is slow so this is made async to reduce user wait time.
         const filter = this.panel.dataFilterer;
+
         const groupings = this.timeRangeGroupings()
             .filter((grouping) => {
                 // Manually filter groupings of x axis to prevent too many x values.
-                const groupingInstance = new grouping(filter, YGrouping.Species);
+                const groupingInstance = new grouping(filter, defaultYGrouping);
                 const [data, length] = filter.getData();
                 const xValues = new Set();
                 for (let i = 0; i < length; i++) {
@@ -91,18 +97,20 @@ export default abstract class TimeChart extends Widget {
                 }
                 return true;
             })
-            .map((grouping: typeof Grouping) => grouping.name);
+            .map((grouping) => grouping.name);
         // Mutex selector for time (or property) grouping along the x axis.
         this.xAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
             `Time Grouping for ${this.chartType()} Widget`,
-            groupings
+            groupings,
+            defaultXGrouping
         );
         // Mutex selector for grouping along the y axis (species, species group, etc).
         this.yAxisSelector = new MutuallyExclusiveSelector(
             this.panel,
             `Count Grouping for ${this.chartType()} Widget`,
-            Object.values(YGrouping)
+            Object.values(YGrouping),
+            defaultYGrouping
         );
 
         // Refresh widgets when options are changed. Also update Trace related Options and reflect on sidebar.
@@ -161,9 +169,13 @@ export default abstract class TimeChart extends Widget {
             this.chartSpecificLayout(this.grouping.numTraces()),
             plotLayout
         );
+
+        // Set widget title to the chart title
+        this.name = this.grouping.getChartTitle();
+
         const plotConfig = {
             modeBarButtonsToRemove: TimeChart.buttonsToRemove,
-            editable: true,
+            editable: false,
             staticplot: true,
             displaylogo: false
         };

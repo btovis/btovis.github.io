@@ -15,6 +15,10 @@ import SpeciesSelector from './options/SpeciesSelector';
 import TimeOfDayRange from './options/TimeOfDayRange';
 import { Query } from './query/Query';
 import TimeChart from './widgets/TimeChart.tsx';
+import LineChart from './widgets/LineChart.tsx';
+import TableWidget from './widgets/TableWidget.tsx';
+import MapWidget from './widgets/MapWidget.tsx';
+import { YGrouping } from './widgets/Grouping.ts';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -41,32 +45,40 @@ export default class Panel {
     public dataFilterer: DataFilterer;
     public readonly uuid: number;
     public minHeight: number;
-    public lifetimeWidgetCount: number;
+    public lifetimeWidgetCount: Map<string, number> = new Map();
 
-    public constructor(pageManager: PageManager) {
+    public constructor(pageManager: PageManager, isDefaultPanel: boolean = false) {
         this.uuid = uuidv4();
         this.pageManager = pageManager;
         this.dataFilterer = new DataFilterer(pageManager.getData());
-        this.lifetimeWidgetCount = 0;
 
-        //Initialise panel filter inputoptions
-        this.nameInput = new PanelNameInput(
-            this,
-            'Panel Name',
-            'Panel ' + (this.pageManager.getLifetimePanelsCreated() + 1)
-        );
-        this.updateInputOptions();
+        let newName = isDefaultPanel
+            ? 'Default Panel'
+            : 'Panel ' + (this.pageManager.getLifetimePanelsCreated() + 1);
 
-        this.widgets = [];
-        this.addWidget(new BarChart(this));
+        this.nameInput = new PanelNameInput(this, 'Panel Name', newName);
+
+        //This boolean only needs to be passed at the start. Later iterations will
+        //take the current values from the current option
+        this.updateInputOptions(isDefaultPanel);
         this.minHeight = 400; // panel body minimum height
+
+        //Initialise widgets only after filters were initiated with default options
+        if (isDefaultPanel) {
+            //Default Filters are handled in updateInputOptions
+            newName = 'Default Panel';
+            this.addWidget(new BarChart(this, 'Month', YGrouping.VulnerabilityStatus));
+            this.addWidget(new LineChart(this, 'Date', YGrouping.SpeciesGroup));
+            this.addWidget(new TableWidget(this));
+            this.addWidget(new MapWidget(this));
+        }
     }
 
     public getName(): string {
         return this.nameInput.value();
     }
 
-    private updateInputOptions(): void {
+    private updateInputOptions(isDefaultPanel: boolean = false): void {
         this.fileSelector = new Selector(
             this,
             'Active Files',
@@ -84,9 +96,19 @@ export default class Panel {
             0,
             1,
             0.01,
+            isDefaultPanel ? 0.5 : 0,
             this.minimumProbability
         );
-        this.speciesSelector = new SpeciesSelector(this, 'Species', this.speciesSelector);
+        if (isDefaultPanel) this.recalculateFilters(this.minimumProbability);
+
+        this.speciesSelector = new SpeciesSelector(
+            this,
+            'Species',
+            isDefaultPanel,
+            this.speciesSelector
+        );
+        if (isDefaultPanel) this.recalculateFilters(this.speciesSelector);
+
         this.warningsSelector = new Selector(
             this,
             'Warnings',
@@ -221,7 +243,12 @@ export default class Panel {
 
     public addWidget(widget: Widget): void {
         this.widgets.push(widget);
-        this.lifetimeWidgetCount++;
+        this.lifetimeWidgetCount.set(
+            widget.constructor.name,
+            this.lifetimeWidgetCount.has(widget.constructor.name)
+                ? this.lifetimeWidgetCount.get(widget.constructor.name) + 1
+                : 1
+        );
     }
 
     public removeWidget(widgetIdx: number) {
@@ -247,7 +274,9 @@ export default class Panel {
         return this.widgets[widgetIdx];
     }
 
-    public getLifetimeWidgetsCreated(): number {
-        return this.lifetimeWidgetCount;
+    public getLifetimeWidgetsCreated(widgetClassName: string): number {
+        return this.lifetimeWidgetCount.has(widgetClassName)
+            ? this.lifetimeWidgetCount.get(widgetClassName)
+            : 0;
     }
 }

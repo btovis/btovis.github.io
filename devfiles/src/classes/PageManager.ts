@@ -4,6 +4,7 @@ import { Data } from './data/Data';
 import Widget from './widgets/Widget';
 
 export default class PageManager {
+    public hasMadeDefaultPanel = false;
     private static instance: PageManager;
     public static get(): PageManager {
         if (PageManager.instance == null) PageManager.instance = new PageManager();

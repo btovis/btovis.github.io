@@ -30,16 +30,27 @@ export default class SpeciesSelector extends InputOption {
     /**
      * @param panel The associated panel
      * @param name Name of the Selector option
-     * @param choices If this is a number, it will be the column index of the thing
-     * to be sorted, and this.choices will populate automatically.
-     * @param allSelected If this is true (default is true), everything will be selected
-     * @param defaults If allSelected is false, the default selected items will be this.
+     * @param defaults If allSelected is false, the default UNselected items will be this.
      * @param template This is the template Selector to "copy" selected options from.
      */
-    public constructor(panel: Panel, name: string, template: SpeciesSelector = undefined) {
+    public constructor(
+        panel: Panel,
+        name: string,
+        deselectNone: boolean,
+        template: SpeciesSelector = undefined
+    ) {
         super(panel, name);
         this.speciesMeta = this.panel.dataFilterer.getDataStats().getSpeciesMeta();
 
+        //Used by the default panel to filter [none] by default
+        if (deselectNone) {
+            const latinNameRefSet =
+                panel.pageManager.getData().sets[
+                    panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName)
+                ];
+            if (latinNameRefSet.hasRaw('[none]'))
+                this.unselected.add(latinNameRefSet.getRef('[none]'));
+        }
         //Copy values to enforce changes
         //These must be saved to easily compare new rows
         this.choices = new Set([

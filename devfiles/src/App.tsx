@@ -75,9 +75,10 @@ function App() {
             setSuccessVisible(rejected.length <= 0);
             setWarningVisible(rejected.length > 0);
 
-            //If there's no panel after a successful upload, make one
-            if (pageManager.data.sets[0].size() > 0 && pageManager.panels.length === 0) {
-                pageManager.addPanel(new Panel(pageManager));
+            //If there was no default panel before, add one
+            if (pageManager.data.sets[0].size() > 0 && !pageManager.hasMadeDefaultPanel) {
+                pageManager.addPanel(new Panel(pageManager, true));
+                pageManager.hasMadeDefaultPanel = true;
                 pageManager.refreshEverything();
             }
         });

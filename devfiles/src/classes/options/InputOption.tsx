@@ -10,7 +10,7 @@ export default abstract class InputOption {
     public readonly uuid: number;
     public readonly name: string;
     protected readonly panel: Panel;
-    public refreshComponent: () => void;
+    public refreshComponent: () => void = () => {};
     public constructor(panel: Panel, name: string) {
         this.uuid = uuidv4();
         this.panel = panel;

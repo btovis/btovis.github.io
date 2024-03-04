@@ -19,10 +19,11 @@ export default class NumericInput extends InputOption {
         min: number,
         max: number,
         step: number,
+        startingValue: number,
         template?: NumericInput
     ) {
         super(panel, name);
-        this.value = 0; //default
+        this.value = startingValue; //let template override it
         this.min = min;
         this.max = max;
         this.step = step;
