@@ -19,4 +19,6 @@ function WidgetComp(params: {
     return params.widgetClass.render();
 }
 
-export default React.memo(WidgetComp);
+const WidgetMemo = React.memo(WidgetComp);
+
+export default WidgetMemo;
