@@ -329,7 +329,7 @@ a:hover {
 .fullscreen-widget {
     position: relative;
     float: left;
-    padding: 3px;
+    margin: 10px;
     width: 1.5em;
     height: 1.5em;
 }
@@ -417,10 +417,7 @@ a:hover {
 .close-widget {
     position: relative;
     float: right;
-}
-
-.lr-button {
-    margin: 5px;
+    margin: 10px;
 }
 
 * {

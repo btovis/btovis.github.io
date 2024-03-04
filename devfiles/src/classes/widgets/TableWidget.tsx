@@ -1,3 +1,4 @@
+import * as Icon from 'react-bootstrap-icons';
 import Widget from './Widget.js';
 import Sidebar from '../Sidebar.js';
 import Selector from '../options/Selector.js';
@@ -222,7 +223,7 @@ export default class TableWidget extends Widget {
                     <br />
                     {/* PgLeft Button */}
                     <button
-                        className='btn btn-primary lr-button'
+                        className='btn btn-secondary p-0 mx-3'
                         disabled={this.searchState.trim() !== '' || this.pageState <= 0}
                         onClick={() => {
                             if (this.pageState === 0) return;
@@ -230,7 +231,7 @@ export default class TableWidget extends Widget {
                             this.refresh();
                         }}
                     >
-                        ◁
+                        <Icon.ArrowLeftShort size={30}></Icon.ArrowLeftShort>
                     </button>
                     {/* Current page */}
                     <span>
@@ -243,7 +244,7 @@ export default class TableWidget extends Widget {
                     </span>
                     {/* PgRight Button */}
                     <button
-                        className='btn btn-primary lr-button'
+                        className='btn btn-secondary p-0 mx-3'
                         disabled={
                             this.searchState.trim() !== '' ||
                             (this.pageState + 1) * rowCountPerPage >= this.tableEntries.length
@@ -255,7 +256,7 @@ export default class TableWidget extends Widget {
                             this.refresh();
                         }}
                     >
-                        ▷
+                        <Icon.ArrowRightShort size={30}></Icon.ArrowRightShort>
                     </button>
                     {/* Search Bar */}
                     {this.tableEntries.length >= this.searchMax ? (
