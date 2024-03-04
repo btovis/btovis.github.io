@@ -377,6 +377,7 @@ export default class SpeciesSelector extends InputOption {
                             .value.toLowerCase()
                             .startsWith(this.searchState.toLowerCase().split('/')[0]))
                 }
+                className='pb-1'
             >
                 <input
                     onChange={(event) =>

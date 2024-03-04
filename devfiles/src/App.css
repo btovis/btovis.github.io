@@ -5,31 +5,13 @@
     --element-hover: #d6d6d6;
     --text-color: black;
     --file-box-color: #eeeeee;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
-
-    color-scheme: light;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
 }
 
 input[type='number']::-webkit-inner-spin-button,
@@ -65,10 +47,6 @@ input[type='number'] {
     color: var(--text-color);
 }
 
-.sidebar strong {
-    color: #052c65;
-}
-
 .sidebar strong query-active {
     color: orange;
 }
@@ -98,6 +76,11 @@ input[type='number'] {
     --bs-accordion-border-radius: 0;
     --bs-accordion-inner-border-radius: 0;
     --bs-accordion-padding-x: 5;
+}
+
+.accordion-button {
+    color: var(--text-color) !important;
+    background-color: var(--element-bg) !important;
 }
 
 .selectorLabel {
@@ -164,7 +147,7 @@ input[type='number'] {
 }
 
 .panel {
-    border: none;
+    border: solid 1px var(--element-hover);
     border-radius: 10px;
     margin: auto;
     width: 90%;
@@ -172,12 +155,7 @@ input[type='number'] {
     margin-bottom: 16px;
 }
 .panel:hover {
-    box-shadow: 1px 1px 3px 5px lightgray;
-}
-
-.panelactive {
-    border: solid;
-    border-color: rgb(134, 201, 219);
+    box-shadow: 1px 1px 3px 5px var(--bs-light);
 }
 
 .panel-header .title {
@@ -196,7 +174,6 @@ input[type='number'] {
     padding: 20px;
     display: grid;
     align-items: center;
-    border-style: dotted;
     background-color: var(--file-box-color);
 }
 
@@ -208,7 +185,6 @@ input[type='number'] {
     height: 98%;
     left: 1%;
     top: 1%;
-    border-style: dotted;
     pointer-events: none;
     background-color: #eeeeee;
     opacity: 0;
@@ -225,7 +201,6 @@ input[type='number'] {
     height: 98%;
     left: 1%;
     top: 1%;
-    border-style: dotted;
     background-color: #aaff82;
     font-weight: bold;
     z-index: 1000000;
@@ -241,9 +216,7 @@ input[type='number'] {
     height: 98%;
     left: 1%;
     top: 1%;
-    border-style: dotted;
-    background-color: #ff9999;
-    color: rgb(47, 1, 1);
+    background-color: var(--bs-warning);
     z-index: 1000000;
 }
 
@@ -273,7 +246,7 @@ span {
 }
 
 .show-widget-icons {
-    background-color: white;
+    background-color: var(--bs-white);
     color: var(--element-bg);
     height: 50px;
     width: 50px;
@@ -285,7 +258,7 @@ span {
 .widget-icon {
     border-radius: 50%;
     background-color: var(--element-bg);
-    color: white;
+    color: var(--bs-white);
     height: 50px;
     width: 50px;
     position: relative;
@@ -293,7 +266,7 @@ span {
 }
 .widget-icon-inner {
     background-color: var(--element-bg);
-    color: white;
+    color: var(--bs-white);
     height: 35px;
     width: 35px;
     position: relative;
@@ -308,8 +281,8 @@ span {
 .widget-icon .tool-tip {
     visibility: hidden;
     width: 120px;
-    background-color: black;
-    color: #fff;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
@@ -338,32 +311,6 @@ a:hover {
 .show-widget-icons:hover .tool-tip {
     visibility: visible;
 }
-.widget {
-    width: fit-content;
-    margin: auto;
-    margin-top: 25px;
-    margin-bottom: 25px;
-    border: solid;
-    overflow: auto;
-    border-color: rgba(0, 0, 0, 0);
-    border-radius: 10px;
-}
-
-.widget:hover {
-    border-color: lightgray;
-}
-
-.widget-row {
-    height: 85%;
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em;
-    align-items: center;
-    justify-content: center;
-    overflow: auto;
-    transition: scrollTop 1s;
-}
 
 .add-widget-btns {
     display: inline-grid;
@@ -386,14 +333,6 @@ a:hover {
     width: 1.5em;
     height: 1.5em;
 }
-
-.delete-btn {
-    border-width: medium;
-    border-color: #d00000;
-    background-color: #f33333;
-    color: white;
-}
-
 .add-panel-button {
     margin-top: 16px;
     margin-bottom: 16px;
@@ -434,18 +373,33 @@ a:hover {
     margin-top: 25px;
     margin-bottom: 25px;
     border: solid;
-    border-color: rgba(0, 0, 0, 0);
-    border-radius: 10px;
+    width: fit-content;
+    overflow: auto;
+    border-radius: 5px;
+    border-color: var(--element-hover) !important;
+    border-width: 1px !important;
 }
+
+.panelactive,
 .widgetactive {
-    border-color: rgb(134, 201, 219, 1);
+    border-width: 3px !important;
 }
 
 .widget:hover {
-    box-shadow: 1px 1px 3px 5px lightgray;
+    box-shadow: 1px 1px 2px 3px lightgray;
 }
 
 .widget-row {
+    height: 85%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    transition: scrollTop 1s;
+
     height: 90%;
     width: 100%;
     overflow-y: scroll;
@@ -488,10 +442,7 @@ button {
     cursor: pointer;
     transition: border-color 0.25s;
 }
-button:hover {
-    border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
+
+.nav-link {
+    color: var(--bs-nav-tabs-link-active-color) !important;
 }

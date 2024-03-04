@@ -43,7 +43,7 @@ function GlobalOptionsComp(params: {
                 />
                 <button
                     type='button'
-                    className='btn btn-secondary'
+                    className='btn btn-primary'
                     onClick={() => fileInputRef.current.click()}
                 >
                     Browse Files
@@ -53,7 +53,7 @@ function GlobalOptionsComp(params: {
             <Button
                 style={{ float: 'left', margin: '5px' }}
                 type='button'
-                className='btn btn-secondary btm-sm'
+                className='btn btn-secondary btm-sm my-3'
                 onClick={() => {
                     window.open('/src/assets/license.txt', '_blank').focus();
                 }}
