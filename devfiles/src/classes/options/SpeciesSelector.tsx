@@ -439,17 +439,20 @@ export default class SpeciesSelector extends InputOption {
      * @returns Query object to be applied by the panel in recalculateFilters(this)
      */
     public query(): { compound: boolean; queries: Query[] } | Query {
-        const latinIndex = this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName);
-        const groups = this.panel.dataFilterer.getColumnIndex(Attribute.speciesGroup);
-        const endangerment = this.panel.dataFilterer.getColumnIndex(Attribute.vulnerability);
-
-        return {
-            compound: true,
-            queries: [
-                new SetQueryArrayReject(latinIndex).query(this.unselected, true),
-                new SetQueryArrayReject(groups).query(this.unallowedGroups, true),
-                new SetQueryArrayReject(endangerment).query(this.unallowedEndangerment, false)
-            ]
-        };
+        return new SetQueryArrayReject(
+            this.panel.dataFilterer.getColumnIndex(Attribute.speciesLatinName)
+        ).query(
+            new Set(
+                [...this.choices].filter((latinName) => {
+                    //Filter group and endangerment
+                    return (
+                        this.unselected.has(latinName) ||
+                        this.unallowedGroups.has(this.speciesMeta.speciesGroup(latinName)) ||
+                        this.unallowedEndangerment.has(this.speciesMeta.endStatus(latinName))
+                    );
+                })
+            ),
+            true
+        );
     }
 }
