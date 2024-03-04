@@ -24,6 +24,22 @@ function integrateNewCSV(
     newDatabase,
     oldSets: ReferenceSet[]
 ) {
+    if (newDatabase.length + oldDatabase.length > 67000000 && oldDatabase.length <= 67000000) {
+        if (alert)
+            alert(
+                'The database is going to have more than 67M rows. This web app might not work. Continuing at your own risk'
+            );
+        // @ts-expect-error: check for chrome
+    } else if (
+        newDatabase.length + oldDatabase.length > 16000000 &&
+        oldDatabase.length <= 16000000 &&
+        window.chrome
+    ) {
+        if (alert)
+            alert(
+                'The database is going to have more than 16M rows. As of 2024, Chrome does not work well in this case. If you do notice that this application does not work, please consider using Safari or Firefox. Continuing at your own risk.'
+            );
+    }
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = newColumnList[i].toUpperCase();
     }
