@@ -2,7 +2,6 @@
 //import FileIdentifierManager from "../setutils/FileIdentifierManager";
 
 import { getSpeciesEndangerment } from '../../../utils/speciesVulnerability';
-import { Attribute } from '../Data';
 import ReferenceSet from '../setutils/ReferenceSet';
 import { processDates, processTimes } from './date';
 
@@ -285,9 +284,6 @@ function integrateNewCSV(
         getProcessorForColumn(n, oldSets[i], oldDBLen, i, oldDatabase)
     );
 
-    const timeCol = titleToColumnIndex.get(Attribute.time);
-    processTimes(oldDatabase, oldDBLen, timeCol);
-
     // Go back to original data, extend with "", process them
     if (oldDBLen != 0 && newDBLen != 0) {
         const oldRowLength = oldDatabase[0].length;
@@ -349,8 +345,7 @@ function getProcessorForColumn(
         case 'SURVEY DATE':
             return processDates(dataArr, startIndexForNewData, colI)[2];
         case 'TIME':
-            // 24H
-            return (x) => x;
+            return processTimes(dataArr, startIndexForNewData, colI)[2];
 
         case 'CLASSIFIER NAME':
             // Set

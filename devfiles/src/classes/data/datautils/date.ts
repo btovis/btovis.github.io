@@ -193,9 +193,9 @@ export function processTimes(
     dataArr,
     startI,
     columnI
-): [TimeSeparator | undefined, TimePrecision | undefined] {
+): [TimeSeparator | undefined, TimePrecision | undefined, (a) => string] {
     // pick a random cell
-    if (startI == dataArr.length) return undefined;
+    if (startI == dataArr.length) return [undefined, undefined, (a) => a];
     const random = startI + Math.floor((dataArr.length - startI) / 2);
     const example: string = dataArr[random][columnI];
     let sep: TimeSeparator, prec: TimePrecision | number;
@@ -209,9 +209,9 @@ export function processTimes(
                 break;
             default: // 4 or more:
                 // nothing after seconds is supported currently
-                return [undefined, undefined];
+                return [undefined, undefined, (a) => a];
         }
-        return [sep, prec];
+        return [sep, prec, (a) => a];
     } else {
         sep = TimeSeparator.NONE;
         let processor: (s) => string;
@@ -223,12 +223,8 @@ export function processTimes(
                 processor = (s) => s.slice(0, 2) + ':' + s.slice(2, 4) + ':' + s.slice(4);
                 break;
             default:
-                return [undefined, undefined];
+                return [undefined, undefined, (a) => a];
         }
-
-        const l = dataArr.length;
-        for (let i = startI; i < l; i++) {
-            dataArr[i][columnI] = processor(dataArr[i][columnI]);
-        }
+        return [sep, prec, processor];
     }
 }
