@@ -57,7 +57,7 @@ export default class BarChart extends TimeChart {
         this.colorOption.updateTraceNames(traceNames);
         this.bindOptions();
         this.refresh();
-        this.panel.pageManager.refreshPanelOptions();
+        this.options.forEach((op) => op.refreshComponent());
     }
 
     public updateChartSpecificOptions(numTraces: number) {
