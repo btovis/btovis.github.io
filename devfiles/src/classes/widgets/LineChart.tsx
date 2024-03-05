@@ -54,7 +54,12 @@ export default class LineChart extends TimeChart {
 
     // bind Chart specific options to Timechart Options
     public bindOptions(): void {
-        this.options = [this.xAxisSelector, this.yAxisSelector, this.stackedSelector];
+        this.options = [
+            this.xAxisSelector,
+            this.yAxisSelector,
+            this.stackedSelector,
+            this.colorOption
+        ];
     }
 
     // Update Trace Options for Linechart
