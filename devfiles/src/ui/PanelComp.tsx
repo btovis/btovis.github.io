@@ -116,14 +116,20 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
         if (params.pageManager.selectedPanel === -1) selectThisPanel();
     });
 
-    useEffect(() => {
-        if (snapDown <= 0 && widgetRowRef.current)
-            widgetRowRef.current.scrollTop = widgetRowRef.current.scrollHeight;
-    }, [snapDown]);
-
     function addwidget(widget) {
         panel.addWidget(new widget(panel));
-        setSnapDown(-Math.abs(snapDown) - 1);
+        refreshComponent();
+        //wait 1 ms before scrolling panel down, to give time for plotly plot
+        setTimeout(function () {
+            scrollPanelDown();
+        }, 1);
+    }
+
+    function scrollPanelDown() {
+        widgetRowRef.current.scrollTo({
+            top: widgetRowRef.current.scrollHeight,
+            behavior: 'smooth'
+        });
     }
 
     return (
@@ -149,7 +155,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                         <div
                                             className='show-widget-icons'
                                             onClick={() => {
-                                                setSnapDown(snapDown - 1);
+                                                scrollPanelDown();
                                             }}
                                         >
                                             <Icon.PlusCircle
