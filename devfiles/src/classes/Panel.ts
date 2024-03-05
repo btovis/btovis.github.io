@@ -19,7 +19,6 @@ import LineChart from './widgets/LineChart.tsx';
 import TableWidget from './widgets/TableWidget.tsx';
 import MapWidget from './widgets/MapWidget.tsx';
 import { YGrouping } from './widgets/Grouping.ts';
-import BinarySelector from './options/BinarySelector.tsx';
 
 export default class Panel {
     //TODO: Consider protecting with private
@@ -30,7 +29,6 @@ export default class Panel {
     public pageManager: PageManager;
 
     private readonly nameInput: PanelNameInput;
-    private automaticRefresh: BinarySelector;
     private fileSelector: Selector;
     private geographic: Geographic;
     private dateRange: DateRange;
@@ -58,7 +56,9 @@ export default class Panel {
             ? 'Default Panel'
             : 'Panel ' + (this.pageManager.getLifetimePanelsCreated() + 1);
 
-        this.nameInput = new PanelNameInput(this, 'Panel Name', newName);
+        this.nameInput = new PanelNameInput(this, 'Panel Name', newName, () =>
+            this.manualRefresh()
+        );
 
         //This boolean only needs to be passed at the start. Later iterations will
         //take the current values from the current option
@@ -89,13 +89,6 @@ export default class Panel {
             [],
             this.fileSelector,
             true
-        );
-        this.automaticRefresh = new BinarySelector(
-            this,
-            'Refresh Automatically',
-            'automatically',
-            true,
-            this.automaticRefresh
         );
         this.geographic = new Geographic(this, 'Location', this.geographic, true);
         this.dateRange = new DateRange(this, 'Date Range', this.dateRange, true);
@@ -194,7 +187,7 @@ export default class Panel {
             else queryArr.push(query as Query);
         }
 
-        const later = !this.automaticRefresh.isEverythingSelected();
+        const later = !this.nameInput.refreshAutomatically;
         queryArr.forEach((q, i, arr) =>
             this.dataFilterer.processQuery(q, i != arr.length - 1 || later)
         );
@@ -219,9 +212,17 @@ export default class Panel {
         this.refreshComponent();
         this.refreshWidgets(false);
     }
+
+    public manualRefresh() {
+        // this.updateInputOptions();
+        // this.pageManager.refreshPanelOptions();
+        this.refreshComponent();
+        this.refreshWidgets(false);
+    }
+
     // Refresh Widgets, Trace Related Options, and Sidebar
     public refreshWidgets(delayable: boolean = true): void {
-        if (delayable && !this.automaticRefresh.isEverythingSelected()) return;
+        if (delayable && !this.nameInput.refreshAutomatically) return;
         this.widgets.forEach((w) => {
             if (w instanceof TimeChart) w.updateGrouping();
         });
@@ -245,7 +246,6 @@ export default class Panel {
         //Panels need their own sidebar, as they hold filters.
         const baseSidebar = new Sidebar([
             this.nameInput, //Panel name. Identity filter
-            this.automaticRefresh,
             this.fileSelector,
             this.geographic, //Positional filter
             this.dateRange,
