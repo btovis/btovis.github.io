@@ -86,8 +86,6 @@ export default class TimeRange extends InputOption {
         //Refresh to update the associated panel and its widgets
         this.panel.refreshComponent();
         this.panel.refreshWidgets();
-        //Refresh this inputoption
-        this.refreshComponent();
     }
     public query(): Query {
         let fromTime: string | number = this.fromTime.format('HH:mm');

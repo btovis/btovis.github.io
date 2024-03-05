@@ -130,7 +130,7 @@ export default class SpeciesSelector extends InputOption {
                             });
                         }}
                         onClick={(event) => event.stopPropagation()}
-                        checked={this.isEverythingSelected()}
+                        defaultChecked={this.isEverythingSelected()}
                         className='form-check-input'
                         type='checkbox'
                     />
@@ -154,7 +154,7 @@ export default class SpeciesSelector extends InputOption {
                         //Refresh state
                         this.callback({ checked: false, item: new Set([]) });
                     }}
-                    checked={this.unallowedEndangerment.size == 0}
+                    defaultChecked={this.unallowedEndangerment.size == 0}
                     className='form-check-input'
                     type='checkbox'
                 />
@@ -173,7 +173,7 @@ export default class SpeciesSelector extends InputOption {
                         //Refresh state
                         this.callback({ checked: false, item: new Set([]) });
                     }}
-                    checked={this.unallowedGroups.size == 0}
+                    defaultChecked={this.unallowedGroups.size == 0}
                     className='form-check-input'
                     type='checkbox'
                 />
@@ -188,7 +188,6 @@ export default class SpeciesSelector extends InputOption {
                         placeholder='Search'
                         onChange={(event) => {
                             this.searchState = event.target.value;
-                            this.refreshComponent();
                         }}
                     />
                     <datalist id={this.uuid.toString() + '-search'}>
@@ -262,7 +261,7 @@ export default class SpeciesSelector extends InputOption {
                         id={uuidv4()}
                         type='checkbox'
                         variant={getEndangermentInfo(status).className.replace('btn-', 'outline-')}
-                        checked={!this.unallowedEndangerment.has(status)}
+                        defaultChecked={!this.unallowedEndangerment.has(status)}
                         value='1'
                         onChange={(event) => {
                             if (!event.currentTarget.checked)
@@ -292,7 +291,7 @@ export default class SpeciesSelector extends InputOption {
                     key={uuidv4()}
                     type='checkbox'
                     variant='outline-info'
-                    checked={!this.unallowedGroups.has(group)}
+                    defaultChecked={!this.unallowedGroups.has(group)}
                     value='1'
                     onChange={(event) => {
                         if (!event.currentTarget.checked) this.unallowedGroups.add(group);
@@ -331,7 +330,7 @@ export default class SpeciesSelector extends InputOption {
                         id='toggle-check'
                         type='checkbox'
                         variant='outline-info'
-                        checked={true}
+                        defaultChecked={true}
                         value='1'
                     >
                         {this.speciesMeta.speciesGroup(props.latinName).value}
@@ -386,7 +385,7 @@ export default class SpeciesSelector extends InputOption {
                         })
                     }
                     id={this.uuid.toString() + latinName.value}
-                    checked={!this.unselected.has(latinName)}
+                    defaultChecked={!this.unselected.has(latinName)}
                     className='form-check-input'
                     type='checkbox'
                 />
@@ -445,8 +444,6 @@ export default class SpeciesSelector extends InputOption {
             this.panel.refreshComponent();
             this.panel.refreshWidgets();
         }, 500);
-        //Refresh this inputoption
-        this.refreshComponent();
     }
 
     /**
