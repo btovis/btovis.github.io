@@ -220,6 +220,7 @@ export default class Panel {
         this.dataFilterer.recalculateFilteredData();
         this.refreshComponent();
         this.refreshWidgets(false);
+        this.nameInput.refreshComponent();
     }
 
     // Refresh Widgets, Trace Related Options, and Sidebar
