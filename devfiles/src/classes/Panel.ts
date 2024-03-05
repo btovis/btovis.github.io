@@ -182,7 +182,7 @@ export default class Panel {
             //Remove null guard once all the filters are implemented
             //we can just call changedOption.query.
             const query = option.query();
-            if (query == null) return;
+            if (query == null) continue;
             if ('compound' in query) queryArr.push(...(query.queries as Query[]));
             else queryArr.push(query as Query);
         }
@@ -216,6 +216,7 @@ export default class Panel {
     public manualRefresh() {
         // this.updateInputOptions();
         // this.pageManager.refreshPanelOptions();
+        this.dataFilterer.recalculateFilteredData();
         this.refreshComponent();
         this.refreshWidgets(false);
     }
