@@ -20,7 +20,7 @@ enum DateSeparator {
 // in our database, for "actual date", use 2024-01-30 etc.
 // assumes: these are int, positive, and in correct ranges
 function stringDate(y: string, m: string, d: string) {
-    return y + '-' + (m.length == 2 ? m : '0' + m) + '-' + (d.length == 2 ? d : '0' + d);
+    return y + '-' + m + '-' + d;
 }
 
 // Only call if there's date column in data
