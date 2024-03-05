@@ -300,10 +300,10 @@ function integrateNewCSV(
         const oldRowLength = oldDatabase[0].length;
         const newRowLength = oldDatabase[oldDBLen].length;
         if (newRowLength < oldRowLength) throw 'Internal error: new row shorter than old';
+        const append = [];
+        for (let x = oldRowLength; x < newRowLength; x++) append.push(newProcessors[x](''));
         for (let i = 0; i < oldDBLen; i++) {
-            const r = oldDatabase[i];
-            r.length = newRowLength;
-            for (let x = oldRowLength; x < newRowLength; x++) r[x] = newProcessors[x]('');
+            oldDatabase[i].push(...append);
         }
     }
 
@@ -386,8 +386,6 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
             return parseInt;
         case 'HIGH_HZ':
             return parseInt;
-        // For now:
-        // TODO: sets, infer american or british
         default:
             return (x) => x;
     }
