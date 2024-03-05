@@ -1,3 +1,4 @@
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Panel from '../Panel';
 import { Query } from '../query/Query';
 import InputOption from './InputOption';
@@ -38,22 +39,45 @@ export default class PanelNameInput extends InputOption {
                     filtered)
                 </span>
                 <br></br>
-                <input onClick={() => this.refresher()} type='button' />
-                <br></br>
-                <input
-                    onChange={(event) => {
-                        console.log(event.currentTarget.checked);
-                        this.refreshAutomatically = event.currentTarget.checked;
-                    }}
-                    defaultChecked={this.refreshAutomatically}
-                    className='form-check-input'
-                    type='checkbox'
-                    name={this.uuid.toString() + 'selector'}
-                    id='automatic-refresh'
-                />
-                <label className='form-check-label selectorLabel' htmlFor='automatic-refresh'>
-                    Refresh Automatically
-                </label>
+                <OverlayTrigger
+                    overlay={(props) => (
+                        <Tooltip {...props}>
+                            Advanced Option. Untick this when the file is very large. This lets you
+                            choose when to render the graphics, so not every filter change triggers
+                            a lag spike.
+                        </Tooltip>
+                    )}
+                >
+                    <div className='form-check'>
+                        <input
+                            onChange={(event) => {
+                                this.refreshAutomatically = event.currentTarget.checked;
+                                this.refreshComponent();
+                            }}
+                            defaultChecked={this.refreshAutomatically}
+                            className='form-check-input'
+                            type='checkbox'
+                            id={this.uuid + '-automatic-refresh'}
+                        />
+                        <label
+                            className='form-check-label selectorLabel'
+                            htmlFor={this.uuid + '-automatic-refresh'}
+                        >
+                            Refresh Automatically
+                        </label>
+                        {!this.refreshAutomatically ? (
+                            <button
+                                onClick={this.refresher}
+                                className='btn btn-danger'
+                                type='button'
+                            >
+                                Refresh
+                            </button>
+                        ) : (
+                            <></>
+                        )}
+                    </div>
+                </OverlayTrigger>
             </div>
         );
     }

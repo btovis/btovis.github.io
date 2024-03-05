@@ -70,7 +70,7 @@ export default class LineChart extends TimeChart {
         const traceNames = this.grouping.getPartialTraces().map((x) => x.name);
         this.colorOption.updateTraceNames(traceNames);
         this.bindOptions();
-        this.refresh();
+        //this.refresh(); Not needed. The callers tend to call refresh
         this.options.forEach((op) => op.refreshComponent());
     }
 

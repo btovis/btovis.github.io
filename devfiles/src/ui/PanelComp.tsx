@@ -9,7 +9,7 @@ import BarChart from '../classes/widgets/BarChart.js';
 import MapWidget from '../classes/widgets/MapWidget.js';
 import TableWidget from '../classes/widgets/TableWidget.js';
 import { Resizable } from 'react-resizable';
-import { CloseButton } from 'react-bootstrap';
+import { CloseButton, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import generateHash from '../utils/generateHash.js';
 import TimeChart from '../classes/widgets/TimeChart.js';
 
@@ -133,11 +133,39 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     }
 
     return (
-        <div className={highlighted ? 'panel panelactive' : 'panel'}>
+        <div
+            className={
+                (highlighted ? 'panel panelactive' : 'panel') +
+                (panel.needsManualRefresh ? ' panel-need-refresh' : '')
+            }
+        >
             <Accordion defaultActiveKey='0'>
                 <Accordion.Item eventKey='0' onClick={() => selectThisPanel()}>
                     <Accordion.Header className=''>
                         <h3 className='title'>{panel.getName()}</h3>
+                        {panel.needsManualRefresh ? (
+                            <OverlayTrigger
+                                overlay={(props) => (
+                                    <Tooltip {...props}>
+                                        Refresh this panel to apply the current filters.
+                                    </Tooltip>
+                                )}
+                            >
+                                <button
+                                    style={{ marginLeft: '10px' }}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        panel.manualRefresh();
+                                    }}
+                                    className='btn btn-danger'
+                                    type='button'
+                                >
+                                    Refresh
+                                </button>
+                            </OverlayTrigger>
+                        ) : (
+                            <></>
+                        )}
                     </Accordion.Header>
 
                     <Accordion.Body className='body p-0'>
