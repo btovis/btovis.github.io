@@ -9,6 +9,8 @@ import InputOption from './InputOption';
  */
 export default class PanelNameInput extends InputOption {
     private text: string;
+    public refreshAutomatically: boolean = true;
+    private refresher: () => void;
 
     //Row counts are here because this is easily available for refreshing in isolation
     public render(): JSX.Element {
@@ -35,13 +37,31 @@ export default class PanelNameInput extends InputOption {
                         this.panel.dataFilterer.getData()[1]}{' '}
                     filtered)
                 </span>
+                <br></br>
+                <input onClick={() => this.refresher()} type='button' />
+                <br></br>
+                <input
+                    onChange={(event) => {
+                        console.log(event.currentTarget.checked);
+                        this.refreshAutomatically = event.currentTarget.checked;
+                    }}
+                    defaultChecked={this.refreshAutomatically}
+                    className='form-check-input'
+                    type='checkbox'
+                    name={this.uuid.toString() + 'selector'}
+                    id='automatic-refresh'
+                />
+                <label className='form-check-label selectorLabel' htmlFor='automatic-refresh'>
+                    Refresh Automatically
+                </label>
             </div>
         );
     }
 
-    public constructor(panel: Panel, name: string, text) {
+    public constructor(panel: Panel, name: string, text, refresher: () => void) {
         super(panel, name);
         this.text = text;
+        this.refresher = refresher;
     }
 
     public callback(newValue): void {

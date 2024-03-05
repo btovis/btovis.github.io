@@ -88,7 +88,7 @@ export default class DataFilterer {
         this.recalculateFilteredData();
     }
 
-    private recalculateFilteredData() {
+    public recalculateFilteredData() {
         if (this.opaqueFilters.size) {
             this.filteredDataArrLen = 0;
             return;

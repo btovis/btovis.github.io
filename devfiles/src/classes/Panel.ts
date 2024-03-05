@@ -56,7 +56,9 @@ export default class Panel {
             ? 'Default Panel'
             : 'Panel ' + (this.pageManager.getLifetimePanelsCreated() + 1);
 
-        this.nameInput = new PanelNameInput(this, 'Panel Name', newName);
+        this.nameInput = new PanelNameInput(this, 'Panel Name', newName, () =>
+            this.manualRefresh()
+        );
 
         //This boolean only needs to be passed at the start. Later iterations will
         //take the current values from the current option
@@ -180,15 +182,18 @@ export default class Panel {
             //Remove null guard once all the filters are implemented
             //we can just call changedOption.query.
             const query = option.query();
-            if (query == null) return;
+            if (query == null) continue;
             if ('compound' in query) queryArr.push(...(query.queries as Query[]));
             else queryArr.push(query as Query);
         }
 
-        queryArr.forEach((q, i, arr) => this.dataFilterer.processQuery(q, i != arr.length - 1));
+        const later = !this.nameInput.refreshAutomatically;
+        queryArr.forEach((q, i, arr) =>
+            this.dataFilterer.processQuery(q, i != arr.length - 1 || later)
+        );
 
         //For the row/filtered count
-        this.nameInput.refreshComponent();
+        if (!later) this.nameInput.refreshComponent();
     }
 
     /**
@@ -205,10 +210,20 @@ export default class Panel {
 
         //Refresh after internal class state is updated
         this.refreshComponent();
-        this.refreshWidgets();
+        this.refreshWidgets(false);
     }
+
+    public manualRefresh() {
+        // this.updateInputOptions();
+        // this.pageManager.refreshPanelOptions();
+        this.dataFilterer.recalculateFilteredData();
+        this.refreshComponent();
+        this.refreshWidgets(false);
+    }
+
     // Refresh Widgets, Trace Related Options, and Sidebar
-    public refreshWidgets(): void {
+    public refreshWidgets(delayable: boolean = true): void {
+        if (delayable && !this.nameInput.refreshAutomatically) return;
         this.widgets.forEach((w) => {
             if (w instanceof TimeChart) w.updateGrouping();
         });

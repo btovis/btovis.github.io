@@ -2,7 +2,6 @@
 //import FileIdentifierManager from "../setutils/FileIdentifierManager";
 
 import { getSpeciesEndangerment } from '../../../utils/speciesVulnerability';
-import { Attribute } from '../Data';
 import ReferenceSet from '../setutils/ReferenceSet';
 import { processDates, processTimes } from './date';
 
@@ -24,6 +23,20 @@ function integrateNewCSV(
     newDatabase,
     oldSets: ReferenceSet[]
 ) {
+    if (newDatabase.length + oldDatabase.length > 67000000 && oldDatabase.length <= 67000000) {
+        if (alert)
+            alert('The database is going to have more than 67M rows. This web app might not work.');
+    } else if (
+        newDatabase.length + oldDatabase.length > 16000000 &&
+        oldDatabase.length <= 16000000 &&
+        // @ts-expect-error: check for chrome
+        window.chrome
+    ) {
+        if (alert)
+            alert(
+                'The database is going to have more than 16M rows. If you do notice that this application does not work, please consider using Safari or Firefox, which support larger sets up to 67M. Continuing at your own risk.'
+            );
+    }
     for (let i = 1; i < newColumnList.length; i++) {
         newColumnList[i] = newColumnList[i].toUpperCase();
     }
@@ -267,29 +280,19 @@ function integrateNewCSV(
     const newColumns = oldColumnList.slice(originalColumnCount);
     const newSets = newColumns.map((a) => (columnNeedsSet(a) ? new ReferenceSet() : undefined));
     oldSets.push(...newSets);
-    const newProcessors = oldColumnList.map((n, i) => getProcessorForColumn(n, oldSets[i]));
-
-    // handle time: get index of actual ...
-    // make processor, replace previous with it
-
-    const dateCol = titleToColumnIndex.get(Attribute.actualDate);
-    processDates(oldDatabase, oldDBLen, dateCol);
-
-    const surveyDateCol = titleToColumnIndex.get(Attribute.surveyDate);
-    processDates(oldDatabase, oldDBLen, surveyDateCol);
-
-    const timeCol = titleToColumnIndex.get(Attribute.time);
-    processTimes(oldDatabase, oldDBLen, timeCol);
+    const newProcessors = oldColumnList.map((n, i) =>
+        getProcessorForColumn(n, oldSets[i], oldDBLen, i, oldDatabase)
+    );
 
     // Go back to original data, extend with "", process them
     if (oldDBLen != 0 && newDBLen != 0) {
         const oldRowLength = oldDatabase[0].length;
         const newRowLength = oldDatabase[oldDBLen].length;
         if (newRowLength < oldRowLength) throw 'Internal error: new row shorter than old';
+        const append = [];
+        for (let x = oldRowLength; x < newRowLength; x++) append.push(newProcessors[x](''));
         for (let i = 0; i < oldDBLen; i++) {
-            const r = oldDatabase[i];
-            r.length = newRowLength;
-            for (let x = oldRowLength; x < newRowLength; x++) r[x] = newProcessors[x]('');
+            oldDatabase[i].push(...append);
         }
     }
 
@@ -302,7 +305,13 @@ function integrateNewCSV(
     }
 }
 
-function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string) => any*/ {
+function getProcessorForColumn(
+    columnName,
+    set: ReferenceSet,
+    startIndexForNewData,
+    colI,
+    dataArr
+) /*: (cell: string) => any*/ {
     // Make set manager for each row that wants a
 
     switch (columnName) {
@@ -333,14 +342,10 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
             return (a) => set.addRawOrGet(a);
 
         case 'ACTUAL DATE':
-            return (x) => x;
-
         case 'SURVEY DATE':
-            return (x) => x;
-
+            return processDates(dataArr, startIndexForNewData, colI)[2];
         case 'TIME':
-            // 24H
-            return (x) => x;
+            return processTimes(dataArr, startIndexForNewData, colI)[2];
 
         case 'CLASSIFIER NAME':
             // Set
@@ -372,8 +377,6 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
             return parseInt;
         case 'HIGH_HZ':
             return parseInt;
-        // For now:
-        // TODO: sets, infer american or british
         default:
             return (x) => x;
     }

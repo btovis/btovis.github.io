@@ -16,8 +16,6 @@ export default class SetFilter implements Filter {
     // more efficient to consider what to reject than to what to accept
     // whereas in "accept some" mode, check if equal to A, or B, or C, ... otherwise fails
 
-    // currently, a little inefficient but, even when allowSet is being used, keep e up to date
-
     public constructor(filterAwayThisSet: ReferenceSet, allVals: ReferenceSet) {
         this.excluded = filterAwayThisSet;
         this.entire = allVals;
@@ -51,13 +49,6 @@ export default class SetFilter implements Filter {
             this.pred[0] = PredicateType.CheckEveryItem;
             this.pred[1] = (c) => allow.has(c);
         }
-    }
-
-    // sets the "excludes set"
-    // as opposed to filterAway and accept, takes entire list
-    public setExcludesSet(e: ReferenceSet) {
-        this.excluded = e;
-        this.recalculateAll();
     }
 
     public getPredicate(): [PredicateType, undefined | ((a) => boolean)] | unknown[] {
