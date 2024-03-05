@@ -40,7 +40,7 @@ export default class BarChart extends TimeChart {
             this.colorOption = new ColorOption(
                 this.panel,
                 traceNames,
-                'BarGroup Colours',
+                'Bar Colours',
                 numTraces,
                 'Bar'
             );
