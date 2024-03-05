@@ -7,10 +7,6 @@ Install node (and npm)
 npm install
 ```
 
-## Test
-Write tests as `filename.test.jsx` (eg `App.tsx` -> `App.test.jsx`).  
-Run `npm run test` to run tests.
-Tests must pass before merging to `main`.
 
 ## Build
 
@@ -19,5 +15,9 @@ Run `npm run build` to build the project.
 
 ## Linting and Formatting
 
-These are checked and updated during committing. To manually check and update, run `npm run lint` and `npm run format`.  
-These are also checked during the CI/CD pipeline.
+To format, run `npm run format`. This will modify files in place.  
+To run the linter, run `npm run lint`. This will generate warnings and fail on errors.
+
+## Test
+Write tests as `filename.test.ts` (eg `App.tsx` -> `App.test.ts`).  
+Run `npm run test` to run tests and `npm run coverage` to generate a coverage report.
