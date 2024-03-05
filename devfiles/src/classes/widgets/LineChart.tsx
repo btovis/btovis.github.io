@@ -71,7 +71,7 @@ export default class LineChart extends TimeChart {
         this.colorOption.updateTraceNames(traceNames);
         this.bindOptions();
         this.refresh();
-        this.panel.pageManager.refreshPanelOptions();
+        this.options.forEach((op) => op.refreshComponent());
     }
 
     // Change internal states of object: widget specific options.

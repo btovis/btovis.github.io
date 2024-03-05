@@ -6,7 +6,7 @@ export default abstract class TraceOption extends InputOption {
     // States that TraceOptions hold
     // Number of Traces
     public numTraces: number;
-    public text = [];
+    public text: string[] = [];
     // Attribute each trace holds, careful the any type
     public traceValList: Array<any>;
     public traceTypeName: string;
@@ -38,7 +38,7 @@ export default abstract class TraceOption extends InputOption {
                 this.traceValList.push(this.traceValList[i % this.traceValList.length]);
             }
         }
-        if (this.refreshComponent != undefined) {
+        if (this.refreshComponent !== undefined) {
             this.refreshComponent();
         }
     }

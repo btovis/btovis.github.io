@@ -9,6 +9,7 @@ import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
     private feedbackOnChanged: boolean;
+    private debounceTimer;
     public fromTime: Dayjs;
     public toTime: Dayjs;
 
@@ -41,7 +42,7 @@ export default class TimeRange extends InputOption {
                             ampm={false}
                             label='From'
                             format='HH:mm'
-                            value={dayjs(this.fromTime, 'HH:mm')}
+                            defaultValue={dayjs(this.fromTime, 'HH:mm')}
                             onChange={(value) =>
                                 this.callback({
                                     which: 0,
@@ -55,7 +56,7 @@ export default class TimeRange extends InputOption {
                             ampm={false}
                             label='To'
                             format='HH:mm'
-                            value={dayjs(this.toTime, 'HH:mm')}
+                            defaultValue={dayjs(this.toTime, 'HH:mm')}
                             onChange={(value) =>
                                 this.callback({
                                     which: 1,
@@ -82,12 +83,14 @@ export default class TimeRange extends InputOption {
         }
         this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
 
-        this.panel.recalculateFilters(this);
-        //Refresh to update the associated panel and its widgets
-        this.panel.refreshComponent();
-        this.panel.refreshWidgets();
-        //Refresh this inputoption
-        this.refreshComponent();
+        if (this.debounceTimer) clearTimeout(this.debounceTimer);
+
+        this.debounceTimer = setTimeout(() => {
+            this.panel.recalculateFilters(this);
+            this.panel.refreshComponent();
+            this.panel.refreshWidgets();
+            this.refreshComponent(); //for Italics
+        }, 600);
     }
     public query(): Query {
         let fromTime: string | number = this.fromTime.format('HH:mm');
