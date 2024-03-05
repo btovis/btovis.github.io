@@ -9,7 +9,7 @@ import { Attribute } from '../data/Data';
 
 export default class TimeRange extends InputOption {
     private feedbackOnChanged: boolean;
-
+    private debounceTimer;
     private minDate: Dayjs;
     private maxDate: Dayjs;
     public fromDate: Dayjs;
@@ -57,29 +57,39 @@ export default class TimeRange extends InputOption {
                     <DatePicker
                         label='From'
                         format='YYYY/MM/DD'
-                        value={this.fromDate}
+                        defaultValue={this.fromDate}
                         minDate={this.minDate}
                         maxDate={this.toDate}
-                        onChange={(value) =>
-                            this.callback({
-                                which: 0,
-                                datetime: value
-                            })
-                        }
+                        onChange={(value) => {
+                            if (
+                                (this.minDate.isBefore(value) || this.minDate.isSame(value)) &&
+                                (this.maxDate.isAfter(value) || this.maxDate.isSame(value))
+                            ) {
+                                this.callback({
+                                    which: 0,
+                                    datetime: value
+                                });
+                            }
+                        }}
                     />
                     <p></p>
                     <DatePicker
                         label='To'
                         format='YYYY/MM/DD'
-                        value={this.toDate}
+                        defaultValue={this.toDate}
                         minDate={this.fromDate}
                         maxDate={this.maxDate}
-                        onChange={(value) =>
-                            this.callback({
-                                which: 1,
-                                datetime: value
-                            })
-                        }
+                        onChange={(value) => {
+                            if (
+                                (this.minDate.isBefore(value) || this.minDate.isSame(value)) &&
+                                (this.maxDate.isAfter(value) || this.maxDate.isSame(value))
+                            ) {
+                                this.callback({
+                                    which: 1,
+                                    datetime: value
+                                });
+                            }
+                        }}
                     />
                     <p className='text-warning' id='warning-if-time-range-zero'></p>
                 </div>
@@ -107,12 +117,19 @@ export default class TimeRange extends InputOption {
         }
 
         this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
-        this.panel.recalculateFilters(this);
-        //Refresh to update the associated panel and its widgets
-        this.panel.refreshComponent();
-        this.panel.refreshWidgets();
-        //Refresh this inputoption
-        this.refreshComponent();
+
+        if (this.debounceTimer !== undefined) clearTimeout(this.debounceTimer);
+
+        this.debounceTimer = setTimeout(() => {
+            this.panel.recalculateFilters(this);
+            //Refresh to update the associated panel and its widgets
+            this.panel.refreshComponent();
+            this.panel.refreshWidgets();
+
+            //This is still needed for the italics
+            this.refreshComponent();
+        }, 600);
+        //delay the debounce for a bit longer than 300, because its really fiddly
     }
     public query(): Query {
         let fromDate: string | number;
