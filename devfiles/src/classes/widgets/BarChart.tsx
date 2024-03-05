@@ -79,4 +79,8 @@ export default class BarChart extends TimeChart {
             FilenameGrouping
         ];
     }
+
+    public override getWidgetName() {
+        return 'Bar Chart';
+    }
 }

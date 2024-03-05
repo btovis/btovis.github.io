@@ -155,4 +155,7 @@ export default class MapWidget extends Widget {
         return new Sidebar([]);
     }
     public delete(): void {}
+    public override getWidgetName() {
+        return 'Map';
+    }
 }

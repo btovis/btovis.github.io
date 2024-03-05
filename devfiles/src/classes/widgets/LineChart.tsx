@@ -99,4 +99,7 @@ export default class LineChart extends TimeChart {
     public timeRangeGroupings(): (typeof Grouping)[] {
         return [DayGrouping, ContinuousMonthGrouping, YearGrouping];
     }
+    public override getWidgetName() {
+        return 'Line Chart';
+    }
 }
