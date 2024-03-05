@@ -281,16 +281,9 @@ function integrateNewCSV(
     const newColumns = oldColumnList.slice(originalColumnCount);
     const newSets = newColumns.map((a) => (columnNeedsSet(a) ? new ReferenceSet() : undefined));
     oldSets.push(...newSets);
-    const newProcessors = oldColumnList.map((n, i) => getProcessorForColumn(n, oldSets[i]));
-
-    // handle time: get index of actual ...
-    // make processor, replace previous with it
-
-    const dateCol = titleToColumnIndex.get(Attribute.actualDate);
-    processDates(oldDatabase, oldDBLen, dateCol);
-
-    const surveyDateCol = titleToColumnIndex.get(Attribute.surveyDate);
-    processDates(oldDatabase, oldDBLen, surveyDateCol);
+    const newProcessors = oldColumnList.map((n, i) =>
+        getProcessorForColumn(n, oldSets[i], oldDBLen, i, oldDatabase)
+    );
 
     const timeCol = titleToColumnIndex.get(Attribute.time);
     processTimes(oldDatabase, oldDBLen, timeCol);
@@ -316,7 +309,13 @@ function integrateNewCSV(
     }
 }
 
-function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string) => any*/ {
+function getProcessorForColumn(
+    columnName,
+    set: ReferenceSet,
+    startIndexForNewData,
+    colI,
+    dataArr
+) /*: (cell: string) => any*/ {
     // Make set manager for each row that wants a
 
     switch (columnName) {
@@ -347,11 +346,8 @@ function getProcessorForColumn(columnName, set: ReferenceSet) /*: (cell: string)
             return (a) => set.addRawOrGet(a);
 
         case 'ACTUAL DATE':
-            return (x) => x;
-
         case 'SURVEY DATE':
-            return (x) => x;
-
+            return processDates(dataArr, startIndexForNewData, colI)[2];
         case 'TIME':
             // 24H
             return (x) => x;

@@ -29,9 +29,9 @@ export function processDates(
     dataArr,
     startI,
     columnI
-): [DateType | undefined, DateSeparator | undefined] {
+): [DateType | undefined, DateSeparator | undefined, (a) => string] {
     // pick a random cell
-    if (startI == dataArr.length) return undefined;
+    if (startI == dataArr.length) return [undefined, undefined, (a) => a];
     const random = startI + Math.floor((dataArr.length - startI) / 2);
     const example: string = dataArr[random][columnI];
     let separators = '',
@@ -47,7 +47,7 @@ export function processDates(
         separators += '.';
     }
     if (separators.length > 1) {
-        return [undefined, undefined];
+        return [undefined, undefined, (a) => a];
     }
     if (separators.length) {
         sep = separators as DateSeparator;
@@ -71,7 +71,8 @@ export function processDates(
             ];
         }
         const potentialYears: [number, boolean][] = years.filter((a) => a[1]);
-        if (potentialYears.length > 2 || potentialYears.length == 0) return [undefined, undefined];
+        if (potentialYears.length > 2 || potentialYears.length == 0)
+            return [undefined, undefined, (a) => a];
         // we could look at all other dates in data
         // DDMMYYY or MMDDYYYY
         // the second case allows potentialYears.length == 2
@@ -89,14 +90,14 @@ export function processDates(
                 processBeforeScan = (s) => [s.slice(0, 2), s.slice(2, 4)];
             } else {
                 // Here reject DD/MM/YY as this isn't used
-                return [undefined, undefined];
+                return [undefined, undefined, (a) => a];
             }
         }
     } else {
         // decide which order
         const date = example.split(sep);
         if (date.length != 3) {
-            return [undefined, undefined];
+            return [undefined, undefined, (a) => a];
         }
         if (
             date[0].length == 4 &&
@@ -113,7 +114,7 @@ export function processDates(
             scanNeeded = true;
             processBeforeScan = (s) => [s.slice(0, 2), s.slice(3, 5)];
         } else {
-            return [undefined, undefined];
+            return [undefined, undefined, (a) => a];
         }
     }
 
@@ -141,7 +142,7 @@ export function processDates(
                     type = DateType.DDMMYYYY;
                     break;
                 default:
-                    return [undefined, undefined];
+                    return [undefined, undefined, (a) => a];
             }
         }
     }
@@ -173,10 +174,7 @@ export function processDates(
         }
     }
 
-    const l = dataArr.length;
-    for (let i = startI; i < l; i++) {
-        dataArr[i][columnI] = processor(dataArr[i][columnI]);
-    }
+    return [type, sep, processor];
 }
 
 enum TimeSeparator {
