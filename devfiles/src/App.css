@@ -384,6 +384,18 @@ a:hover {
     border-width: 1px !important;
 }
 
+.panel-need-refresh {
+    border-color: rgb(255, 156, 156) !important;
+}
+.panel-need-refresh .accordion-button {
+    background-color: rgb(255, 73, 73) !important;
+    --bs-accordion-border-color: red;
+    color: white !important;
+}
+.panel-need-refresh .accordion-body {
+    background-color: rgb(255, 227, 227) !important;
+}
+
 .panelactive,
 .widgetactive {
     border-width: 3px !important;

@@ -91,7 +91,14 @@ export default class TimeRange extends InputOption {
                             }
                         }}
                     />
-                    <p className='text-warning' id='warning-if-time-range-zero'></p>
+                    <button
+                        style={{ marginTop: '5px' }}
+                        type='button'
+                        className='btn btn-secondary btn-sm'
+                        onClick={() => this.callback({ which: 2, datetime: null })}
+                    >
+                        Reset
+                    </button>
                 </div>
             </LocalizationProvider>
         );
@@ -112,8 +119,11 @@ export default class TimeRange extends InputOption {
     public callback(newValue: { which: number; datetime: Dayjs }): void {
         if (newValue.which === 0) {
             this.fromDate = newValue.datetime;
-        } else {
+        } else if (newValue.which === 1) {
             this.toDate = newValue.datetime;
+        } else {
+            this.fromDate = this.minDate;
+            this.toDate = this.maxDate;
         }
 
         this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;

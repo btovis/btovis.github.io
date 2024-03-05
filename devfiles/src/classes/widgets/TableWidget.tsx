@@ -424,4 +424,8 @@ export default class TableWidget extends Widget {
         //Nothing to do?
     }
     public updateTraceOptions(): void {}
+
+    public override getWidgetName() {
+        return 'Table';
+    }
 }

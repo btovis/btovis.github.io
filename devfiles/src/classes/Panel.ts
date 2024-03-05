@@ -45,6 +45,7 @@ export default class Panel {
     public dataFilterer: DataFilterer;
     public readonly uuid: number;
     public minHeight: number;
+    public needsManualRefresh = false;
     public lifetimeWidgetCount: Map<string, number> = new Map();
 
     public constructor(pageManager: PageManager, isDefaultPanel: boolean = false) {
@@ -223,7 +224,12 @@ export default class Panel {
 
     // Refresh Widgets, Trace Related Options, and Sidebar
     public refreshWidgets(delayable: boolean = true): void {
-        if (delayable && !this.nameInput.refreshAutomatically) return;
+        if (delayable && !this.nameInput.refreshAutomatically) {
+            this.needsManualRefresh = true;
+            this.refreshComponent();
+            return;
+        }
+        this.needsManualRefresh = false;
         this.widgets.forEach((w) => {
             if (w instanceof TimeChart) w.updateGrouping();
         });

@@ -16,9 +16,9 @@ export default abstract class Widget {
         this.panel = panel;
         this.options = [];
         this.name =
-            this.constructor.name +
+            this.getWidgetName() +
             ' ' +
-            (panel.getLifetimeWidgetsCreated(this.constructor.name) + 1);
+            (panel.getLifetimeWidgetsCreated(this.getWidgetName()) + 1);
     }
 
     public displaySidebar() {}
@@ -37,4 +37,6 @@ export default abstract class Widget {
     public abstract renderFullscreen(): JSX.Element;
 
     public abstract delete(): void;
+
+    public abstract getWidgetName(): string;
 }
