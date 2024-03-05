@@ -53,6 +53,7 @@ export default class NumericInput extends InputOption {
                             document.getElementById(this.uuid + '-textsel') as HTMLInputElement
                         ).value = event.currentTarget.value;
                         this.debounce(event.target.valueAsNumber);
+                        this.refreshComponent();
                     }}
                 />
                 <div style={{ display: 'inline' }}>
@@ -88,6 +89,7 @@ export default class NumericInput extends InputOption {
 
     private debounce(newValue: number) {
         this.bouncyValue = newValue;
+        this.refreshComponent();
         if (this.timer !== undefined) clearTimeout(this.timer);
         this.timer = setTimeout(() => {
             if (this.bouncyValue === newValue) this.callback(this.bouncyValue);
@@ -99,6 +101,8 @@ export default class NumericInput extends InputOption {
         this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
         this.panel.recalculateFilters(this);
         this.panel.refreshWidgets();
+        //Refresh this inputoption
+        this.refreshComponent();
     }
 
     public query(): Query {

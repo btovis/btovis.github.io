@@ -112,7 +112,7 @@ export default class Selector extends InputOption {
                             this.callback(event.currentTarget.checked ? [] : this.choices)
                         }
                         onClick={(event) => event.stopPropagation()}
-                        defaultChecked={this.isEverythingSelected()}
+                        checked={this.isEverythingSelected()}
                         className='form-check-input'
                         type='checkbox'
                         id={this.uuid.toString() + 'all'}
@@ -149,7 +149,7 @@ export default class Selector extends InputOption {
                                         })
                                     }
                                     id={this.uuid.toString() + item}
-                                    defaultChecked={!this.excluded.has(item)}
+                                    checked={!this.excluded.has(item)}
                                     className='form-check-input'
                                     type={this.inputType()}
                                     name={this.uuid.toString() + 'selector'}
@@ -204,6 +204,9 @@ export default class Selector extends InputOption {
             this.panel.refreshComponent();
             this.panel.refreshWidgets();
         } else this.extendedCallbacks.forEach((f) => f(newValue));
+
+        //Refresh this inputoption
+        this.refreshComponent();
     }
 
     /**
