@@ -100,21 +100,25 @@ export default class Geographic extends InputOption {
                             overflowY: 'hidden'
                         }}
                     >
-                        {/* If the accordion is closed, cheat and do not render */}
-                        <Plot
-                            onSelected={(event) => {
-                                //#168, this variable is just undefined if you click
-                                if (event === undefined) return;
-                                this.callback({
-                                    pointCount: event.points.length,
-                                    bounds: event.range.mapbox
-                                });
-                            }}
-                            data={plotData}
-                            layout={plotLayout}
-                            config={plotConfig}
-                        />
-                        Map failed to refresh. Click Select All twice to force the map to refresh
+                        {/* If there's no locations, cheat and do not render */}
+                        {this.posMeta().globalMax[0] === -Infinity ? (
+                            <></>
+                        ) : (
+                            <Plot
+                                onSelected={(event) => {
+                                    //#168, this variable is just undefined if you click
+                                    if (event === undefined) return;
+                                    this.callback({
+                                        pointCount: event.points.length,
+                                        bounds: event.range.mapbox
+                                    });
+                                }}
+                                data={plotData}
+                                layout={plotLayout}
+                                config={plotConfig}
+                            />
+                        )}
+                        No latitude/longitude pairs are present in the dataset
                     </div>
                 </OverlayTrigger>
             </>
