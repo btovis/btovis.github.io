@@ -211,25 +211,39 @@ export default class SpeciesSelector extends InputOption {
                     {[...this.speciesMeta.groupByGroup.keys()].map((group) => (
                         <div key={uuidv4()}>
                             <hr />
-                            <div className='speciesGroupRowDiv' key={uuidv4()}>
-                                <strong>{group.value}</strong>
-                                <button
-                                    className='btn btn-outline-dark btn-sm'
-                                    type='button'
-                                    onClick={() => {
-                                        [...this.speciesMeta.groupByGroup.get(group)].map((s) => {
+                            <strong style={{ fontWeight: 'bolder' }}>{group.value}</strong>
+                            <div className='speciesGroupRowDiv'>
+                                <input
+                                    className='form-check-input'
+                                    id={this.uuid + '-groupsel-' + group.value}
+                                    type='checkbox'
+                                    checked={
+                                        [...this.speciesMeta.groupByGroup.get(group)].filter((s) =>
                                             this.unselected.has(s)
-                                                ? this.unselected.delete(s)
-                                                : this.unselected.add(s);
-                                        });
+                                        ).length === 0
+                                    }
+                                    onChange={(event) => {
+                                        if (!event.currentTarget.checked)
+                                            [...this.speciesMeta.groupByGroup.get(group)].map((s) =>
+                                                this.unselected.add(s)
+                                            );
+                                        else
+                                            [...this.speciesMeta.groupByGroup.get(group)].map((s) =>
+                                                this.unselected.delete(s)
+                                            );
+
                                         this.callback({
                                             checked: false,
                                             item: new Set([])
                                         });
                                     }}
+                                />
+                                <label
+                                    className='form-check-label selectorLabel select-all-label fw-bold'
+                                    htmlFor={this.uuid + '-groupsel-' + group.value}
                                 >
-                                    Invert
-                                </button>
+                                    Select All
+                                </label>
                             </div>
                             {this.speciesMeta.groupByGroup
                                 .get(group)
