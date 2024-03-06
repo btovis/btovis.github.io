@@ -168,7 +168,22 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                             <div
                                 className='download-btn'
                                 onClick={(event) => {
-                                    // download csv
+                                    const array = exportCSV(panel.dataFilterer);
+                                    if (array.length > 1000000000)
+                                        window.alert(
+                                            'Resultant file larger than 1 GB. This might not work depending on your browser'
+                                        );
+                                    const blob = new Blob([array], {
+                                        type: 'application/octet-stream'
+                                    });
+                                    const url = URL.createObjectURL(blob);
+                                    const elem = document.getElementById('invisibleDiv');
+                                    // @ts-expect-error: how to change ts to allow href?
+                                    elem.href = url;
+                                    // @ts-expect-error: how to change ts to allow download?
+                                    elem.download = panel.getName() + '.csv';
+                                    setTimeout(() => elem.click(), 0);
+                                    setTimeout(() => URL.revokeObjectURL(url), 10000);
                                     event.stopPropagation();
                                 }}
                             >
@@ -256,39 +271,6 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                                     className='widget-icon-inner'
                                                 />
                                                 <div className='tool-tip'>Map</div>
-                                            </div>
-                                            <div
-                                                className='widget-icon'
-                                                onClick={() => {
-                                                    const array = exportCSV(panel.dataFilterer);
-                                                    if (array.length > 1000000000)
-                                                        window.alert(
-                                                            'Resultant file larger than 1 GB. This might not work depending on your browser'
-                                                        );
-                                                    const blob = new Blob([array], {
-                                                        type: 'application/octet-stream'
-                                                    });
-                                                    const url = URL.createObjectURL(blob);
-                                                    const elem =
-                                                        document.getElementById('invisibleDiv');
-                                                    // @ts-expect-error: how to change ts to allow href?
-                                                    elem.href = url;
-                                                    // @ts-expect-error: how to change ts to allow download?
-                                                    elem.download = panel.getName() + '.csv';
-                                                    setTimeout(() => elem.click(), 0);
-                                                    setTimeout(
-                                                        () => URL.revokeObjectURL(url),
-                                                        10000
-                                                    );
-                                                }}
-                                            >
-                                                <Icon.Download
-                                                    size={iconSize}
-                                                    className='widget-icon'
-                                                />
-                                                <div className='tool-tip'>
-                                                    Download Filtered CSV
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
