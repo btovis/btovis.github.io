@@ -1,5 +1,6 @@
 import DataFilterer from '../DataFilterer';
 import SetElement from '../setutils/SetElement';
+import { stringReplacer } from './csvreader';
 
 class Uint8Buffer {
     public buffer: ArrayBuffer = new ArrayBuffer(8000);
@@ -70,9 +71,10 @@ export function exportCSV(filterer: DataFilterer): Uint8Array {
         for (const cell of data[i]) {
             const str: string =
                 cell instanceof SetElement ? '"' + cell.value + '",' : '"' + cell + '",';
-            allocateMoreForAddition(buffer, str.length * 4);
+            const str2 = str.includes('"') ? stringReplacer(str, '"', '""') : str;
+            allocateMoreForAddition(buffer, str2.length * 4);
             const { written } = utf8encoder.encodeInto(
-                str,
+                str2,
                 buffer.accessibleBuffer.subarray(buffer.usedLength)
             );
             buffer.usedLength += written;
