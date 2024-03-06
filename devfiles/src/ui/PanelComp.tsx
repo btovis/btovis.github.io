@@ -164,7 +164,15 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                 </button>
                             </OverlayTrigger>
                         ) : (
-                            <></>
+                            <div
+                                className='download-btn'
+                                onClick={(event) => {
+                                    // download csv
+                                    event.stopPropagation();
+                                }}
+                            >
+                                <Icon.Download color='#4ea0e4' size={30} />
+                            </div>
                         )}
                     </Accordion.Header>
 
