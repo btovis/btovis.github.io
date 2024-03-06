@@ -6,11 +6,13 @@ import MutuallyExclusiveSelector from '../options/MutuallyExclusiveSelector';
 import { Grouping, YGrouping } from './Grouping';
 import Widget from './Widget';
 import ColorOption from '../options/ColorOption.js';
+import { Attribute } from '../data/Data.js';
 
 // Covers bar chart, line chart, stacked line chart.
 export default abstract class TimeChart extends Widget {
     xAxisSelector: MutuallyExclusiveSelector;
     yAxisSelector: MutuallyExclusiveSelector;
+    dateTypeSelector: MutuallyExclusiveSelector;
 
     static readonly buttonsToRemove = [
         'zoom2d',
@@ -70,19 +72,37 @@ export default abstract class TimeChart extends Widget {
             (grouping: typeof Grouping) => grouping.name === this.xAxisSelector.selected
         );
         // Change Value for 'grouping'
-        this.grouping = new groupingCls(this.panel.dataFilterer, yGrouping);
+        this.grouping = new groupingCls(this.panel.dataFilterer, this.getDateColumn(), yGrouping);
     }
+
+    private getDateColumn(): Attribute {
+        if (this.dateTypeSelector.selected === 'Survey Date') return Attribute.surveyDate;
+        else return Attribute.actualDate;
+    }
+
     public async initOptions(
         defaultXGrouping?: string,
         defaultYGrouping: YGrouping = YGrouping.Species
     ): Promise<void> {
+        this.dateTypeSelector = new MutuallyExclusiveSelector(
+            this.panel,
+            'Date Type',
+            ['Survey Date', 'Actual Date'],
+            'Survey Date'
+        );
+        this.dateTypeSelector.extendedCallbacks.push(() => this.optionsCallback());
+
         // The filtering is slow so this is made async to reduce user wait time.
         const filter = this.panel.dataFilterer;
 
         const groupings = this.timeRangeGroupings()
             .filter((grouping) => {
                 // Manually filter groupings of x axis to prevent too many x values.
-                const groupingInstance = new grouping(filter, defaultYGrouping);
+                const groupingInstance = new grouping(
+                    filter,
+                    this.getDateColumn(),
+                    defaultYGrouping
+                );
                 const [data, length] = filter.getData();
                 const xValues = new Set();
                 for (let i = 0; i < length; i++) {

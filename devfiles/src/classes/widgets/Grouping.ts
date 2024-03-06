@@ -21,9 +21,11 @@ abstract class Grouping {
     yColumnIdx: number;
     yGrouping: YGrouping;
     speciesMeta: SpeciesMeta;
+    dateColumn: Attribute;
     static maxXValues: number = 1000;
-    constructor(filter: DataFilterer, yGrouping: YGrouping) {
+    constructor(filter: DataFilterer, dateColumn: Attribute, yGrouping: YGrouping) {
         this.filter = filter;
+        this.dateColumn = dateColumn;
         this.referenceSet = new ReferenceSet();
         // Unique x values.
         this.xValues = new Set();
@@ -191,8 +193,8 @@ abstract class Grouping {
 class BatchNameGrouping extends Grouping {
     columnIdx: number;
     static name = 'Batch Name';
-    constructor(filter: DataFilterer, yGrouping: YGrouping) {
-        super(filter, yGrouping);
+    constructor(filter: DataFilterer, dateColumn: Attribute, yGrouping: YGrouping) {
+        super(filter, dateColumn, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.batchName);
     }
     public selectX(row: Row): SetElement {
@@ -209,8 +211,8 @@ class BatchNameGrouping extends Grouping {
 class ProjectNameGrouping extends Grouping {
     columnIdx: number;
     static name = 'Project Name';
-    constructor(filter: DataFilterer, yGrouping: YGrouping) {
-        super(filter, yGrouping);
+    constructor(filter: DataFilterer, dateColumn: Attribute, yGrouping: YGrouping) {
+        super(filter, dateColumn, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.projectName);
     }
     public selectX(row: Row): SetElement {
@@ -227,8 +229,8 @@ class ProjectNameGrouping extends Grouping {
 class FilenameGrouping extends Grouping {
     static name = 'Filename';
     columnIdx: number;
-    constructor(filter: DataFilterer, yGrouping: YGrouping) {
-        super(filter, yGrouping);
+    constructor(filter: DataFilterer, dateColumn: Attribute, yGrouping: YGrouping) {
+        super(filter, dateColumn, yGrouping);
         this.columnIdx = filter.getColumnIndex(Attribute.csvName);
     }
     public selectX(row: Row): SetElement {
@@ -245,10 +247,10 @@ class FilenameGrouping extends Grouping {
 abstract class TimeGrouping extends Grouping {
     timeColumnIdx: number;
     dateColumnIdx: number;
-    constructor(filter: DataFilterer, yGrouping: YGrouping) {
-        super(filter, yGrouping);
+    constructor(filter: DataFilterer, dateColumn: Attribute, yGrouping: YGrouping) {
+        super(filter, dateColumn, yGrouping);
         this.timeColumnIdx = filter.getColumnIndex(Attribute.time);
-        this.dateColumnIdx = filter.getColumnIndex(Attribute.actualDate);
+        this.dateColumnIdx = filter.getColumnIndex(this.dateColumn);
     }
     public selectX(row: Row): SetElement {
         return this.referenceSet.addRawOrGet(
