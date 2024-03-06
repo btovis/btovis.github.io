@@ -12,6 +12,7 @@ import { Resizable } from 'react-resizable';
 import { CloseButton, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import generateHash from '../utils/generateHash.js';
 import TimeChart from '../classes/widgets/TimeChart.js';
+import { exportCSV } from '../classes/data/datautils/exportCSV.js';
 
 function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
     //State machine mechanism. Have this arbitrary integer for a makeshift refresh
@@ -255,6 +256,39 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                                     className='widget-icon-inner'
                                                 />
                                                 <div className='tool-tip'>Map</div>
+                                            </div>
+                                            <div
+                                                className='widget-icon'
+                                                onClick={() => {
+                                                    const array = exportCSV(panel.dataFilterer);
+                                                    if (array.length > 1000000000)
+                                                        window.alert(
+                                                            'Resultant file larger than 1 GB. This might not work depending on your browser'
+                                                        );
+                                                    const blob = new Blob([array], {
+                                                        type: 'application/octet-stream'
+                                                    });
+                                                    const url = URL.createObjectURL(blob);
+                                                    const elem =
+                                                        document.getElementById('invisibleDiv');
+                                                    // @ts-expect-error: how to change ts to allow href?
+                                                    elem.href = url;
+                                                    // @ts-expect-error: how to change ts to allow download?
+                                                    elem.download = panel.getName() + '.csv';
+                                                    setTimeout(() => elem.click(), 0);
+                                                    setTimeout(
+                                                        () => URL.revokeObjectURL(url),
+                                                        10000
+                                                    );
+                                                }}
+                                            >
+                                                <Icon.Download
+                                                    size={iconSize}
+                                                    className='show-widget-icons'
+                                                />
+                                                <div className='tool-tip'>
+                                                    Download Filtered CSV
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
