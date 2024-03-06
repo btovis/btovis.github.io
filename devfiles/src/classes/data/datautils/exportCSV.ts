@@ -52,7 +52,7 @@ export function exportCSV(filterer: DataFilterer): Uint8Array {
     const columnCount = columns.length;
 
     for (let i = 0; i < columnCount; i++) {
-        const cell = '"' + columns[i] + '",';
+        const cell = '"' + stringReplacer(columns[i], '"', '""') + '",';
 
         // Follow Mozilla docs for TextEncoder.
         allocateMoreForAddition(buffer, cell.length * 4);
@@ -69,15 +69,26 @@ export function exportCSV(filterer: DataFilterer): Uint8Array {
     // See the above loop; this one is almost same but uncommented
     for (let i = 0; i < l; i++) {
         for (const cell of data[i]) {
-            const str: string =
-                cell instanceof SetElement ? '"' + cell.value + '",' : '"' + cell + '",';
-            const str2 = str.includes('"') ? stringReplacer(str, '"', '""') : str;
-            allocateMoreForAddition(buffer, str2.length * 4);
-            const { written } = utf8encoder.encodeInto(
-                str2,
-                buffer.accessibleBuffer.subarray(buffer.usedLength)
-            );
-            buffer.usedLength += written;
+            if (cell instanceof SetElement) {
+                const str = cell.value;
+                const str2 = '"' + (str.includes('"') ? stringReplacer(str, '"', '""') : str) + '"';
+                allocateMoreForAddition(buffer, str2.length * 4);
+                const { written } = utf8encoder.encodeInto(
+                    str2,
+                    buffer.accessibleBuffer.subarray(buffer.usedLength)
+                );
+                buffer.usedLength += written;
+            } else {
+                const str = '"' + cell;
+                const str2 =
+                    (str.includes('"', 1) ? '"' + stringReplacer('' + cell, '"', '""') : str) + '"';
+                allocateMoreForAddition(buffer, str2.length * 4);
+                const { written } = utf8encoder.encodeInto(
+                    str2,
+                    buffer.accessibleBuffer.subarray(buffer.usedLength)
+                );
+                buffer.usedLength += written;
+            }
         }
         buffer.accessibleBuffer[buffer.usedLength - 1] = '\n' as unknown as number;
     }
