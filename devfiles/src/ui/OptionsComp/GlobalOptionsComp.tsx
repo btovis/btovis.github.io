@@ -4,6 +4,7 @@ import PageManager from '../../classes/PageManager.js';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from 'react-bootstrap';
 import license from '../../assets/license.txt?url';
+import documentation from '../../assets/documentation.pdf?url';
 
 function GlobalOptionsComp(params: {
     renderFileProcess: (FileList) => void;
@@ -50,6 +51,17 @@ function GlobalOptionsComp(params: {
                     Browse Files
                 </button>
             </div>
+            {/* For displaying documentation */}
+            <Button
+                style={{ float: 'left', margin: '5px' }}
+                type='button'
+                className='btn btn-info btm-sm my-3'
+                onClick={() => {
+                    window.open(documentation, '_blank').focus();
+                }}
+            >
+                Documentation
+            </Button>
             {/* For displaying the License */}
             <Button
                 style={{ float: 'left', margin: '5px' }}
