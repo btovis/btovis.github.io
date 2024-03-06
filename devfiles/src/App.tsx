@@ -145,6 +145,8 @@ function App() {
             <div className='paner'>
                 <MainPage pageManager={pageManager}></MainPage>
             </div>
+            {/* This is used for CSV downloads */}
+            <a id='invisibleDiv'></a>
         </div>
     );
 }
