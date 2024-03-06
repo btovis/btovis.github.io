@@ -187,7 +187,11 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                     event.stopPropagation();
                                 }}
                             >
-                                <Icon.Download color='#4ea0e4' size={30} />
+                                <Icon.Download
+                                    title='Download Filtered CSV'
+                                    color='#4ea0e4'
+                                    size={28}
+                                />
                             </div>
                         )}
                     </Accordion.Header>

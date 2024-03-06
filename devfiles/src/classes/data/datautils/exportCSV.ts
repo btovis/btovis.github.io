@@ -64,14 +64,15 @@ export function exportCSV(filterer: DataFilterer): Uint8Array {
 
         buffer.usedLength += written;
     }
-    buffer.accessibleBuffer[buffer.usedLength - 1] = '\n' as unknown as number; // replace the final ',' with \n
+    buffer.accessibleBuffer[buffer.usedLength - 1] = 10; //'\n' as unknown as number; // replace the final ',' with \n
 
     // See the above loop; this one is almost same but uncommented
     for (let i = 0; i < l; i++) {
         for (const cell of data[i]) {
             if (cell instanceof SetElement) {
                 const str = cell.value;
-                const str2 = '"' + (str.includes('"') ? stringReplacer(str, '"', '""') : str) + '"';
+                const str2 =
+                    '"' + (str.includes('"') ? stringReplacer(str, '"', '""') : str) + '",';
                 allocateMoreForAddition(buffer, str2.length * 4);
                 const { written } = utf8encoder.encodeInto(
                     str2,
@@ -81,7 +82,8 @@ export function exportCSV(filterer: DataFilterer): Uint8Array {
             } else {
                 const str = '"' + cell;
                 const str2 =
-                    (str.includes('"', 1) ? '"' + stringReplacer('' + cell, '"', '""') : str) + '"';
+                    (str.includes('"', 1) ? '"' + stringReplacer('' + cell, '"', '""') : str) +
+                    '",';
                 allocateMoreForAddition(buffer, str2.length * 4);
                 const { written } = utf8encoder.encodeInto(
                     str2,
@@ -90,7 +92,7 @@ export function exportCSV(filterer: DataFilterer): Uint8Array {
                 buffer.usedLength += written;
             }
         }
-        buffer.accessibleBuffer[buffer.usedLength - 1] = '\n' as unknown as number;
+        buffer.accessibleBuffer[buffer.usedLength - 1] = 10; //'\n' as unknown as number;
     }
     return new Uint8Array(buffer.buffer, 0, buffer.usedLength);
 }
