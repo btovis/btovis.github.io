@@ -264,4 +264,4 @@ function parseCSVFromByteArray(input: Uint8Array, firstElement: SetElement) {
     return parseCSV(utf8decoder.decode(input), firstElement);
 }
 
-export { parseCSV, parseCSVFromByteArray };
+export { parseCSV, parseCSVFromByteArray, stringReplacer };
