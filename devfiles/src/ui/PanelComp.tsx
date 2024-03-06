@@ -284,7 +284,7 @@ function PanelComp(params: { panelIdx: number; pageManager: PageManager }) {
                                             >
                                                 <Icon.Download
                                                     size={iconSize}
-                                                    className='show-widget-icons'
+                                                    className='widget-icon'
                                                 />
                                                 <div className='tool-tip'>
                                                     Download Filtered CSV
