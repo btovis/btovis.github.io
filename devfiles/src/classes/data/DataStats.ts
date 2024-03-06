@@ -1,4 +1,4 @@
-import { EndangermentStatus, getSpeciesEndangerment } from '../../utils/speciesVulnerability';
+import { EndangermentStatus } from '../../utils/speciesVulnerability';
 import PositionMeta from '../queryMeta/PositionMeta';
 import RangeMeta from '../queryMeta/RangeMeta';
 import SetMeta from '../queryMeta/SetMeta';
@@ -30,6 +30,23 @@ export default class DataStats {
     public constructor(d: Data) {
         this.data = d;
         if (!d) throw 'Stats uninitialized'; // can be removed
+    }
+
+    private static parseVulnerability(vuln: SetElement): EndangermentStatus {
+        switch (vuln.value) {
+            case 'Extinct in the Wild':
+            case 'Extinct':
+            case 'Critically Endangered':
+            case 'Endangered':
+            case 'Vulnerable':
+            case 'Near Threatened':
+            case 'Least Concern':
+            case 'Data Deficient':
+            case 'Not Evaluated':
+                return vuln.value as EndangermentStatus;
+            default:
+                return 'Unknown' as EndangermentStatus;
+        }
     }
 
     public refresh() {
@@ -92,6 +109,7 @@ export default class DataStats {
         const speciesCol = this.data.getIndexForColumn(Attribute.species);
         const speciesEnglishCol = this.data.getIndexForColumn(Attribute.speciesEnglishName);
         const groupCol = this.data.getIndexForColumn(Attribute.speciesGroup);
+        const endangermentCol = this.data.getIndexForColumn(Attribute.vulnerability);
         let rowIndex = 0;
         while (this.species.size < uniqueSpecies && rowIndex < l) {
             const latinName = db[rowIndex][latinNameCol];
@@ -100,7 +118,7 @@ export default class DataStats {
                     db[rowIndex][speciesCol] as SetElement,
                     db[rowIndex][speciesEnglishCol] as SetElement,
                     db[rowIndex][groupCol] as SetElement,
-                    getSpeciesEndangerment((latinName as SetElement).value)
+                    DataStats.parseVulnerability(db[rowIndex][endangermentCol] as SetElement)
                 ]);
             }
             rowIndex++;
