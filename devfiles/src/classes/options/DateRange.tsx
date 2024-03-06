@@ -52,55 +52,57 @@ export default class TimeRange extends InputOption {
 
     public render(): JSX.Element {
         return this.generateAccordion(
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div>
-                    <DatePicker
-                        label='From'
-                        format='YYYY/MM/DD'
-                        defaultValue={this.fromDate}
-                        minDate={this.minDate}
-                        maxDate={this.toDate}
-                        onChange={(value) => {
-                            if (
-                                (this.minDate.isBefore(value) || this.minDate.isSame(value)) &&
-                                (this.maxDate.isAfter(value) || this.maxDate.isSame(value))
-                            ) {
-                                this.callback({
-                                    which: 0,
-                                    datetime: value
-                                });
-                            }
-                        }}
-                    />
-                    <p></p>
-                    <DatePicker
-                        label='To'
-                        format='YYYY/MM/DD'
-                        defaultValue={this.toDate}
-                        minDate={this.fromDate}
-                        maxDate={this.maxDate}
-                        onChange={(value) => {
-                            if (
-                                (this.minDate.isBefore(value) || this.minDate.isSame(value)) &&
-                                (this.maxDate.isAfter(value) || this.maxDate.isSame(value))
-                            ) {
-                                this.callback({
-                                    which: 1,
-                                    datetime: value
-                                });
-                            }
-                        }}
-                    />
-                    <button
-                        style={{ marginTop: '5px' }}
-                        type='button'
-                        className='btn btn-secondary btn-sm'
-                        onClick={() => this.callback({ which: 2, datetime: null })}
-                    >
-                        Reset
-                    </button>
-                </div>
-            </LocalizationProvider>
+            <div>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <div>
+                        <DatePicker
+                            label='From'
+                            format='YYYY/MM/DD'
+                            defaultValue={this.fromDate}
+                            minDate={this.minDate}
+                            maxDate={this.toDate}
+                            onChange={(value) => {
+                                if (
+                                    (this.minDate.isBefore(value) || this.minDate.isSame(value)) &&
+                                    (this.maxDate.isAfter(value) || this.maxDate.isSame(value))
+                                ) {
+                                    this.callback({
+                                        which: 0,
+                                        datetime: value
+                                    });
+                                }
+                            }}
+                        />
+                        <p></p>
+                        <DatePicker
+                            label='To'
+                            format='YYYY/MM/DD'
+                            defaultValue={this.toDate}
+                            minDate={this.fromDate}
+                            maxDate={this.maxDate}
+                            onChange={(value) => {
+                                if (
+                                    (this.minDate.isBefore(value) || this.minDate.isSame(value)) &&
+                                    (this.maxDate.isAfter(value) || this.maxDate.isSame(value))
+                                ) {
+                                    this.callback({
+                                        which: 1,
+                                        datetime: value
+                                    });
+                                }
+                            }}
+                        />
+                        <button
+                            style={{ marginTop: '5px' }}
+                            type='button'
+                            className='btn btn-secondary btn-sm'
+                            onClick={() => this.callback({ which: 2, datetime: null })}
+                        >
+                            Reset
+                        </button>
+                    </div>
+                </LocalizationProvider>
+            </div>
         );
     }
 
