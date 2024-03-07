@@ -99,7 +99,7 @@ export default class TimeRange extends InputOption {
                         />
                         <p></p>
                         <DatePicker
-                            key={uuidv4() + (this.renderResetId & 3)}
+                            key={uuidv4() + 'to' + (this.renderResetId & 3)}
                             label='To'
                             format='YYYY/MM/DD'
                             defaultValue={this.toDate}
