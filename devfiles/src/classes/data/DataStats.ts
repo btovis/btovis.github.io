@@ -9,7 +9,8 @@ import SetElement from './setutils/SetElement';
 // currently, recalculates for all data whenever updated
 export default class DataStats {
     private data: Data;
-    private timeRange: [] | [low: string, up: string, colI: number] = [];
+    private actualTimeRange: [] | [low: string, up: string, colI: number] = [];
+    private surveyTimeRange: [] | [low: string, up: string, colI: number] = [];
 
     // count was removed. Was it wanted?
     // Scientific name to species tuple of values
@@ -35,13 +36,16 @@ export default class DataStats {
     public refresh() {
         if (this.data.isEmpty()) return;
         //Required Columns, throw otherwise
-        const dateCol = this.data.getIndexForColumn(Attribute.actualDate);
+        const actualDateCol = this.data.getIndexForColumn(Attribute.actualDate);
+        const surveyDateCol = this.data.getIndexForColumn(Attribute.surveyDate);
         const latCol = this.data.getIndexForColumn(Attribute.latitude);
         const lonCol = this.data.getIndexForColumn(Attribute.longitude);
 
         //TimeMeta Initialisers
-        let min = 'z';
-        let max = '0';
+        let acMin = 'z';
+        let surMin = 'z';
+        let acMax = '0';
+        let surMax = '0';
         //PositionMeta Initialisers
         const uniquePositions = new Set<string>();
         const globalMin = [Infinity, Infinity];
@@ -53,10 +57,15 @@ export default class DataStats {
         for (let i = 0; i < l; i++) {
             const row = db[i];
             //TimeMeta processing
-            const d = row[dateCol] as string;
+            const d = row[actualDateCol] as string;
             if (d.startsWith('20')) {
-                if (d < min) min = d;
-                if (d > max) max = d;
+                if (d < acMin) acMin = d;
+                if (d > acMax) acMax = d;
+            }
+            const d2 = row[surveyDateCol] as string;
+            if (d2.startsWith('20')) {
+                if (d2 < surMin) surMin = d2;
+                if (d2 > surMax) surMax = d2;
             }
 
             //PositionMeta processing
@@ -72,12 +81,20 @@ export default class DataStats {
         }
 
         //TimeMeta Post-Processing
-        if (min != 'z') {
-            this.timeRange[0] = min;
-            this.timeRange[1] = max;
-            this.timeRange[2] = dateCol;
+        if (acMin != 'z') {
+            this.actualTimeRange[0] = acMin;
+            this.actualTimeRange[1] = acMax;
+            this.actualTimeRange[2] = actualDateCol;
         } else {
-            this.timeRange.length = 0;
+            this.actualTimeRange.length = 0;
+        }
+
+        if (surMin != 'z') {
+            this.surveyTimeRange[0] = surMin;
+            this.surveyTimeRange[1] = surMax;
+            this.surveyTimeRange[2] = surveyDateCol;
+        } else {
+            this.surveyTimeRange.length = 0;
         }
         //PositionMeta Post-Processing
         this.positionMeta = new PositionMeta(uniquePositions, globalMin, globalMax);
@@ -119,8 +136,12 @@ export default class DataStats {
     }
 
     // You shouldn't need to call this more than once but no harm otherwise
-    public getTimeMeta() {
-        return new RangeMeta(this.timeRange);
+    public getActualTimeMeta() {
+        return new RangeMeta(this.actualTimeRange);
+    }
+
+    public getSurveyTimeMeta() {
+        return new RangeMeta(this.surveyTimeRange);
     }
 
     public getPositionMeta() {
