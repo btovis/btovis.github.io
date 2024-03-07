@@ -6,6 +6,7 @@ import { Query } from '../query/Query';
 import InputOption from './InputOption';
 import RangeQuery from '../query/RangeQuery';
 import { Attribute } from '../data/Data';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class TimeRange extends InputOption {
     private feedbackOnChanged: boolean;
@@ -70,6 +71,7 @@ export default class TimeRange extends InputOption {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <div>
                         <DatePicker
+                            key={uuidv4()}
                             label='From'
                             format='YYYY/MM/DD'
                             defaultValue={this.fromDate}
@@ -96,6 +98,7 @@ export default class TimeRange extends InputOption {
                         />
                         <p></p>
                         <DatePicker
+                            key={uuidv4()}
                             label='To'
                             format='YYYY/MM/DD'
                             defaultValue={this.toDate}
@@ -126,20 +129,25 @@ export default class TimeRange extends InputOption {
                             style={{ marginTop: '5px' }}
                             type='button'
                             className='btn btn-secondary btn-sm'
-                            onClick={() => this.callback({ which: 2, datetime: null })}
+                            onClick={() => {
+                                this.callback({ which: 2, datetime: null });
+
+                                //The elements don't refresh because they're set to value and
+                                // not defaultValue. But defaultValue must be used here.
+                            }}
                         >
                             Reset
                         </button>
                     </div>
                 </LocalizationProvider>
-                <div className='form-check'>
+                <div style={{ marginTop: '10px' }} className='form-check'>
                     <input
                         className='form-check-input'
                         type='radio'
                         id={this.uuid + 'survey'}
                         name={this.uuid + 'datetype'}
                         value='Survey Date'
-                        checked={this.actualDateOrNot == 0}
+                        checked={this.actualDateOrNot === 0}
                         onChange={() => this.callback({ which: 3, datetime: null })}
                     ></input>
                     <label htmlFor={this.uuid + 'survey'}>Survey Date</label>
@@ -150,7 +158,7 @@ export default class TimeRange extends InputOption {
                         id={this.uuid + 'actual'}
                         name={this.uuid + 'datetype'}
                         value='Actual Date'
-                        checked={this.actualDateOrNot == 1}
+                        checked={this.actualDateOrNot === 1}
                         onChange={() => this.callback({ which: 4, datetime: null })}
                     ></input>
                     <label htmlFor={this.uuid + 'actual'}>Actual Date</label>
