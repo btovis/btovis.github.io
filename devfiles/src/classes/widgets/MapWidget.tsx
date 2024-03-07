@@ -115,7 +115,13 @@ export default class MapWidget extends Widget {
                     [...seenGroups.get(key)]
                         .map((elem) => document.createTextNode(unpack(elem) as string).textContent)
                         .join('<br />')
-                )
+                ),
+                hoverlabel: {
+                    font: {
+                        size: 14,
+                        family: 'Open Sans'
+                    }
+                }
             }
         ];
 
