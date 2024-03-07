@@ -72,7 +72,7 @@ export default class TimeRange extends InputOption {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <div>
                         <DatePicker
-                            key={uuidv4() + (this.renderResetId & 3)}
+                            key={uuidv4() + this.renderResetId}
                             label='From'
                             format='YYYY/MM/DD'
                             defaultValue={this.fromDate}
@@ -99,7 +99,7 @@ export default class TimeRange extends InputOption {
                         />
                         <p></p>
                         <DatePicker
-                            key={uuidv4() + 'to' + (this.renderResetId & 3)}
+                            key={uuidv4() + 'to' + this.renderResetId}
                             label='To'
                             format='YYYY/MM/DD'
                             defaultValue={this.toDate}
@@ -189,7 +189,7 @@ export default class TimeRange extends InputOption {
         } else if (newValue.which === 2) {
             this.fromDate = this.minDate[this.actualDateOrNot];
             this.toDate = this.maxDate[this.actualDateOrNot];
-            this.renderResetId = (this.renderResetId + 1) & 3;
+            this.renderResetId++;
         } else {
             const newDateType = newValue.which === 3 ? 0 : 1;
             if (newDateType != this.actualDateOrNot) {
@@ -209,7 +209,7 @@ export default class TimeRange extends InputOption {
 
                 this.actualDateOrNot = newDateType;
             }
-            this.renderResetId = (this.renderResetId + 1) & 3;
+            this.renderResetId++;
         }
 
         this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
