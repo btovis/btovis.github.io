@@ -16,6 +16,7 @@ export default class TimeRange extends InputOption {
     private maxDate: [Dayjs, Dayjs]; // 0 for survey date, 1 for actual date
     public fromDate: Dayjs;
     public toDate: Dayjs;
+    private renderResetId = 0;
 
     public constructor(
         panel: Panel,
@@ -75,6 +76,7 @@ export default class TimeRange extends InputOption {
                             label='From'
                             format='YYYY/MM/DD'
                             defaultValue={this.fromDate}
+                            key={this.renderResetId & 3}
                             minDate={this.minDate[this.actualDateOrNot]}
                             maxDate={this.toDate}
                             slotProps={{
@@ -102,6 +104,7 @@ export default class TimeRange extends InputOption {
                             label='To'
                             format='YYYY/MM/DD'
                             defaultValue={this.toDate}
+                            key={(this.renderResetId & 3) + 8}
                             minDate={this.fromDate}
                             maxDate={this.maxDate[this.actualDateOrNot]}
                             slotProps={{
@@ -188,6 +191,7 @@ export default class TimeRange extends InputOption {
         } else if (newValue.which === 2) {
             this.fromDate = this.minDate[this.actualDateOrNot];
             this.toDate = this.maxDate[this.actualDateOrNot];
+            this.renderResetId = (this.renderResetId + 1) & 3;
         } else {
             const newDateType = newValue.which === 3 ? 0 : 1;
             if (newDateType != this.actualDateOrNot) {
@@ -207,6 +211,7 @@ export default class TimeRange extends InputOption {
 
                 this.actualDateOrNot = newDateType;
             }
+            this.renderResetId = (this.renderResetId + 1) & 3;
         }
 
         this.titleItalics = this.feedbackOnChanged && !this.checkDefault() ? true : false;
