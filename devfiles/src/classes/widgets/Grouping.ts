@@ -317,7 +317,12 @@ class DayGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return DayGrouping.name;
+        return (
+            DayGrouping.name +
+            ' (' +
+            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
+            ')'
+        );
     }
     public getXRate(): string {
         return 'Daily';
@@ -362,7 +367,12 @@ class ContinuousMonthGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return ContinuousMonthGrouping.name;
+        return (
+            ContinuousMonthGrouping.name +
+            ' (' +
+            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
+            ')'
+        );
     }
 }
 
@@ -396,7 +406,12 @@ class MonthGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return MonthGrouping.name;
+        return (
+            MonthGrouping.name +
+            ' (' +
+            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
+            ')'
+        );
     }
 }
 
@@ -416,7 +431,12 @@ class YearGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return YearGrouping.name;
+        return (
+            YearGrouping.name +
+            ' (' +
+            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
+            ')'
+        );
     }
 }
 

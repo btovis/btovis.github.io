@@ -52,10 +52,10 @@ function integrateNewCSV(
             newColumnList[newColumnList.indexOf('DATE')] = 'ACTUAL DATE';
         }
         if (newColumnList.includes('ACTUAL DATE') && !newColumnList.includes('SURVEY DATE')) {
-            // todo: copy from actual date?
             newColumnList.push('SURVEY DATE');
+            const colI = newColumnList.indexOf('ACTUAL DATE');
             for (const r of newDatabase) {
-                r.push('0000-00-00');
+                r.push(r[colI]);
             }
         }
 
@@ -148,6 +148,11 @@ function integrateNewCSV(
 
     if (!newColumnList.includes('SPECIES GROUP')) {
         throw 'No SPECIES GROUP column found';
+    }
+
+    if (!newColumnList.includes('WARNINGS')) {
+        newColumnList.push('WARNINGS');
+        for (const r of newDatabase) r.push('');
     }
 
     if (!newColumnList.includes('VULNERABILITY')) {
