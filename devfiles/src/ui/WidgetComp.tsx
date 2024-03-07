@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageManager from '../classes/PageManager.js';
 import Widget from '../classes/widgets/Widget.js';
 import React from 'react';
@@ -16,6 +16,11 @@ function WidgetComp(params: {
     const widget = panel.getWidget(params.widgetIdx);
     widget.refresh = () => dud(r + 1);
 
+    useEffect(() => {
+        //Some widget things are actually stored in PanelComp (like title)
+        //As such, refresh the panel as needed.
+        panel.refreshComponent();
+    });
     return params.widgetClass.render();
 }
 
