@@ -180,6 +180,12 @@ export default abstract class TimeChart extends Widget {
             height: height,
             font: {
                 size: 16
+            },
+            hoverlabel: {
+                font: {
+                    size: 14,
+                    family: 'Open Sans'
+                }
             }
         };
         // Add specific layout to each chart.
