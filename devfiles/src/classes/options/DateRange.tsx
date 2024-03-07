@@ -166,8 +166,8 @@ export default class TimeRange extends InputOption {
 
     private isDefaultRange() {
         return (
-            Math.abs(this.fromDate.diff(this.minDate, 'day')) +
-                Math.abs(this.toDate.diff(this.maxDate, 'day')) ==
+            Math.abs(this.fromDate.diff(this.minDate[this.actualDateOrNot], 'day')) +
+                Math.abs(this.toDate.diff(this.maxDate[this.actualDateOrNot], 'day')) ==
             0
         );
     }
