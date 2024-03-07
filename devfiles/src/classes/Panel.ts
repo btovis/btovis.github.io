@@ -276,9 +276,9 @@ export default class Panel {
     public addWidget(widget: Widget): void {
         this.widgets.push(widget);
         this.lifetimeWidgetCount.set(
-            widget.constructor.name,
-            this.lifetimeWidgetCount.has(widget.constructor.name)
-                ? this.lifetimeWidgetCount.get(widget.constructor.name) + 1
+            widget.getWidgetName(),
+            this.lifetimeWidgetCount.has(widget.getWidgetName())
+                ? this.lifetimeWidgetCount.get(widget.getWidgetName()) + 1
                 : 1
         );
     }

@@ -196,7 +196,6 @@ export default abstract class TimeChart extends Widget {
 
         // Set widget title to the chart title
         this.name = this.grouping.getChartTitle();
-        this.panel.refreshComponent();
         const plotConfig = {
             modeBarButtonsToRemove: TimeChart.buttonsToRemove,
             editable: false,
