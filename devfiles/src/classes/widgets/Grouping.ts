@@ -170,7 +170,16 @@ abstract class Grouping {
             }),
             layout: {
                 xaxis: {
-                    title: this.getXLabel(),
+                    //This is done here, as XLabel is used in title
+                    title:
+                        this.getXLabel() +
+                        (this instanceof TimeGrouping && !(this instanceof HourGrouping)
+                            ? ' (' +
+                              (this.dateColumn === Attribute.surveyDate
+                                  ? 'Survey Date'
+                                  : 'Actual Date') +
+                              ')'
+                            : ''),
                     labelalias: labelAlias,
                     nticks: Math.min(xIndexMap.size, 10),
                     tickmode: 'auto'
@@ -317,12 +326,7 @@ class DayGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return (
-            DayGrouping.name +
-            ' (' +
-            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
-            ')'
-        );
+        return DayGrouping.name;
     }
     public getXRate(): string {
         return 'Daily';
@@ -367,12 +371,7 @@ class ContinuousMonthGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return (
-            ContinuousMonthGrouping.name +
-            ' (' +
-            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
-            ')'
-        );
+        return ContinuousMonthGrouping.name;
     }
 }
 
@@ -406,12 +405,7 @@ class MonthGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return (
-            MonthGrouping.name +
-            ' (' +
-            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
-            ')'
-        );
+        return MonthGrouping.name;
     }
 }
 
@@ -431,12 +425,7 @@ class YearGrouping extends TimeGrouping {
         return valueMap;
     }
     public getXLabel(): string {
-        return (
-            YearGrouping.name +
-            ' (' +
-            (this.dateColumn === Attribute.surveyDate ? 'Survey Date' : 'Actual Date') +
-            ')'
-        );
+        return YearGrouping.name;
     }
 }
 
