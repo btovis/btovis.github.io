@@ -72,11 +72,10 @@ export default class TimeRange extends InputOption {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <div>
                         <DatePicker
-                            key={uuidv4()}
+                            key={uuidv4() + (this.renderResetId & 3)}
                             label='From'
                             format='YYYY/MM/DD'
                             defaultValue={this.fromDate}
-                            key={this.renderResetId & 3}
                             minDate={this.minDate[this.actualDateOrNot]}
                             maxDate={this.toDate}
                             slotProps={{
@@ -100,11 +99,10 @@ export default class TimeRange extends InputOption {
                         />
                         <p></p>
                         <DatePicker
-                            key={uuidv4()}
+                            key={uuidv4() + (this.renderResetId & 3)}
                             label='To'
                             format='YYYY/MM/DD'
                             defaultValue={this.toDate}
-                            key={(this.renderResetId & 3) + 8}
                             minDate={this.fromDate}
                             maxDate={this.maxDate[this.actualDateOrNot]}
                             slotProps={{
